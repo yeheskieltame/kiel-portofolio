@@ -1,7 +1,7 @@
-
 import { useEffect, useState } from "react";
 import { ArrowDownIcon, Code, Database, Sparkles, BrainCircuit } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getGreeting } from "@/lib/utils";
 
 const Hero = () => {
   const [greeting, setGreeting] = useState("");
@@ -11,14 +11,6 @@ const Hero = () => {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
 
   useEffect(() => {
-    // Get time-based greeting
-    const getGreeting = () => {
-      const hour = new Date().getHours();
-      if (hour < 12) return "Good morning";
-      if (hour < 18) return "Good afternoon";
-      return "Good evening";
-    };
-
     // Check if visitor name is already saved
     const savedName = localStorage.getItem("visitorName");
     if (savedName) {
