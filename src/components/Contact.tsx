@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Loader2 } from "lucide-react";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -21,34 +21,60 @@ const Contact = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      // Create a message that includes all form data
+      const emailBody = `
+        Name: ${formData.name}
+        Email: ${formData.email}
+        Subject: ${formData.subject}
+        
+        Message:
+        ${formData.message}
+      `;
+
+      // Open email client with pre-populated fields
+      const mailtoLink = `mailto:yeheskielyunustame13@gmail.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(emailBody)}`;
+      window.open(mailtoLink, '_blank');
+      
+      // Show success message
       toast({
-        title: "Message sent successfully!",
-        description: "Thank you for reaching out. I'll get back to you as soon as possible.",
+        title: "Message prepared!",
+        description: "Your email client has been opened with the message. Just click send!",
       });
+      
+      // Clear form
       setFormData({
         name: "",
         email: "",
         subject: "",
         message: "",
       });
-    }, 1500);
+    } catch (error) {
+      toast({
+        title: "Something went wrong",
+        description: "Please try again or contact me directly via email.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <section id="contact" className="py-20 px-6 md:px-10">
+    <section id="contact" className="py-20 px-6 md:px-10 relative overflow-hidden">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-theme-purple-light/5 to-theme-blue-light/10"></div>
+      <div className="absolute inset-0 -z-10 bg-circuit bg-cover bg-fixed opacity-5"></div>
+      
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12 md:mb-16">
-          <span className="inline-block py-1 px-3 rounded-full text-xs font-medium bg-secondary text-secondary-foreground mb-3">
+          <span className="inline-block py-1 px-3 rounded-full text-xs font-medium bg-theme-purple/20 text-theme-purple border border-theme-purple/30 mb-3">
             Get in Touch
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-theme-purple to-theme-blue">
             Contact Me
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -60,18 +86,18 @@ const Contact = () => {
           <div className="lg:col-span-2 space-y-8 opacity-0 animate-slide-up" style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}>
             <div className="space-y-6">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-secondary flex items-center justify-center">
-                  <Mail className="h-5 w-5 text-primary" />
+                <div className="h-12 w-12 rounded-full bg-gradient-to-r from-theme-purple to-theme-blue flex items-center justify-center">
+                  <Mail className="h-5 w-5 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">Email</h3>
-                  <p className="text-muted-foreground">hello@example.com</p>
+                  <p className="text-muted-foreground">yeheskielyunustame13@gmail.com</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-secondary flex items-center justify-center">
-                  <Phone className="h-5 w-5 text-primary" />
+                <div className="h-12 w-12 rounded-full bg-gradient-to-r from-theme-purple to-theme-blue flex items-center justify-center">
+                  <Phone className="h-5 w-5 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">Phone</h3>
@@ -80,8 +106,8 @@ const Contact = () => {
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-secondary flex items-center justify-center">
-                  <MapPin className="h-5 w-5 text-primary" />
+                <div className="h-12 w-12 rounded-full bg-gradient-to-r from-theme-purple to-theme-blue flex items-center justify-center">
+                  <MapPin className="h-5 w-5 text-white" />
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">Location</h3>
@@ -90,27 +116,49 @@ const Contact = () => {
               </div>
             </div>
 
-            <div className="rounded-xl border border-gray-100 p-6 bg-white shadow-sm">
-              <h3 className="text-lg font-medium mb-3">Schedule a Meeting</h3>
-              <p className="text-muted-foreground mb-4">
-                Prefer a face-to-face discussion? Schedule a video call at your convenience.
-              </p>
-              <Button className="w-full rounded-xl gap-2">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 2V5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M16 2V5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M3 8H21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M21 6V16C21 19 19.2 22 15 22H9C4.8 22 3 19 3 16V6C3 3 4.8 0 9 0H15C19.2 0 21 3 21 6Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M11.995 13.7H12.005" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M8.294 13.7H8.304" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M8.294 16.7H8.304" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <span>Schedule a Call</span>
-              </Button>
+            <div className="rounded-xl border border-gray-200 p-6 bg-white/90 backdrop-blur-sm shadow-xl">
+              <div className="mb-5 space-y-2">
+                <h3 className="text-lg font-medium">Connect with me</h3>
+                <p className="text-muted-foreground text-sm">
+                  Follow me on social media to stay updated with my latest projects and insights.
+                </p>
+              </div>
+              
+              <div className="flex flex-wrap gap-3">
+                <a 
+                  href="https://github.com/yeheskieltame" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-theme-dark-light text-white hover:bg-theme-dark transition-all duration-300"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-github"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+                  <span className="text-sm">GitHub</span>
+                </a>
+                
+                <a 
+                  href="https://linkedin.com/in/yeheskieltame" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0077B5] text-white hover:bg-[#006699] transition-all duration-300"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-linkedin"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                  <span className="text-sm">LinkedIn</span>
+                </a>
+                
+                <a 
+                  href="https://discord.gg/skyriortame" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#5865F2] text-white hover:bg-[#4a56d6] transition-all duration-300"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                  <span className="text-sm">Discord</span>
+                </a>
+              </div>
             </div>
           </div>
 
-          <div className="lg:col-span-3 bg-white rounded-xl border border-gray-100 p-6 md:p-8 shadow-sm opacity-0 animate-slide-up" style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}>
+          <div className="lg:col-span-3 bg-white rounded-xl border border-gray-200 p-6 md:p-8 shadow-xl opacity-0 animate-slide-up" style={{ animationDelay: "0.3s", animationFillMode: "forwards" }}>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -124,7 +172,7 @@ const Contact = () => {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="rounded-xl"
+                    className="rounded-xl border-gray-200 focus:border-theme-purple focus:ring-theme-purple/20"
                   />
                 </div>
                 
@@ -140,7 +188,7 @@ const Contact = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="rounded-xl"
+                    className="rounded-xl border-gray-200 focus:border-theme-purple focus:ring-theme-purple/20"
                   />
                 </div>
               </div>
@@ -156,7 +204,7 @@ const Contact = () => {
                   required
                   value={formData.subject}
                   onChange={handleChange}
-                  className="rounded-xl"
+                  className="rounded-xl border-gray-200 focus:border-theme-purple focus:ring-theme-purple/20"
                 />
               </div>
               
@@ -172,17 +220,17 @@ const Contact = () => {
                   required
                   value={formData.message}
                   onChange={handleChange}
-                  className="rounded-xl resize-none"
+                  className="rounded-xl resize-none border-gray-200 focus:border-theme-purple focus:ring-theme-purple/20"
                 />
               </div>
               
               <Button 
                 type="submit" 
-                className="w-full rounded-xl py-6 gap-2" 
+                className="w-full rounded-xl py-6 gap-2 bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90 transition-all duration-300" 
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
-                  <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
                     <Send className="h-4 w-4" />

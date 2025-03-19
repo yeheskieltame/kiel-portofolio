@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, X, Download } from "lucide-react";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -38,7 +38,7 @@ const Navbar = () => {
           href="#home"
           className="font-medium text-xl tracking-tight transition-smooth hover:opacity-80"
         >
-          Portfolio
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-theme-purple to-theme-blue">Portfolio</span>
         </a>
 
         {/* Desktop Navigation */}
@@ -47,12 +47,13 @@ const Navbar = () => {
             <a
               key={item.name}
               href={item.href}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-smooth"
+              className="text-sm font-medium text-muted-foreground hover:text-theme-purple transition-smooth"
             >
               {item.name}
             </a>
           ))}
-          <Button className="rounded-full px-6" size="sm">
+          <Button className="rounded-full px-6 bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90 transition-all duration-300 shadow-md shadow-theme-purple/20" size="sm">
+            <Download className="h-4 w-4 mr-2" />
             Resume
           </Button>
         </nav>
@@ -64,14 +65,18 @@ const Navbar = () => {
           className="md:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
-          <Menu className="h-5 w-5" />
+          {mobileMenuOpen ? (
+            <X className="h-5 w-5 text-theme-purple" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </Button>
       </div>
 
       {/* Mobile Navigation */}
       <div
         className={cn(
-          "fixed inset-0 bg-background/95 backdrop-blur-sm z-40 pt-20 px-6 md:hidden transition-all duration-300 ease-in-out",
+          "fixed inset-0 bg-white/95 backdrop-blur-sm z-40 pt-20 px-6 md:hidden transition-all duration-300 ease-in-out",
           mobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
       >
@@ -80,13 +85,16 @@ const Navbar = () => {
             <a
               key={item.name}
               href={item.href}
-              className="text-lg font-medium"
+              className="text-lg font-medium hover:text-theme-purple"
               onClick={() => setMobileMenuOpen(false)}
             >
               {item.name}
             </a>
           ))}
-          <Button className="rounded-full w-full mt-4">Resume</Button>
+          <Button className="rounded-full w-full bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90">
+            <Download className="h-4 w-4 mr-2" />
+            Resume
+          </Button>
         </nav>
       </div>
     </header>

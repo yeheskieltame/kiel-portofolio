@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -62,6 +61,22 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Custom RGB theme
+				"theme-purple": {
+					light: "#9b87f5",
+					DEFAULT: "#7E69AB",
+					dark: "#6E59A5",
+				},
+				"theme-blue": {
+					light: "#0EA5E9",
+					DEFAULT: "#0284c7",
+					dark: "#0c4a6e",
+				},
+				"theme-dark": {
+					light: "#1A1F2C",
+					DEFAULT: "#121726",
+					dark: "#0A0D16",
 				}
 			},
 			borderRadius: {
@@ -109,6 +124,23 @@ export default {
 				'float': {
 					'0%, 100%': { transform: 'translateY(0)' },
 					'50%': { transform: 'translateY(-5px)' }
+				},
+				'typing': {
+					'0%': { width: '0%' },
+					'100%': { width: '100%' }
+				},
+				'blink': {
+					'0%, 100%': { borderColor: 'transparent' },
+					'50%': { borderColor: 'currentColor' }
+				},
+				'bounce-slow': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-15px)' }
+				},
+				'gradient-shift': {
+					'0%': { backgroundPosition: '0% 50%' },
+					'50%': { backgroundPosition: '100% 50%' },
+					'100%': { backgroundPosition: '0% 50%' }
 				}
 			},
 			animation: {
@@ -121,7 +153,16 @@ export default {
 				'slide-down': 'slide-down 0.5s ease-out forwards',
 				'slide-in-right': 'slide-in-right 0.5s ease-out forwards',
 				'blur-in': 'blur-in 0.5s ease-out forwards',
-				'float': 'float 6s ease-in-out infinite'
+				'float': 'float 6s ease-in-out infinite',
+				'typing': 'typing 3.5s steps(40, end)',
+				'caret': 'blink 0.75s step-end infinite',
+				'bounce-slow': 'bounce-slow 3s infinite',
+				'gradient-shift': 'gradient-shift 8s ease infinite'
+			},
+			backgroundImage: {
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+				'purple-grid': "url('/grid-pattern-purple.svg')",
+				'circuit': "url('/circuit-pattern.svg')"
 			}
 		}
 	},

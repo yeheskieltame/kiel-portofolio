@@ -1,0 +1,39 @@
+
+<svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="400" fill="none"/>
+  
+  <!-- Circuit lines -->
+  <path d="M50,50 L150,50 L150,100 L250,100 L250,150 L350,150 L350,250 L450,250 L450,300 L550,300" 
+        stroke="#7E69AB" stroke-width="2" stroke-opacity="0.15" fill="none"/>
+  
+  <path d="M50,150 L100,150 L100,250 L200,250 L200,350 L300,350" 
+        stroke="#0EA5E9" stroke-width="2" stroke-opacity="0.15" fill="none"/>
+  
+  <path d="M250,50 L250,100 L350,100 L350,200 L400,200 L400,300 L500,300" 
+        stroke="#7E69AB" stroke-width="2" stroke-opacity="0.15" fill="none"/>
+  
+  <path d="M450,50 L450,150 L400,150 L400,200 L300,200 L300,300 L200,300" 
+        stroke="#0EA5E9" stroke-width="2" stroke-opacity="0.15" fill="none"/>
+  
+  <!-- Connection nodes -->
+  <circle cx="150" cy="50" r="4" fill="#7E69AB" fill-opacity="0.25"/>
+  <circle cx="150" cy="100" r="4" fill="#7E69AB" fill-opacity="0.25"/>
+  <circle cx="250" cy="100" r="4" fill="#7E69AB" fill-opacity="0.25"/>
+  <circle cx="250" cy="150" r="4" fill="#7E69AB" fill-opacity="0.25"/>
+  <circle cx="100" cy="150" r="4" fill="#0EA5E9" fill-opacity="0.25"/>
+  <circle cx="100" cy="250" r="4" fill="#0EA5E9" fill-opacity="0.25"/>
+  <circle cx="350" cy="100" r="4" fill="#7E69AB" fill-opacity="0.25"/>
+  <circle cx="350" cy="150" r="4" fill="#7E69AB" fill-opacity="0.25"/>
+  <circle cx="350" cy="200" r="4" fill="#7E69AB" fill-opacity="0.25"/>
+  <circle cx="400" cy="150" r="4" fill="#0EA5E9" fill-opacity="0.25"/>
+  <circle cx="400" cy="200" r="4" fill="#0EA5E9" fill-opacity="0.25"/>
+  <circle cx="400" cy="300" r="4" fill="#7E69AB" fill-opacity="0.25"/>
+  <circle cx="300" cy="200" r="4" fill="#0EA5E9" fill-opacity="0.25"/>
+  <circle cx="300" cy="300" r="4" fill="#0EA5E9" fill-opacity="0.25"/>
+  <circle cx="200" cy="250" r="4" fill="#0EA5E9" fill-opacity="0.25"/>
+  <circle cx="200" cy="300" r="4" fill="#0EA5E9" fill-opacity="0.25"/>
+  <circle cx="200" cy="350" r="4" fill="#0EA5E9" fill-opacity="0.25"/>
+  <circle cx="350" cy="250" r="4" fill="#7E69AB" fill-opacity="0.25"/>
+  <circle cx="450" cy="250" r="4" fill="#7E69AB" fill-opacity="0.25"/>
+  <circle cx="450" cy="300" r="4" fill="#7E69AB" fill-opacity="0.25"/>
+</svg>
