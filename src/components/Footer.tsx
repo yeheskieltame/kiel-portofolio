@@ -1,5 +1,5 @@
 
-import { Github, Twitter, Linkedin, Mail } from "lucide-react";
+import { Github, Facebook, Linkedin, Mail, Instagram, MessageSquare } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
             <a href="#home" className="text-xl font-medium tracking-tight">
-              Portfolio
+              Yeheskiel Yunus Tame
             </a>
             <p className="text-muted-foreground mt-2 text-sm">
               &copy; {new Date().getFullYear()} All rights reserved.
@@ -17,32 +17,54 @@ const Footer = () => {
           
           <div className="flex items-center space-x-6">
             <a 
-              href="https://github.com" 
+              href="https://github.com/yeheskieltame" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-smooth"
+              aria-label="GitHub"
             >
               <Github className="h-5 w-5" />
             </a>
             <a 
-              href="https://twitter.com" 
+              href="https://facebook.com/Yeheskiel-Yunus-Tame" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-smooth"
+              aria-label="Facebook"
             >
-              <Twitter className="h-5 w-5" />
+              <Facebook className="h-5 w-5" />
             </a>
             <a 
-              href="https://linkedin.com" 
+              href="https://instagram.com/skyrior_tame" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-smooth"
+              aria-label="Instagram"
+            >
+              <Instagram className="h-5 w-5" />
+            </a>
+            <a 
+              href="https://linkedin.com/in/yeheskieltame" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-smooth"
+              aria-label="LinkedIn"
             >
               <Linkedin className="h-5 w-5" />
             </a>
             <a 
+              href="https://discord.gg/skyriortame" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-smooth"
+              aria-label="Discord"
+            >
+              <MessageSquare className="h-5 w-5" />
+            </a>
+            <a 
               href="mailto:hello@example.com" 
               className="text-muted-foreground hover:text-foreground transition-smooth"
+              aria-label="Email"
             >
               <Mail className="h-5 w-5" />
             </a>
@@ -50,7 +72,7 @@ const Footer = () => {
         </div>
         
         <div className="mt-10 pt-6 border-t border-gray-100 text-center text-sm text-muted-foreground">
-          <p>Designed and built with ❤️</p>
+          <p>Machine Learning Developer | Data Science Enthusiast</p>
         </div>
       </div>
     </footer>

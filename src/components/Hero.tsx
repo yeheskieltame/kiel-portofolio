@@ -13,15 +13,15 @@ const Hero = () => {
       <div className="max-w-4xl mx-auto text-center">
         <div className="space-y-4 animate-slide-down opacity-0" style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}>
           <span className="inline-block py-1 px-3 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
-            Front-end Developer
+            Machine Learning Developer
           </span>
           
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight md:leading-tight lg:leading-tight text-balance">
-            Creating digital experiences that blend form and function
+            Hi, I'm Yeheskiel Yunus Tame
           </h1>
           
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mt-6 text-balance">
-            I build elegant, intuitive, and high-performance applications with meticulous attention to detail, focusing on both aesthetics and functionality.
+            A passionate Machine Learning Developer with a keen interest in data science, web development, and crafting intelligent systems. Currently honing my skills through Bangkit Academy's Machine Learning Path.
           </p>
         </div>
         

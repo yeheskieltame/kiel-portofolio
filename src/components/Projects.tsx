@@ -7,57 +7,57 @@ const Projects = () => {
   const allProjects = [
     {
       id: 1,
-      title: "E-Commerce Platform",
-      description: "A modern e-commerce platform with product filtering, cart functionality, and payment integration",
-      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-      demoLink: "https://example.com",
-      githubLink: "https://github.com",
-      tech: ["React", "Redux", "Node.js", "Express", "MongoDB"],
+      title: "Bike Rental Data Analysis",
+      description: "Analyzed bike rental patterns using Python libraries to identify trends and predict future demand.",
+      image: "https://images.unsplash.com/photo-1556155092-490a1ba16284",
+      demoLink: "https://github.com/yeheskieltame/Project-Data-Analist.git",
+      githubLink: "https://github.com/yeheskieltame/Project-Data-Analist.git",
+      tech: ["Python", "Pandas", "Matplotlib"],
     },
     {
       id: 2,
-      title: "Task Management App",
-      description: "A collaborative task management application with real-time updates and team features",
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
-      demoLink: "https://example.com",
-      githubLink: "https://github.com",
-      tech: ["Vue.js", "Firebase", "Tailwind CSS"],
+      title: "Machine Learning Time Management System",
+      description: "Developed a system that optimizes study and rest times using machine learning, predicting optimal break intervals.",
+      image: "https://images.unsplash.com/photo-1606761568499-6d2451b23c66",
+      demoLink: "https://time-management-system.streamlit.app",
+      githubLink: "https://github.com/yeheskieltame/Time-Management-System.git",
+      tech: ["Python", "Matplotlib", "JSON", "Google Colab", "Pandas"],
     },
     {
       id: 3,
-      title: "Weather Dashboard",
-      description: "A weather application that displays current conditions and forecasts with interactive maps",
-      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-      demoLink: "https://example.com",
-      githubLink: "https://github.com",
-      tech: ["JavaScript", "Weather API", "Chart.js", "HTML/CSS"],
+      title: "Student Route and Dispenser Recommendation",
+      description: "Built a machine learning model to predict the fastest routes for students on campus, including nearest dispensers.",
+      image: "https://images.unsplash.com/photo-1519750783826-e2420f4d687f",
+      demoLink: "https://github.com/yeheskieltame/rekomendasi_dispenser.git",
+      githubLink: "https://github.com/yeheskieltame/rekomendasi_dispenser.git",
+      tech: ["Python", "Dijkstra's Algorithm", "Matplotlib"],
     },
     {
       id: 4,
-      title: "Real Estate Platform",
-      description: "A property listing website with advanced filtering, map integration, and booking features",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-      demoLink: "https://example.com",
-      githubLink: "https://github.com",
-      tech: ["React", "Next.js", "Prisma", "PostgreSQL"],
+      title: "Data Visualization Dashboard",
+      description: "Created an interactive dashboard using Streamlit for exploring large datasets with intuitive visualizations.",
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71",
+      demoLink: "https://zsoeyhh3bvdl7bwvenk5ma.streamlit.app/",
+      githubLink: "https://github.com/yeheskieltame",
+      tech: ["Python", "Streamlit", "Pandas", "Matplotlib"],
     },
     {
       id: 5,
-      title: "Fitness Tracking App",
-      description: "A mobile-responsive application for tracking workouts, nutrition, and fitness goals",
-      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
-      demoLink: "https://example.com",
-      githubLink: "https://github.com",
-      tech: ["React Native", "Redux", "Firebase", "Expo"],
+      title: "Personal Portfolio Website",
+      description: "Developed a modern and responsive portfolio website showcasing my projects with a sleek dark RGB theme.",
+      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+      demoLink: "https://github.com/yeheskieltame",
+      githubLink: "https://github.com/yeheskieltame",
+      tech: ["HTML", "CSS", "JavaScript", "Bootstrap"],
     },
     {
       id: 6,
-      title: "Portfolio Website",
-      description: "A developer portfolio showcasing projects, skills, and professional experience",
-      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-      demoLink: "https://example.com",
-      githubLink: "https://github.com",
-      tech: ["React", "Tailwind CSS", "Framer Motion"],
+      title: "Laravel Web Development Project",
+      description: "Created a full-stack web application with Laravel featuring user authentication, database integration, and responsive design.",
+      image: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5",
+      demoLink: "https://github.com/yeheskieltame",
+      githubLink: "https://github.com/yeheskieltame",
+      tech: ["Laravel", "PHP", "MySQL", "Bootstrap"],
     },
   ];
 
@@ -74,10 +74,10 @@ const Projects = () => {
             Portfolio
           </span>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Featured Projects
+            Key Projects
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            A collection of projects that showcase my skills and experience in building digital products that solve real-world problems.
+            A collection of projects that showcase my skills in machine learning, data science, and web development.
           </p>
         </div>
 
