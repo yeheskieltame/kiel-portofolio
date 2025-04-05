@@ -103,7 +103,7 @@ const Hero = () => {
           ) : visitorName ? (
             <div className="animate-fade-in mb-8">
               <p className="text-lg md:text-xl text-theme-purple font-medium">
-                {getGreeting()} {visitorName}! Welcome to my portfolio
+                {getGreeting()} {visitorName}! Looking for expert freelance services?
               </p>
             </div>
           ) : null}
@@ -112,7 +112,7 @@ const Hero = () => {
             <div className="inline-flex gap-4 items-center justify-center md:justify-start mb-6">
               <span className="h-px w-16 bg-gradient-to-r from-transparent via-theme-purple to-transparent"></span>
               <span className="inline-block py-1 px-3 rounded-full text-xs font-medium bg-theme-purple/20 text-theme-purple border border-theme-purple/30">
-                Machine Learning Developer
+                Freelance Developer
               </span>
               <span className="h-px w-16 bg-gradient-to-r from-transparent via-theme-purple to-transparent"></span>
             </div>
@@ -123,13 +123,13 @@ const Hero = () => {
             </h1>
             
             <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto md:mx-0 leading-relaxed mt-6 text-balance">
-              A passionate Machine Learning Developer with a keen interest in data science, web development, and crafting intelligent systems. Currently honing my skills through Bangkit Academy's Machine Learning Path.
+              I create custom software solutions, machine learning models, intelligent chatbots, and set up professional Meta business accounts. Let's turn your ideas into reality!
             </p>
 
             <div className="flex justify-center md:justify-start gap-4 mt-8 flex-wrap">
               <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm border border-gray-100">
                 <Code size={18} className="text-theme-purple" />
-                <span className="text-sm font-medium">Web Development</span>
+                <span className="text-sm font-medium">Software Dev</span>
               </div>
               <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm border border-gray-100">
                 <Database size={18} className="text-theme-blue" />
@@ -151,7 +151,7 @@ const Hero = () => {
                 size="lg" 
                 asChild
               >
-                <a href="#projects">View Projects</a>
+                <a href="#services">My Services</a>
               </Button>
               <Button 
                 variant="outline" 
@@ -159,7 +159,7 @@ const Hero = () => {
                 size="lg" 
                 asChild
               >
-                <a href="#contact">Contact Me</a>
+                <a href="#contact">Hire Me</a>
               </Button>
             </div>
           </div>
@@ -179,7 +179,7 @@ const Hero = () => {
       </div>
       
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce-slow">
-        <a href="#projects" className="flex flex-col items-center text-theme-purple hover:text-theme-purple-dark transition-smooth">
+        <a href="#services" className="flex flex-col items-center text-theme-purple hover:text-theme-purple-dark transition-smooth">
           <span className="text-sm font-medium mb-2">Scroll</span>
           <ArrowDownIcon className="h-5 w-5" />
         </a>

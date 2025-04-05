@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import { Mail, Phone, MapPin, Send, Loader2 } from "lucide-react";
 
 const Contact = () => {
@@ -13,10 +14,11 @@ const Contact = () => {
     email: "",
     subject: "",
     message: "",
+    service: "Custom Software", // Default selected service
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -26,18 +28,19 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
-      // Create a message that includes all form data
+      // Create a message that includes all form data including the selected service
       const emailBody = `
         Name: ${formData.name}
         Email: ${formData.email}
         Subject: ${formData.subject}
+        Service: ${formData.service}
         
         Message:
         ${formData.message}
       `;
 
       // Open email client with pre-populated fields
-      const mailtoLink = `mailto:yeheskielyunustame13@gmail.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(emailBody)}`;
+      const mailtoLink = `mailto:yeheskielyunustame13@gmail.com?subject=${encodeURIComponent(`[Freelance Inquiry] ${formData.subject} - ${formData.service}`)}&body=${encodeURIComponent(emailBody)}`;
       window.open(mailtoLink, '_blank');
       
       // Show success message
@@ -52,6 +55,7 @@ const Contact = () => {
         email: "",
         subject: "",
         message: "",
+        service: "Custom Software",
       });
     } catch (error) {
       toast({
@@ -78,7 +82,7 @@ const Contact = () => {
             Contact Me
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Have a project in mind or just want to say hello? Feel free to reach out to me. I'm always open to discussing new opportunities.
+            Have a project in mind? Ready to start your next digital journey? Let's discuss how I can help bring your vision to life.
           </p>
         </div>
 
@@ -194,6 +198,26 @@ const Contact = () => {
               </div>
               
               <div className="space-y-2">
+                <label htmlFor="service" className="text-sm font-medium">
+                  Service Interested In
+                </label>
+                <select
+                  id="service"
+                  name="service"
+                  value={formData.service}
+                  onChange={handleChange}
+                  required
+                  className="w-full rounded-xl border-gray-200 focus:border-theme-purple focus:ring-theme-purple/20 py-2 px-3"
+                >
+                  <option value="Custom Software">Custom Software Development</option>
+                  <option value="Machine Learning">Machine Learning Solutions</option>
+                  <option value="Chatbot">Chatbot Development</option>
+                  <option value="Meta Business">Meta Business Account Setup</option>
+                  <option value="Other">Other Services</option>
+                </select>
+              </div>
+              
+              <div className="space-y-2">
                 <label htmlFor="subject" className="text-sm font-medium">
                   Subject
                 </label>
@@ -210,12 +234,12 @@ const Contact = () => {
               
               <div className="space-y-2">
                 <label htmlFor="message" className="text-sm font-medium">
-                  Message
+                  Project Details
                 </label>
                 <Textarea
                   id="message"
                   name="message"
-                  placeholder="Your message"
+                  placeholder="Describe your project requirements"
                   rows={5}
                   required
                   value={formData.message}
