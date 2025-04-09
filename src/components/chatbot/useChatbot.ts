@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Message } from "./types";
@@ -63,14 +62,33 @@ export const useChatbot = () => {
       const data = await response.json();
       console.log("Response from n8n:", data);
       
-      // Extract the response from the n8n response - this should match your n8n output
+      // Extract the response from the n8n response
       let botReply = "Sorry, I couldn't process your request.";
       
-      // Based on your n8n workflow "Respond to Webhook" node, the response is directly in data
+      // Parse the response properly based on the n8n workflow structure
       if (data) {
         console.log("Response structure:", JSON.stringify(data));
-        botReply = data;
+        
+        // Check if data is an object with keys (based on the console logs)
+        if (typeof data === 'object' && data !== null) {
+          // Get the first key in the object (which appears to be the message content)
+          const firstKey = Object.keys(data)[0];
+          if (firstKey) {
+            // If the object has a nested structure with an output property
+            if (data[firstKey] && data[firstKey].output) {
+              botReply = data[firstKey].output;
+            } else {
+              // Otherwise, use the key itself which contains the message
+              botReply = firstKey;
+            }
+          }
+        } else if (typeof data === 'string') {
+          // If data is directly a string
+          botReply = data;
+        }
       }
+
+      console.log("Extracted bot reply:", botReply);
 
       // Add bot reply to chat
       const botMessage: Message = {
