@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -87,16 +86,13 @@ const Chatbot = () => {
         }),
       });
 
-      let botReply: string;
+      // Process the response from n8n
+      const data = await response.json();
+      console.log("Response from n8n:", data);
       
-      try {
-        const data = await response.json();
-        botReply = data.response || "Sorry, I couldn't process your request.";
-      } catch (error) {
-        // If we can't parse the response as JSON, use a default message
-        console.log("Couldn't parse response as JSON, using default message");
-        botReply = "Thank you for your message! I'll get back to you soon.";
-      }
+      // Extract the response text from the n8n response
+      // Use the response field directly from the data object
+      const botReply = data.response || "Sorry, I couldn't process your request.";
 
       // Add bot reply to chat
       const botMessage: Message = {
@@ -113,7 +109,7 @@ const Chatbot = () => {
       // Add error message to chat
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
-        content: "Sorry, I'm having trouble connecting. Please try again later.",
+        content: "Sorry, I'm having trouble connecting. Please check your n8n webhook configuration and try again.",
         sender: "bot",
         timestamp: new Date(),
       };
