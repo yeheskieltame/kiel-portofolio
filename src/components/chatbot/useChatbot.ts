@@ -63,8 +63,14 @@ export const useChatbot = () => {
       const data = await response.json();
       console.log("Response from n8n:", data);
       
-      // Extract the response text from the n8n response
-      const botReply = data.response || "Sorry, I couldn't process your request.";
+      // Extract the response from the n8n response - this should match your n8n output
+      let botReply = "Sorry, I couldn't process your request.";
+      
+      // Based on your n8n workflow "Respond to Webhook" node, the response is directly in data
+      if (data) {
+        console.log("Response structure:", JSON.stringify(data));
+        botReply = data;
+      }
 
       // Add bot reply to chat
       const botMessage: Message = {
