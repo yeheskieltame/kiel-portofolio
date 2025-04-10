@@ -42,12 +42,12 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
 
   const startListening = () => {
     try {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
+      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognitionAPI) {
         throw new Error("Speech recognition not supported");
       }
       
-      const recognition = new SpeechRecognition();
+      const recognition = new SpeechRecognitionAPI();
       recognition.continuous = false;
       recognition.interimResults = true;
       recognition.lang = "en-US"; // Default language
@@ -142,4 +142,3 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
     </form>
   );
 };
-
