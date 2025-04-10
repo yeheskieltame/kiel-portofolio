@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Message } from "./types";
@@ -13,13 +14,17 @@ export const useChatbot = () => {
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  const [n8nWebhookUrl, setN8nWebhookUrl] = useState("");
+  // Set the default webhook URL
+  const [n8nWebhookUrl, setN8nWebhookUrl] = useState("https://kieltame.app.n8n.cloud/webhook/643ff32a-6743-4406-a9f5-573a3120ff03");
 
-  // Load webhook URL from localStorage if available
+  // Load webhook URL from localStorage if available, otherwise use the default
   useEffect(() => {
     const savedWebhookUrl = localStorage.getItem("n8nWebhookUrl");
     if (savedWebhookUrl) {
       setN8nWebhookUrl(savedWebhookUrl);
+    } else {
+      // Save the default webhook URL to localStorage
+      localStorage.setItem("n8nWebhookUrl", n8nWebhookUrl);
     }
   }, []);
 

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mic, Send } from "lucide-react";
@@ -13,7 +12,7 @@ interface ChatInputProps {
 export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
   const [inputMessage, setInputMessage] = useState("");
   const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
