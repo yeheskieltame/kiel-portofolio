@@ -117,6 +117,45 @@ export const useChatbot = () => {
     currentAudioRef.current = null;
   };
 
+  // Helper function to format text with Markdown
+  const formatResponse = (text: string): string => {
+    // Check if it's already formatted with Markdown
+    const hasMarkdown = text.includes('**') || text.includes('#') || 
+                        text.includes('- ') || text.includes('1. ');
+    
+    if (hasMarkdown) {
+      return text; // If already has markdown, return as is
+    }
+    
+    // Basic formatting for unformatted text
+    // Add emojis, bold text for important parts, and proper spacing
+    let formatted = text;
+    
+    // Add emoji to greetings
+    if (formatted.includes('Hi!') || formatted.includes('Hello') || 
+        formatted.includes('Hey') || formatted.includes('Welcome')) {
+      formatted = formatted.replace(/(Hi!|Hello|Hey|Welcome)/g, '$1 👋');
+    }
+    
+    // Format questions with emoji
+    if (formatted.includes('?')) {
+      formatted = formatted.replace(/([^.!?]+\?)/g, '$1 🤔');
+    }
+    
+    // Add emphasis to important statements
+    if (formatted.includes('Yeheskiel')) {
+      formatted = formatted.replace(/(Yeheskiel)/g, '**$1**');
+    }
+    
+    // Add proper line breaks for readability
+    if (formatted.length > 100 && !formatted.includes('\n')) {
+      // Break long text into paragraphs roughly every 80-100 chars at punctuation
+      formatted = formatted.replace(/([.!?])\s+/g, '$1\n\n');
+    }
+    
+    return formatted;
+  };
+
   const handleSendMessage = async (inputMessage: string) => {
     // Check if n8n webhook URL is set
     if (!n8nWebhookUrl) {
@@ -175,21 +214,53 @@ export const useChatbot = () => {
       // Default message in case extraction fails
       let botReply = "Sorry, I couldn't process your request.";
 
-      // SIMPLIFIED EXTRACTION LOGIC - focused on the exact format from your example
-      if (Array.isArray(data) && data.length > 0) {
-        const firstItem = data[0];
-        
-        // Check for the exact format shown in your example
-        if (firstItem && typeof firstItem === 'object' && 'output' in firstItem) {
-          botReply = firstItem.output;
-          console.log("Successfully extracted output from array format", botReply.substring(0, 50) + "...");
+      // Handle the exact format from the example
+      if (data && typeof data === 'object') {
+        // Handle array format [{"output": "text"}]
+        if (Array.isArray(data) && data.length > 0 && data[0].output) {
+          botReply = data[0].output;
+          console.log("Extracted from array format");
+        } 
+        // Handle object format with arbitrary key and nested output {"message": {"output": "text"}}
+        else {
+          const keys = Object.keys(data);
+          if (keys.length > 0) {
+            const firstKey = keys[0];
+            
+            // If first key contains an object with output property
+            if (typeof data[firstKey] === 'object' && data[firstKey] !== null && data[firstKey].output) {
+              botReply = data[firstKey].output;
+              console.log("Extracted from nested object format");
+            } 
+            // If first key is itself the message and contains "output" too
+            else if (firstKey.includes("output")) {
+              botReply = firstKey;
+              console.log("Used key as output");
+            }
+            // If first key is the message itself
+            else if (typeof data[firstKey] === 'string') {
+              botReply = data[firstKey];
+              console.log("Used object value");
+            }
+            // Special case: the key itself is the message
+            else if (typeof firstKey === 'string' && firstKey.length > 10) {
+              botReply = firstKey;
+              console.log("Used object key as message");
+            }
+            // Handle your specific example format where key is message and value has .output
+            else if (typeof data[firstKey] === 'object' && data[firstKey] !== null) {
+              botReply = firstKey;
+              console.log("Using key as message from specific format");
+            }
+          }
         }
-      } else if (responseText && typeof responseText === 'string') {
-        // If we have raw text that isn't JSON, use it directly
-        // This might handle case where n8n returns plain text
-        botReply = responseText;
-        console.log("Using raw response text");
+      } else if (typeof data === 'string') {
+        botReply = data;
+        console.log("Used direct string");
       }
+
+      // Format the response to make it look clean and professional
+      botReply = formatResponse(botReply);
 
       // Add bot reply to chat
       const botMessage: Message = {
