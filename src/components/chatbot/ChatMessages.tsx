@@ -11,9 +11,11 @@ interface Message {
 
 interface ChatMessagesProps {
   messages: Message[];
+  ttsEnabled?: boolean;
+  onSpeakMessage?: (message: string) => void;
 }
 
-export const ChatMessages = ({ messages }: ChatMessagesProps) => {
+export const ChatMessages = ({ messages, ttsEnabled, onSpeakMessage }: ChatMessagesProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const scrollToBottom = () => {
@@ -32,6 +34,8 @@ export const ChatMessages = ({ messages }: ChatMessagesProps) => {
           content={msg.content}
           sender={msg.sender}
           timestamp={msg.timestamp}
+          onSpeakMessage={onSpeakMessage}
+          ttsEnabled={ttsEnabled}
         />
       ))}
       <div ref={messagesEndRef} />

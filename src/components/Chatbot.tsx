@@ -14,8 +14,14 @@ const Chatbot = () => {
     setIsOpen,
     messages, 
     isLoading, 
+    ttsEnabled,
+    ttsLanguage,
     handleSendMessage, 
-    handleConfigureWebhook 
+    handleConfigureWebhook,
+    handleConfigureTts,
+    toggleTts,
+    switchLanguage,
+    speakText
   } = useChatbot();
 
   return (
@@ -44,8 +50,19 @@ const Chatbot = () => {
         )}
       >
         <Card className="flex flex-col h-[500px] shadow-2xl border border-theme-purple/30">
-          <ChatHeader onConfigureWebhook={handleConfigureWebhook} />
-          <ChatMessages messages={messages} />
+          <ChatHeader 
+            onConfigureWebhook={handleConfigureWebhook}
+            onConfigureTts={handleConfigureTts}
+            ttsEnabled={ttsEnabled}
+            toggleTts={toggleTts}
+            ttsLanguage={ttsLanguage}
+            switchLanguage={switchLanguage}
+          />
+          <ChatMessages 
+            messages={messages} 
+            ttsEnabled={ttsEnabled}
+            onSpeakMessage={speakText}
+          />
           <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
         </Card>
       </div>

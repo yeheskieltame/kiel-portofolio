@@ -1,7 +1,8 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Message } from "./types";
+import { textToSpeech, stopSpeech } from "./audioUtils";
 
 export const useChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,8 +17,15 @@ export const useChatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   // Set the default webhook URL
   const [n8nWebhookUrl, setN8nWebhookUrl] = useState("https://kieltame.app.n8n.cloud/webhook/643ff32a-6743-4406-a9f5-573a3120ff03");
+  
+  // TTS related states
+  const [ttsEnabled, setTtsEnabled] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [ttsLanguage, setTtsLanguage] = useState<"id" | "en">("en");
+  const [elevenLabsApiKey, setElevenLabsApiKey] = useState<string | null>(null);
+  const currentAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Load webhook URL from localStorage if available, otherwise use the default
+  // Load settings from localStorage if available
   useEffect(() => {
     const savedWebhookUrl = localStorage.getItem("n8nWebhookUrl");
     if (savedWebhookUrl) {
@@ -26,7 +34,89 @@ export const useChatbot = () => {
       // Save the default webhook URL to localStorage
       localStorage.setItem("n8nWebhookUrl", n8nWebhookUrl);
     }
+
+    // Load TTS settings
+    const savedTtsEnabled = localStorage.getItem("ttsEnabled");
+    if (savedTtsEnabled) {
+      setTtsEnabled(savedTtsEnabled === "true");
+    }
+
+    const savedTtsLanguage = localStorage.getItem("ttsLanguage") as "id" | "en" | null;
+    if (savedTtsLanguage) {
+      setTtsLanguage(savedTtsLanguage);
+    }
+
+    const savedApiKey = localStorage.getItem("elevenLabsApiKey");
+    if (savedApiKey) {
+      setElevenLabsApiKey(savedApiKey);
+    }
   }, []);
+
+  // Save TTS settings when they change
+  useEffect(() => {
+    localStorage.setItem("ttsEnabled", ttsEnabled.toString());
+    localStorage.setItem("ttsLanguage", ttsLanguage);
+    if (elevenLabsApiKey) {
+      localStorage.setItem("elevenLabsApiKey", elevenLabsApiKey);
+    }
+  }, [ttsEnabled, ttsLanguage, elevenLabsApiKey]);
+
+  // When a new bot message is added, read it out if TTS is enabled
+  useEffect(() => {
+    const lastMessage = messages[messages.length - 1];
+    if (ttsEnabled && lastMessage && lastMessage.sender === "bot" && !isLoading) {
+      speakText(lastMessage.content);
+    }
+  }, [messages, ttsEnabled, isLoading]);
+
+  // Clean up audio when component unmounts
+  useEffect(() => {
+    return () => {
+      stopSpeech(currentAudioRef.current);
+    };
+  }, []);
+
+  const speakText = async (text: string) => {
+    // Stop any currently playing speech
+    stopSpeech(currentAudioRef.current);
+    
+    // Start new speech
+    setIsSpeaking(true);
+    const audio = await textToSpeech(text, elevenLabsApiKey, ttsLanguage);
+    
+    if (audio) {
+      currentAudioRef.current = audio;
+      
+      audio.onended = () => {
+        setIsSpeaking(false);
+        currentAudioRef.current = null;
+      };
+      
+      audio.onerror = () => {
+        setIsSpeaking(false);
+        currentAudioRef.current = null;
+        toast({
+          title: "Playback Error",
+          description: "There was an error playing the audio",
+          variant: "destructive",
+        });
+      };
+      
+      audio.play().catch((error) => {
+        console.error("Error playing audio:", error);
+        setIsSpeaking(false);
+        currentAudioRef.current = null;
+      });
+    } else {
+      setIsSpeaking(false);
+    }
+  };
+
+  const stopSpeaking = () => {
+    stopSpeech(currentAudioRef.current);
+    setIsSpeaking(false);
+    currentAudioRef.current = null;
+  };
 
   const handleSendMessage = async (inputMessage: string) => {
     // Check if n8n webhook URL is set
@@ -49,6 +139,9 @@ export const useChatbot = () => {
     // Add user message to chat
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
+    
+    // Stop any ongoing speech when user sends a message
+    stopSpeaking();
 
     try {
       // Send message to n8n webhook
@@ -139,12 +232,46 @@ export const useChatbot = () => {
     }
   };
 
+  const handleConfigureTts = () => {
+    const apiKey = prompt("Enter your ElevenLabs API key:", elevenLabsApiKey || "");
+    if (apiKey !== null) {
+      setElevenLabsApiKey(apiKey);
+      toast({
+        title: "API Key updated",
+        description: "Your ElevenLabs API key has been saved.",
+      });
+    }
+  };
+
+  const toggleTts = () => {
+    if (!ttsEnabled && !elevenLabsApiKey) {
+      handleConfigureTts();
+    }
+    setTtsEnabled(prev => !prev);
+  };
+
+  const switchLanguage = () => {
+    setTtsLanguage(prev => prev === "en" ? "id" : "en");
+    toast({
+      title: "Language switched",
+      description: `Text-to-speech language set to ${ttsLanguage === "en" ? "Indonesian" : "English"}`,
+    });
+  };
+
   return {
     isOpen,
     setIsOpen,
     messages,
     isLoading,
+    ttsEnabled,
+    ttsLanguage,
+    isSpeaking,
     handleSendMessage,
     handleConfigureWebhook,
+    handleConfigureTts,
+    toggleTts,
+    switchLanguage,
+    speakText,
+    stopSpeaking
   };
 };
