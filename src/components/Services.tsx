@@ -1,8 +1,23 @@
 
+import { useState } from "react";
 import { Code, BrainCircuit, MessageSquare, Facebook, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ServiceRequestDialog from "@/components/ServiceRequestDialog";
 
 const Services = () => {
+  const [selectedService, setSelectedService] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleRequestService = (serviceName: string) => {
+    setSelectedService(serviceName);
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedService(null);
+  };
+
   const services = [
     {
       id: 1,
@@ -87,15 +102,23 @@ const Services = () => {
                   variant="outline" 
                   size="sm" 
                   className="w-full border-theme-purple text-theme-purple hover:bg-theme-purple hover:text-white transition-all"
-                  asChild
+                  onClick={() => handleRequestService(service.title)}
                 >
-                  <a href="#contact">Request Service</a>
+                  Request Service
                 </Button>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {selectedService && (
+        <ServiceRequestDialog 
+          isOpen={isDialogOpen} 
+          onClose={handleCloseDialog} 
+          serviceName={selectedService} 
+        />
+      )}
     </section>
   );
 };
