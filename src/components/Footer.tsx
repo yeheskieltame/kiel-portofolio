@@ -31,8 +31,8 @@ const Footer = () => {
             <h3 className="font-bold text-lg mb-4">Contact Info</h3>
             <ul className="space-y-2">
               <li className="text-muted-foreground">yeheskielyunustame13@gmail.com</li>
-              <li className="text-muted-foreground">San Francisco, CA</li>
-              <li className="text-muted-foreground">+1 (555) 123-4567</li>
+              <li className="text-muted-foreground">Yogyakarta, Indonesia</li>
+              <li className="text-muted-foreground">+62 87861330910</li>
             </ul>
             <div className="flex gap-4 mt-4">
               <a 
