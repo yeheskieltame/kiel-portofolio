@@ -117,45 +117,6 @@ export const useChatbot = () => {
     currentAudioRef.current = null;
   };
 
-  // Helper function to format text with Markdown
-  const formatResponse = (text: string): string => {
-    // Check if it's already formatted with Markdown
-    const hasMarkdown = text.includes('**') || text.includes('#') || 
-                        text.includes('- ') || text.includes('1. ');
-    
-    if (hasMarkdown) {
-      return text; // If already has markdown, return as is
-    }
-    
-    // Basic formatting for unformatted text
-    // Add emojis, bold text for important parts, and proper spacing
-    let formatted = text;
-    
-    // Add emoji to greetings
-    if (formatted.includes('Hi!') || formatted.includes('Hello') || 
-        formatted.includes('Hey') || formatted.includes('Welcome')) {
-      formatted = formatted.replace(/(Hi!|Hello|Hey|Welcome)/g, '$1 👋');
-    }
-    
-    // Format questions with emoji
-    if (formatted.includes('?')) {
-      formatted = formatted.replace(/([^.!?]+\?)/g, '$1 🤔');
-    }
-    
-    // Add emphasis to important statements
-    if (formatted.includes('Yeheskiel')) {
-      formatted = formatted.replace(/(Yeheskiel)/g, '**$1**');
-    }
-    
-    // Add proper line breaks for readability
-    if (formatted.length > 100 && !formatted.includes('\n')) {
-      // Break long text into paragraphs roughly every 80-100 chars at punctuation
-      formatted = formatted.replace(/([.!?])\s+/g, '$1\n\n');
-    }
-    
-    return formatted;
-  };
-
   const handleSendMessage = async (inputMessage: string) => {
     // Check if n8n webhook URL is set
     if (!n8nWebhookUrl) {
@@ -194,73 +155,108 @@ export const useChatbot = () => {
         }),
       });
 
-      // Get raw text response first to debug
-      const responseText = await response.text();
-      console.log("Raw response text:", responseText);
-      
-      // Now parse as JSON if possible
+      // Process the response from n8n
       let data;
       try {
-        // Parse the text response as JSON
-        data = JSON.parse(responseText);
-        console.log("Parsed JSON data:", data);
+        data = await response.json();
+        console.log("Raw response from n8n:", data);
       } catch (parseError) {
         console.error("Error parsing JSON response:", parseError);
-        // If JSON parsing fails, use the raw text
-        data = responseText;
-        console.log("Using raw text as fallback");
+        throw new Error("Failed to parse webhook response");
       }
 
-      // Default message in case extraction fails
+      // Extract the response from the n8n response
       let botReply = "Sorry, I couldn't process your request.";
 
-      // Handle the exact format from the example
-      if (data && typeof data === 'object') {
-        // Handle array format [{"output": "text"}]
-        if (Array.isArray(data) && data.length > 0 && data[0].output) {
-          botReply = data[0].output;
-          console.log("Extracted from array format");
-        } 
-        // Handle object format with arbitrary key and nested output {"message": {"output": "text"}}
-        else {
-          const keys = Object.keys(data);
-          if (keys.length > 0) {
-            const firstKey = keys[0];
+      // Improved response handling logic
+      if (data) {
+        console.log("Response structure:", JSON.stringify(data));
+
+        if (Array.isArray(data)) {
+          // Handle array response format
+          if (data.length > 0) {
+            const firstItem = data[0];
             
-            // If first key contains an object with output property
-            if (typeof data[firstKey] === 'object' && data[firstKey] !== null && data[firstKey].output) {
-              botReply = data[firstKey].output;
-              console.log("Extracted from nested object format");
-            } 
-            // If first key is itself the message and contains "output" too
-            else if (firstKey.includes("output")) {
-              botReply = firstKey;
-              console.log("Used key as output");
-            }
-            // If first key is the message itself
-            else if (typeof data[firstKey] === 'string') {
-              botReply = data[firstKey];
-              console.log("Used object value");
-            }
-            // Special case: the key itself is the message
-            else if (typeof firstKey === 'string' && firstKey.length > 10) {
-              botReply = firstKey;
-              console.log("Used object key as message");
-            }
-            // Handle your specific example format where key is message and value has .output
-            else if (typeof data[firstKey] === 'object' && data[firstKey] !== null) {
-              botReply = firstKey;
-              console.log("Using key as message from specific format");
+            if (typeof firstItem === 'object' && firstItem !== null) {
+              // Check for output property
+              if (firstItem.output && typeof firstItem.output === 'string') {
+                botReply = firstItem.output;
+                console.log("Extracted from array.output, length:", botReply.length);
+              } else if (firstItem.text && typeof firstItem.text === 'string') {
+                botReply = firstItem.text;
+                console.log("Extracted from array.text, length:", botReply.length);
+              } else if (firstItem.message && typeof firstItem.message === 'string') {
+                botReply = firstItem.message;
+                console.log("Extracted from array.message, length:", botReply.length);
+              } else {
+                // Try to stringify the object if it has no known properties
+                try {
+                  botReply = JSON.stringify(firstItem);
+                  console.log("Stringified first array item, length:", botReply.length);
+                } catch (e) {
+                  console.error("Failed to stringify first array item:", e);
+                }
+              }
+            } else if (typeof firstItem === 'string') {
+              // Direct string in array
+              botReply = firstItem;
+              console.log("Extracted string from array, length:", botReply.length);
             }
           }
+        } else if (typeof data === 'object' && data !== null) {
+          // Handle object response format
+          if (data.output && typeof data.output === 'string') {
+            botReply = data.output;
+            console.log("Extracted from object.output, length:", botReply.length);
+          } else if (data.text && typeof data.text === 'string') {
+            botReply = data.text;
+            console.log("Extracted from object.text, length:", botReply.length);
+          } else if (data.message && typeof data.message === 'string') {
+            botReply = data.message;
+            console.log("Extracted from object.message, length:", botReply.length);
+          } else {
+            // Try to extract from first key
+            const keys = Object.keys(data);
+            if (keys.length > 0) {
+              const firstKey = keys[0];
+              const firstValue = data[firstKey];
+              
+              if (typeof firstValue === 'object' && firstValue !== null) {
+                if (firstValue.output && typeof firstValue.output === 'string') {
+                  botReply = firstValue.output;
+                  console.log("Extracted from nested object.output, length:", botReply.length);
+                } else if (firstValue.text && typeof firstValue.text === 'string') {
+                  botReply = firstValue.text;
+                  console.log("Extracted from nested object.text, length:", botReply.length);
+                } else if (firstValue.message && typeof firstValue.message === 'string') {
+                  botReply = firstValue.message;
+                  console.log("Extracted from nested object.message, length:", botReply.length);
+                }
+              } else if (typeof firstValue === 'string') {
+                botReply = firstValue;
+                console.log("Extracted string from object value, length:", botReply.length);
+              }
+            }
+          }
+        } else if (typeof data === 'string') {
+          // Handle direct string response
+          botReply = data;
+          console.log("Used direct string response, length:", botReply.length);
         }
-      } else if (typeof data === 'string') {
-        botReply = data;
-        console.log("Used direct string");
       }
 
-      // Format the response to make it look clean and professional
-      botReply = formatResponse(botReply);
+      // Check for empty or extremely short replies
+      if (!botReply || botReply.length < 5) {
+        console.warn("Suspiciously short reply detected:", botReply);
+        // Try to use raw data as fallback
+        try {
+          botReply = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+          console.log("Using fallback raw data response, length:", botReply.length);
+        } catch (e) {
+          console.error("Failed to use raw data as fallback:", e);
+          botReply = "Sorry, I received an incomplete response. Please try again.";
+        }
+      }
 
       // Add bot reply to chat
       const botMessage: Message = {
