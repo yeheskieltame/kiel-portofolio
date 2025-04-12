@@ -17,7 +17,6 @@ const Chatbot = () => {
     ttsEnabled,
     ttsLanguage,
     handleSendMessage, 
-    handleConfigureTts,
     toggleTts,
     switchLanguage,
     speakText
@@ -50,7 +49,6 @@ const Chatbot = () => {
       >
         <Card className="flex flex-col h-[500px] shadow-2xl border border-theme-purple/30">
           <ChatHeader 
-            onConfigureTts={handleConfigureTts}
             ttsEnabled={ttsEnabled}
             toggleTts={toggleTts}
             ttsLanguage={ttsLanguage}

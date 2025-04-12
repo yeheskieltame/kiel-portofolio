@@ -1,9 +1,8 @@
 
-import { Volume2, VolumeX, Mic } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ChatHeaderProps {
-  onConfigureTts?: () => void;
   ttsEnabled?: boolean;
   toggleTts?: () => void;
   ttsLanguage?: "id" | "en";
@@ -11,7 +10,6 @@ interface ChatHeaderProps {
 }
 
 export const ChatHeader = ({ 
-  onConfigureTts, 
   ttsEnabled = false,
   toggleTts,
   ttsLanguage = "en",
@@ -45,18 +43,6 @@ export const ChatHeader = ({
             title={`Current language: ${ttsLanguage === "en" ? "English" : "Indonesian"}`}
           >
             <span className="text-xs font-bold">{ttsLanguage.toUpperCase()}</span>
-          </Button>
-        )}
-        
-        {onConfigureTts && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={onConfigureTts}
-            title="Configure text-to-speech API"
-          >
-            <Mic className="h-4 w-4" />
           </Button>
         )}
       </div>

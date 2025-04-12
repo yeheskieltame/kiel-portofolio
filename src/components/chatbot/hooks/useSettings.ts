@@ -5,7 +5,8 @@ import { toast } from "@/components/ui/use-toast";
 export const useSettings = () => {
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [ttsLanguage, setTtsLanguage] = useState<"id" | "en">("en");
-  const [elevenLabsApiKey, setElevenLabsApiKey] = useState<string | null>(null);
+  // Hardcoded ElevenLabs API key
+  const [elevenLabsApiKey, setElevenLabsApiKey] = useState<string>("sk_e0911c61be42e23722e578076ecda0ba2ba729b1b3f39147");
 
   // Load TTS settings from localStorage if available
   useEffect(() => {
@@ -19,37 +20,19 @@ export const useSettings = () => {
     if (savedTtsLanguage) {
       setTtsLanguage(savedTtsLanguage);
     }
-
-    const savedApiKey = localStorage.getItem("elevenLabsApiKey");
-    if (savedApiKey) {
-      setElevenLabsApiKey(savedApiKey);
-    }
+    
+    // No longer loading API key from localStorage as we're using a hardcoded key
   }, []);
 
   // Save TTS settings when they change
   useEffect(() => {
     localStorage.setItem("ttsEnabled", ttsEnabled.toString());
     localStorage.setItem("ttsLanguage", ttsLanguage);
-    if (elevenLabsApiKey) {
-      localStorage.setItem("elevenLabsApiKey", elevenLabsApiKey);
-    }
-  }, [ttsEnabled, ttsLanguage, elevenLabsApiKey]);
+    // No longer saving API key to localStorage
+  }, [ttsEnabled, ttsLanguage]);
 
-  const handleConfigureTts = () => {
-    const apiKey = prompt("Enter your ElevenLabs API key:", elevenLabsApiKey || "");
-    if (apiKey !== null) {
-      setElevenLabsApiKey(apiKey);
-      toast({
-        title: "API Key updated",
-        description: "Your ElevenLabs API key has been saved.",
-      });
-    }
-  };
-
+  // Remove the handleConfigureTts function as it's no longer needed
   const toggleTts = () => {
-    if (!ttsEnabled && !elevenLabsApiKey) {
-      handleConfigureTts();
-    }
     setTtsEnabled(prev => !prev);
   };
 
@@ -65,8 +48,8 @@ export const useSettings = () => {
     ttsEnabled,
     ttsLanguage,
     elevenLabsApiKey,
-    handleConfigureTts,
     toggleTts,
-    switchLanguage
+    switchLanguage,
+    // Remove handleConfigureTts from returned object
   };
 };

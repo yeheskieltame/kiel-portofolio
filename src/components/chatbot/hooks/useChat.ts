@@ -11,7 +11,6 @@ export const useChat = () => {
     ttsEnabled,
     ttsLanguage,
     elevenLabsApiKey,
-    handleConfigureTts,
     toggleTts,
     switchLanguage
   } = useSettings();
@@ -45,7 +44,6 @@ export const useChat = () => {
     ttsLanguage,
     isSpeaking,
     handleSendMessage,
-    handleConfigureTts,
     toggleTts,
     switchLanguage,
     speakText,
