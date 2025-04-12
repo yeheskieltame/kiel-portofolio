@@ -1,9 +1,8 @@
 
-import { Settings, Volume2, VolumeX, Mic } from "lucide-react";
+import { Volume2, VolumeX, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ChatHeaderProps {
-  onConfigureWebhook: () => void;
   onConfigureTts?: () => void;
   ttsEnabled?: boolean;
   toggleTts?: () => void;
@@ -12,7 +11,6 @@ interface ChatHeaderProps {
 }
 
 export const ChatHeader = ({ 
-  onConfigureWebhook, 
   onConfigureTts, 
   ttsEnabled = false,
   toggleTts,
@@ -61,16 +59,6 @@ export const ChatHeader = ({
             <Mic className="h-4 w-4" />
           </Button>
         )}
-        
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8"
-          onClick={onConfigureWebhook}
-          title="Configure webhook URL"
-        >
-          <Settings className="h-4 w-4" />
-        </Button>
       </div>
     </div>
   );

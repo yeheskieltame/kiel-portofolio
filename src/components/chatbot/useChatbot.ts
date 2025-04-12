@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Message } from "./types";
@@ -15,8 +14,8 @@ export const useChatbot = () => {
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  // Set the default webhook URL
-  const [n8nWebhookUrl, setN8nWebhookUrl] = useState("https://kieltame.app.n8n.cloud/webhook/643ff32a-6743-4406-a9f5-573a3120ff03");
+  // Set the fixed webhook URL - no longer configurable by users
+  const n8nWebhookUrl = "https://kieltame.app.n8n.cloud/webhook/643ff32a-6743-4406-a9f5-573a3120ff03";
   
   // TTS related states
   const [ttsEnabled, setTtsEnabled] = useState(false);
@@ -25,16 +24,8 @@ export const useChatbot = () => {
   const [elevenLabsApiKey, setElevenLabsApiKey] = useState<string | null>(null);
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Load settings from localStorage if available
+  // Load TTS settings from localStorage if available
   useEffect(() => {
-    const savedWebhookUrl = localStorage.getItem("n8nWebhookUrl");
-    if (savedWebhookUrl) {
-      setN8nWebhookUrl(savedWebhookUrl);
-    } else {
-      // Save the default webhook URL to localStorage
-      localStorage.setItem("n8nWebhookUrl", n8nWebhookUrl);
-    }
-
     // Load TTS settings
     const savedTtsEnabled = localStorage.getItem("ttsEnabled");
     if (savedTtsEnabled) {
@@ -119,16 +110,6 @@ export const useChatbot = () => {
   };
 
   const handleSendMessage = async (inputMessage: string) => {
-    // Check if n8n webhook URL is set
-    if (!n8nWebhookUrl) {
-      toast({
-        title: "Webhook URL not set",
-        description: "Please set your n8n webhook URL in the settings",
-        variant: "destructive",
-      });
-      return;
-    }
-
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       content: inputMessage,
@@ -203,7 +184,7 @@ export const useChatbot = () => {
       // Add error message to chat
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
-        content: "Sorry, I'm having trouble connecting. Please check your n8n webhook configuration and try again.",
+        content: "Sorry, I'm having trouble connecting. Please try again.",
         sender: "bot",
         timestamp: new Date(),
       };
@@ -212,23 +193,11 @@ export const useChatbot = () => {
       
       toast({
         title: "Connection Error",
-        description: "Failed to send message to n8n. Check your webhook URL.",
+        description: "Failed to send message to n8n webhook.",
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleConfigureWebhook = () => {
-    const url = prompt("Enter your n8n webhook URL:", n8nWebhookUrl);
-    if (url !== null) {
-      setN8nWebhookUrl(url);
-      localStorage.setItem("n8nWebhookUrl", url);
-      toast({
-        title: "Webhook URL updated",
-        description: "Your n8n webhook URL has been saved.",
-      });
     }
   };
 
@@ -267,7 +236,6 @@ export const useChatbot = () => {
     ttsLanguage,
     isSpeaking,
     handleSendMessage,
-    handleConfigureWebhook,
     handleConfigureTts,
     toggleTts,
     switchLanguage,

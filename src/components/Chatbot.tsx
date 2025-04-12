@@ -17,7 +17,6 @@ const Chatbot = () => {
     ttsEnabled,
     ttsLanguage,
     handleSendMessage, 
-    handleConfigureWebhook,
     handleConfigureTts,
     toggleTts,
     switchLanguage,
@@ -30,15 +29,15 @@ const Chatbot = () => {
       <Button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "fixed bottom-10 right-8 z-50 rounded-full w-16 h-16 p-0 shadow-lg bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90",
+          "fixed bottom-16 right-8 z-50 rounded-full w-20 h-20 p-0 shadow-lg bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90",
           isOpen && "bg-gray-600 hover:bg-gray-700"
         )}
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >
         {isOpen ? (
-          <X className="h-7 w-7" />
+          <X className="h-8 w-8" />
         ) : (
-          <MessageCircle className="h-7 w-7" />
+          <MessageCircle className="h-8 w-8" />
         )}
       </Button>
 
@@ -51,7 +50,6 @@ const Chatbot = () => {
       >
         <Card className="flex flex-col h-[500px] shadow-2xl border border-theme-purple/30">
           <ChatHeader 
-            onConfigureWebhook={handleConfigureWebhook}
             onConfigureTts={handleConfigureTts}
             ttsEnabled={ttsEnabled}
             toggleTts={toggleTts}
