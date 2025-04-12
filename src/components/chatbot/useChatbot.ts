@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Message } from "./types";
@@ -144,20 +145,42 @@ export const useChatbot = () => {
       // Extract the response from the n8n response
       let botReply = "Sorry, I couldn't process your request.";
       
-      // Parse the response properly based on the n8n workflow structure
+      // Improved parsing logic to handle various n8n response structures
       if (data) {
         console.log("Response structure:", JSON.stringify(data));
         
-        // Check if data is an object with keys (based on the console logs)
-        if (typeof data === 'object' && data !== null) {
-          // Get the first key in the object (which appears to be the message content)
-          const firstKey = Object.keys(data)[0];
-          if (firstKey) {
-            // If the object has a nested structure with an output property
-            if (data[firstKey] && data[firstKey].output) {
-              botReply = data[firstKey].output;
-            } else {
-              // Otherwise, use the key itself which contains the message
+        // Check if data is an array (new n8n format)
+        if (Array.isArray(data) && data.length > 0 && data[0].output) {
+          botReply = data[0].output;
+        }
+        // Check if data is an object with nested structure
+        else if (typeof data === 'object' && data !== null) {
+          // Try to find the 'output' property at any level
+          const findOutput = (obj: any): string | null => {
+            if (obj && typeof obj === 'object') {
+              // If the object has an output property directly
+              if (obj.output && typeof obj.output === 'string') {
+                return obj.output;
+              }
+              
+              // Recursively look for the output in nested properties
+              for (const key in obj) {
+                if (typeof obj[key] === 'object') {
+                  const found = findOutput(obj[key]);
+                  if (found) return found;
+                }
+              }
+            }
+            return null;
+          };
+          
+          const output = findOutput(data);
+          if (output) {
+            botReply = output;
+          } else {
+            // Fall back to first key if we can't find an output property
+            const firstKey = Object.keys(data)[0];
+            if (firstKey && typeof firstKey === 'string') {
               botReply = firstKey;
             }
           }

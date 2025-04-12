@@ -29,15 +29,15 @@ const Chatbot = () => {
       <Button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "fixed bottom-16 right-8 z-50 rounded-full w-20 h-20 p-0 shadow-lg bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90",
+          "fixed bottom-24 right-8 z-50 rounded-full w-24 h-24 p-0 shadow-lg bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90",
           isOpen && "bg-gray-600 hover:bg-gray-700"
         )}
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >
         {isOpen ? (
-          <X className="h-8 w-8" />
+          <X className="h-10 w-10" />
         ) : (
-          <MessageCircle className="h-8 w-8" />
+          <MessageCircle className="h-10 w-10" />
         )}
       </Button>
 
