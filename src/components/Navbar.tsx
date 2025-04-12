@@ -24,6 +24,24 @@ const Navbar = () => {
     { name: "Contact", href: "#contact" },
   ];
 
+  const handleDownloadResume = () => {
+    // Direct link to the raw PDF file on GitHub
+    const resumeUrl = "https://github.com/yeheskieltame/yeheskieltame/raw/12673cadc56ff863de482ab7d81e27ac5420f529/Yeheskiel%20Yunus%20Tame-resume%20(4).pdf";
+    
+    // Create a temporary link element
+    const link = document.createElement("a");
+    link.href = resumeUrl;
+    link.setAttribute("download", "Yeheskiel_Yunus_Tame_Resume.pdf");
+    link.setAttribute("target", "_blank");
+    document.body.appendChild(link);
+    
+    // Trigger the download
+    link.click();
+    
+    // Clean up the temporary link
+    document.body.removeChild(link);
+  };
+
   return (
     <header
       className={cn(
@@ -52,7 +70,11 @@ const Navbar = () => {
               {item.name}
             </a>
           ))}
-          <Button className="rounded-full px-6 bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90 transition-all duration-300 shadow-md shadow-theme-purple/20" size="sm">
+          <Button 
+            className="rounded-full px-6 bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90 transition-all duration-300 shadow-md shadow-theme-purple/20" 
+            size="sm"
+            onClick={handleDownloadResume}
+          >
             <Download className="h-4 w-4 mr-2" />
             Resume
           </Button>
@@ -91,7 +113,10 @@ const Navbar = () => {
               {item.name}
             </a>
           ))}
-          <Button className="rounded-full w-full bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90">
+          <Button 
+            className="rounded-full w-full bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90"
+            onClick={handleDownloadResume}
+          >
             <Download className="h-4 w-4 mr-2" />
             Resume
           </Button>
