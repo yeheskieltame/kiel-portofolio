@@ -8,6 +8,7 @@ import {
   PortfolioEducation,
   PortfolioEducationCourse 
 } from '@/types/portfolio-types';
+import { supabase } from '@/integrations/supabase/client';
 
 // Types for our data - using our custom types that match Supabase schema
 export type Service = PortfolioService;
@@ -39,7 +40,7 @@ interface AdminContextType {
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
-// Sample data for development (will be replaced with API calls)
+// Sample data for development (will be used as fallback in case Supabase connection fails)
 const initialServices: Service[] = [
   {
     id: 1,
@@ -143,10 +144,62 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
       setError(null);
       
       try {
-        // For now, just use the initialized data until we create the actual tables in Supabase
-        // In a real app, we'd connect to the Supabase API here
+        // Fetch services from Supabase
+        const { data: servicesData, error: servicesError } = await supabase
+          .from('kiel_portfolio_services')
+          .select('*');
+
+        if (servicesError) throw new Error(`Services error: ${servicesError.message}`);
         
-        // Try to load data from localStorage first (if it exists)
+        // Fetch projects from Supabase
+        const { data: projectsData, error: projectsError } = await supabase
+          .from('kiel_portfolio_projects')
+          .select('*');
+
+        if (projectsError) throw new Error(`Projects error: ${projectsError.message}`);
+        
+        // Fetch skills from Supabase
+        const { data: skillsData, error: skillsError } = await supabase
+          .from('kiel_portfolio_skills')
+          .select('*');
+
+        if (skillsError) throw new Error(`Skills error: ${skillsError.message}`);
+        
+        // Fetch education from Supabase with related courses
+        const { data: educationData, error: educationError } = await supabase
+          .from('kiel_portfolio_education')
+          .select('*');
+
+        if (educationError) throw new Error(`Education error: ${educationError.message}`);
+        
+        // For each education, we need to fetch its courses
+        const educationWithCourses = await Promise.all(
+          educationData.map(async (edu) => {
+            const { data: coursesData, error: coursesError } = await supabase
+              .from('kiel_portfolio_education_courses')
+              .select('*')
+              .eq('education_id', edu.id);
+
+            if (coursesError) {
+              console.error(`Error fetching courses for education ${edu.id}:`, coursesError);
+              return { ...edu, courses: [] };
+            }
+
+            return { ...edu, courses: coursesData };
+          })
+        );
+
+        // Set the data
+        setServices(servicesData);
+        setProjects(projectsData);
+        setSkills(skillsData);
+        setEducation(educationWithCourses);
+        
+      } catch (error) {
+        console.error('Error loading data from Supabase:', error);
+        setError('Failed to load data from database. Using local data as fallback.');
+        
+        // Fallback to localStorage or initial data
         const savedServices = localStorage.getItem('adminServices');
         const savedProjects = localStorage.getItem('adminProjects');
         const savedSkills = localStorage.getItem('adminSkills');
@@ -156,9 +209,13 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         setProjects(savedProjects ? JSON.parse(savedProjects) : initialProjects);
         setSkills(savedSkills ? JSON.parse(savedSkills) : initialSkills);
         setEducation(savedEducation ? JSON.parse(savedEducation) : initialEducation);
-      } catch (error) {
-        console.error('Error loading data:', error);
-        setError('Failed to load data');
+        
+        // Show toast with error
+        toast({
+          title: "Database Connection Failed",
+          description: "Using local data as fallback. Changes won't be saved to database.",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -167,7 +224,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     fetchData();
   }, []);
 
-  // Save to localStorage whenever data changes
+  // Save to localStorage whenever data changes as backup
   useEffect(() => {
     localStorage.setItem('adminServices', JSON.stringify(services));
   }, [services]);
@@ -187,6 +244,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   // Service operations
   const updateService = async (updatedService: Service) => {
     try {
+      // Update in Supabase
+      const { error: updateError } = await supabase
+        .from('kiel_portfolio_services')
+        .update(updatedService)
+        .eq('id', updatedService.id);
+      
+      if (updateError) throw new Error(updateError.message);
+      
       // Update local state
       setServices(prevServices => 
         prevServices.map(service => 
@@ -210,6 +275,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteService = async (id: number) => {
     try {
+      // Delete from Supabase
+      const { error: deleteError } = await supabase
+        .from('kiel_portfolio_services')
+        .delete()
+        .eq('id', id);
+      
+      if (deleteError) throw new Error(deleteError.message);
+      
       // Update local state
       setServices(prevServices => prevServices.filter(service => service.id !== id));
       
@@ -229,11 +302,17 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const addService = async (newService: Omit<Service, 'id'>) => {
     try {
-      // Generate a new ID locally (in a real app, this would come from the database)
-      const id = services.length > 0 ? Math.max(...services.map(s => s.id)) + 1 : 1;
+      // Add to Supabase
+      const { data: insertedData, error: insertError } = await supabase
+        .from('kiel_portfolio_services')
+        .insert(newService)
+        .select();
+      
+      if (insertError) throw new Error(insertError.message);
+      if (!insertedData || insertedData.length === 0) throw new Error("No data returned after insert");
       
       // Add to local state
-      const serviceToAdd = { ...newService, id } as Service;
+      const serviceToAdd = insertedData[0] as Service;
       setServices(prevServices => [...prevServices, serviceToAdd]);
       
       toast({
@@ -253,6 +332,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   // Project operations
   const updateProject = async (updatedProject: Project) => {
     try {
+      // Update in Supabase
+      const { error: updateError } = await supabase
+        .from('kiel_portfolio_projects')
+        .update(updatedProject)
+        .eq('id', updatedProject.id);
+      
+      if (updateError) throw new Error(updateError.message);
+      
       // Update local state
       setProjects(prevProjects => 
         prevProjects.map(project => 
@@ -276,6 +363,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteProject = async (id: number) => {
     try {
+      // Delete from Supabase
+      const { error: deleteError } = await supabase
+        .from('kiel_portfolio_projects')
+        .delete()
+        .eq('id', id);
+      
+      if (deleteError) throw new Error(deleteError.message);
+      
       // Update local state
       setProjects(prevProjects => prevProjects.filter(project => project.id !== id));
       
@@ -295,11 +390,17 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const addProject = async (newProject: Omit<Project, 'id'>) => {
     try {
-      // Generate a new ID locally
-      const id = projects.length > 0 ? Math.max(...projects.map(p => p.id)) + 1 : 1;
+      // Add to Supabase
+      const { data: insertedData, error: insertError } = await supabase
+        .from('kiel_portfolio_projects')
+        .insert(newProject)
+        .select();
+      
+      if (insertError) throw new Error(insertError.message);
+      if (!insertedData || insertedData.length === 0) throw new Error("No data returned after insert");
       
       // Add to local state
-      const projectToAdd = { ...newProject, id } as Project;
+      const projectToAdd = insertedData[0] as Project;
       setProjects(prevProjects => [...prevProjects, projectToAdd]);
       
       toast({
@@ -319,6 +420,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   // Skill operations
   const updateSkill = async (updatedSkill: Skill) => {
     try {
+      // Update in Supabase
+      const { error: updateError } = await supabase
+        .from('kiel_portfolio_skills')
+        .update(updatedSkill)
+        .eq('id', updatedSkill.id);
+      
+      if (updateError) throw new Error(updateError.message);
+      
       // Update local state
       setSkills(prevSkills => 
         prevSkills.map(skill => 
@@ -342,6 +451,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteSkill = async (id: number) => {
     try {
+      // Delete from Supabase
+      const { error: deleteError } = await supabase
+        .from('kiel_portfolio_skills')
+        .delete()
+        .eq('id', id);
+      
+      if (deleteError) throw new Error(deleteError.message);
+      
       // Update local state
       setSkills(prevSkills => prevSkills.filter(skill => skill.id !== id));
       
@@ -361,11 +478,17 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const addSkill = async (newSkill: Omit<Skill, 'id'>) => {
     try {
-      // Generate a new ID locally
-      const id = skills.length > 0 ? Math.max(...skills.map(s => s.id)) + 1 : 1;
+      // Add to Supabase
+      const { data: insertedData, error: insertError } = await supabase
+        .from('kiel_portfolio_skills')
+        .insert(newSkill)
+        .select();
+      
+      if (insertError) throw new Error(insertError.message);
+      if (!insertedData || insertedData.length === 0) throw new Error("No data returned after insert");
       
       // Add to local state
-      const skillToAdd = { ...newSkill, id } as Skill;
+      const skillToAdd = insertedData[0] as Skill;
       setSkills(prevSkills => [...prevSkills, skillToAdd]);
       
       toast({
@@ -385,6 +508,70 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   // Education operations
   const updateEducation = async (updatedEducation: Education) => {
     try {
+      // First update the education provider
+      const { error: updateError } = await supabase
+        .from('kiel_portfolio_education')
+        .update({ provider: updatedEducation.provider })
+        .eq('id', updatedEducation.id);
+      
+      if (updateError) throw new Error(updateError.message);
+      
+      // For each course, update, insert, or delete
+      const existingCoursesResponse = await supabase
+        .from('kiel_portfolio_education_courses')
+        .select('*')
+        .eq('education_id', updatedEducation.id);
+      
+      if (existingCoursesResponse.error) throw new Error(existingCoursesResponse.error.message);
+      
+      // Get existing courses
+      const existingCourses = existingCoursesResponse.data || [];
+      
+      // Update existing courses and add new ones
+      for (const course of updatedEducation.courses) {
+        if (course.id) {
+          // Update existing course
+          const { error } = await supabase
+            .from('kiel_portfolio_education_courses')
+            .update({ 
+              name: course.name,
+              link: course.link
+            })
+            .eq('id', course.id);
+          
+          if (error) throw new Error(`Error updating course: ${error.message}`);
+        } else {
+          // Add new course
+          const { error } = await supabase
+            .from('kiel_portfolio_education_courses')
+            .insert({
+              education_id: updatedEducation.id,
+              name: course.name,
+              link: course.link
+            });
+          
+          if (error) throw new Error(`Error adding course: ${error.message}`);
+        }
+      }
+      
+      // Delete removed courses
+      const updatedCourseIds = updatedEducation.courses
+        .filter(c => c.id !== undefined)
+        .map(c => c.id);
+      
+      const coursesToDelete = existingCourses
+        .filter(c => !updatedCourseIds.includes(c.id))
+        .map(c => c.id);
+      
+      if (coursesToDelete.length > 0) {
+        const { error } = await supabase
+          .from('kiel_portfolio_education_courses')
+          .delete()
+          .in('id', coursesToDelete);
+        
+        if (error) throw new Error(`Error deleting courses: ${error.message}`);
+      }
+      
       // Update local state
       setEducation(prevEducation => 
         prevEducation.map(edu => 
@@ -408,6 +595,15 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteEducation = async (id: number) => {
     try {
+      // Due to CASCADE constraint in Supabase, we only need to delete education
+      // and related courses will be automatically deleted
+      const { error: deleteError } = await supabase
+        .from('kiel_portfolio_education')
+        .delete()
+        .eq('id', id);
+      
+      if (deleteError) throw new Error(deleteError.message);
+      
       // Update local state
       setEducation(prevEducation => prevEducation.filter(edu => edu.id !== id));
       
@@ -427,24 +623,58 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const addEducation = async (newEducation: Omit<Education, 'id'>) => {
     try {
-      // Generate a new ID locally
-      const id = education.length > 0 ? Math.max(...education.map(e => e.id)) + 1 : 1;
+      // First create the education provider
+      const { data: insertedEducation, error: insertError } = await supabase
+        .from('kiel_portfolio_education')
+        .insert({ provider: newEducation.provider })
+        .select();
       
-      // Create course IDs as well
-      const coursesWithIds = newEducation.courses.map((course, index) => ({
-        ...course,
-        id: index + 1,
-        education_id: id
-      }));
+      if (insertError) throw new Error(insertError.message);
+      if (!insertedEducation || insertedEducation.length === 0) {
+        throw new Error("No data returned after insert");
+      }
+      
+      const educationId = insertedEducation[0].id;
+      
+      // Then create all courses for this education
+      if (newEducation.courses.length > 0) {
+        const coursesToInsert = newEducation.courses.map(course => ({
+          education_id: educationId,
+          name: course.name,
+          link: course.link
+        }));
+        
+        const { error: coursesError } = await supabase
+          .from('kiel_portfolio_education_courses')
+          .insert(coursesToInsert);
+        
+        if (coursesError) throw new Error(coursesError.message);
+      }
+      
+      // Fetch the newly created education with courses
+      const { data: newEduWithCourses, error: fetchError } = await supabase
+        .from('kiel_portfolio_education')
+        .select('*')
+        .eq('id', educationId)
+        .single();
+      
+      if (fetchError) throw new Error(fetchError.message);
+      
+      // Fetch related courses
+      const { data: coursesData, error: coursesError } = await supabase
+        .from('kiel_portfolio_education_courses')
+        .select('*')
+        .eq('education_id', educationId);
+      
+      if (coursesError) throw new Error(coursesError.message);
       
       // Add to local state
-      const educationToAdd = { 
-        ...newEducation,
-        id,
-        courses: coursesWithIds 
+      const completeEducation = { 
+        ...newEduWithCourses, 
+        courses: coursesData || [] 
       } as Education;
       
-      setEducation(prevEducation => [...prevEducation, educationToAdd]);
+      setEducation(prev => [...prev, completeEducation]);
       
       toast({
         title: "Education Provider Added",
