@@ -6,7 +6,7 @@ import ServiceRequestDialog from "@/components/ServiceRequestDialog";
 import { useAdminData } from "./admin/AdminDataContext";
 
 const Services = () => {
-  const { services } = useAdminData();
+  const { services, isLoading } = useAdminData();
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -34,6 +34,16 @@ const Services = () => {
     
     return icons[iconName] || <Code className="h-8 w-8 text-theme-purple" />;
   };
+  
+  if (isLoading) {
+    return (
+      <section id="services" className="py-20 px-6 md:px-10 bg-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto text-center">
+          <p>Loading services...</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="services" className="py-20 px-6 md:px-10 bg-white relative overflow-hidden">

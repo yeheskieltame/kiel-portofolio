@@ -5,12 +5,22 @@ import { Button } from "@/components/ui/button";
 import { useAdminData } from "./admin/AdminDataContext";
 
 const Projects = () => {
-  const { projects } = useAdminData();
+  const { projects, isLoading } = useAdminData();
   
   const [visibleProjects, setVisibleProjects] = useState(4);
   const showMoreProjects = () => {
     setVisibleProjects(prevVisible => Math.min(prevVisible + 2, projects.length));
   };
+
+  if (isLoading) {
+    return (
+      <section id="projects" className="py-20 px-6 md:px-10">
+        <div className="max-w-7xl mx-auto text-center">
+          <p>Loading projects...</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="projects" className="py-20 px-6 md:px-10">

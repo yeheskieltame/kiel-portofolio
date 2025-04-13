@@ -1,6 +1,12 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from '@/hooks/use-toast';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabaseUrl = 'https://deeoqzyrvwudgtqcqpdc.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRlZW9xenlydnd1ZGd0cWNxcGRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyNTU0NzgsImV4cCI6MjA1OTgzMTQ3OH0.QR9vcNevBsVNIf22Le5JAndqUhNHMVRbGwsVUftgN0w';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Types for our data
 export interface Service {
@@ -43,23 +49,25 @@ interface AdminContextType {
   projects: Project[];
   skills: Skill[];
   education: Education[];
-  updateService: (service: Service) => void;
-  deleteService: (id: number) => void;
-  addService: (service: Omit<Service, 'id'>) => void;
-  updateProject: (project: Project) => void;
-  deleteProject: (id: number) => void;
-  addProject: (project: Omit<Project, 'id'>) => void;
-  updateSkill: (skill: Skill) => void;
-  deleteSkill: (id: number) => void;
-  addSkill: (skill: Omit<Skill, 'id'>) => void;
-  updateEducation: (education: Education) => void;
-  deleteEducation: (id: number) => void;
-  addEducation: (education: Omit<Education, 'id'>) => void;
+  updateService: (service: Service) => Promise<void>;
+  deleteService: (id: number) => Promise<void>;
+  addService: (service: Omit<Service, 'id'>) => Promise<void>;
+  updateProject: (project: Project) => Promise<void>;
+  deleteProject: (id: number) => Promise<void>;
+  addProject: (project: Omit<Project, 'id'>) => Promise<void>;
+  updateSkill: (skill: Skill) => Promise<void>;
+  deleteSkill: (id: number) => Promise<void>;
+  addSkill: (skill: Omit<Skill, 'id'>) => Promise<void>;
+  updateEducation: (education: Education) => Promise<void>;
+  deleteEducation: (id: number) => Promise<void>;
+  addEducation: (education: Omit<Education, 'id'>) => Promise<void>;
+  isLoading: boolean;
+  error: string | null;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
-// Default data from the existing components
+// Default data as fallback
 const defaultServices = [
   {
     id: 1,
@@ -349,162 +357,597 @@ const defaultEducation = [
 ];
 
 export const AdminProvider = ({ children }: { children: ReactNode }) => {
-  // Load data from localStorage or use defaults
-  const [services, setServices] = useState<Service[]>(() => {
-    const saved = localStorage.getItem('adminServices');
-    return saved ? JSON.parse(saved) : defaultServices;
-  });
+  // State for storing fetched data
+  const [services, setServices] = useState<Service[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [education, setEducation] = useState<Education[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   
-  const [projects, setProjects] = useState<Project[]>(() => {
-    const saved = localStorage.getItem('adminProjects');
-    return saved ? JSON.parse(saved) : defaultProjects;
-  });
-  
-  const [skills, setSkills] = useState<Skill[]>(() => {
-    const saved = localStorage.getItem('adminSkills');
-    return saved ? JSON.parse(saved) : defaultSkills;
-  });
-  
-  const [education, setEducation] = useState<Education[]>(() => {
-    const saved = localStorage.getItem('adminEducation');
-    return saved ? JSON.parse(saved) : defaultEducation;
-  });
+  // Function to fetch education with courses
+  const fetchEducationWithCourses = async () => {
+    try {
+      // Fetch education providers
+      const { data: educationData, error: educationError } = await supabase
+        .from('kiel_portfolio_education')
+        .select('*');
+        
+      if (educationError) throw new Error(educationError.message);
+      
+      if (!educationData) return [];
+      
+      // For each education provider, fetch their courses
+      const educationWithCourses = await Promise.all(educationData.map(async (edu) => {
+        const { data: coursesData, error: coursesError } = await supabase
+          .from('kiel_portfolio_education_courses')
+          .select('*')
+          .eq('education_id', edu.id);
+          
+        if (coursesError) throw new Error(coursesError.message);
+        
+        return {
+          id: edu.id,
+          provider: edu.provider,
+          courses: coursesData?.map(course => ({
+            name: course.name,
+            link: course.link || ''
+          })) || []
+        };
+      }));
+      
+      return educationWithCourses;
+    } catch (err) {
+      console.error("Error fetching education data:", err);
+      throw err;
+    }
+  };
 
-  // Save to localStorage whenever data changes
+  // Fetch data from Supabase on component mount
   useEffect(() => {
-    localStorage.setItem('adminServices', JSON.stringify(services));
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        // Fetch services
+        const { data: servicesData, error: servicesError } = await supabase
+          .from('kiel_portfolio_services')
+          .select('*');
+          
+        if (servicesError) throw new Error(servicesError.message);
+        
+        // Fetch projects
+        const { data: projectsData, error: projectsError } = await supabase
+          .from('kiel_portfolio_projects')
+          .select('*');
+          
+        if (projectsError) throw new Error(projectsError.message);
+        
+        // Fetch skills
+        const { data: skillsData, error: skillsError } = await supabase
+          .from('kiel_portfolio_skills')
+          .select('*');
+          
+        if (skillsError) throw new Error(skillsError.message);
+        
+        // Fetch education with courses
+        const educationWithCourses = await fetchEducationWithCourses();
+        
+        // Map Supabase data to our expected format
+        if (servicesData) {
+          setServices(servicesData.map(service => ({
+            id: service.id,
+            title: service.title,
+            description: service.description,
+            icon: service.icon,
+            features: service.features
+          })));
+        }
+        
+        if (projectsData) {
+          setProjects(projectsData.map(project => ({
+            id: project.id,
+            title: project.title,
+            description: project.description,
+            image: project.image,
+            demoLink: project.demo_link,
+            githubLink: project.github_link,
+            tech: project.tech
+          })));
+        }
+        
+        if (skillsData) {
+          setSkills(skillsData.map(skill => ({
+            id: skill.id,
+            name: skill.name,
+            icon: skill.icon,
+            level: skill.level,
+            category: skill.category as 'programming' | 'ml' | 'webdev'
+          })));
+        }
+        
+        setEducation(educationWithCourses);
+        
+      } catch (error) {
+        console.error("Error fetching data from Supabase:", error);
+        setError("Failed to load data from server. Using local data instead.");
+        
+        // Fallback to localStorage if Supabase fails
+        const savedServices = localStorage.getItem('adminServices');
+        const savedProjects = localStorage.getItem('adminProjects');
+        const savedSkills = localStorage.getItem('adminSkills');
+        const savedEducation = localStorage.getItem('adminEducation');
+        
+        setServices(savedServices ? JSON.parse(savedServices) : defaultServices);
+        setProjects(savedProjects ? JSON.parse(savedProjects) : defaultProjects);
+        setSkills(savedSkills ? JSON.parse(savedSkills) : defaultSkills);
+        setEducation(savedEducation ? JSON.parse(savedEducation) : defaultEducation);
+        
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
+  // Save to localStorage as backup whenever data changes
+  useEffect(() => {
+    if (services.length > 0) {
+      localStorage.setItem('adminServices', JSON.stringify(services));
+    }
   }, [services]);
   
   useEffect(() => {
-    localStorage.setItem('adminProjects', JSON.stringify(projects));
+    if (projects.length > 0) {
+      localStorage.setItem('adminProjects', JSON.stringify(projects));
+    }
   }, [projects]);
   
   useEffect(() => {
-    localStorage.setItem('adminSkills', JSON.stringify(skills));
+    if (skills.length > 0) {
+      localStorage.setItem('adminSkills', JSON.stringify(skills));
+    }
   }, [skills]);
   
   useEffect(() => {
-    localStorage.setItem('adminEducation', JSON.stringify(education));
+    if (education.length > 0) {
+      localStorage.setItem('adminEducation', JSON.stringify(education));
+    }
   }, [education]);
 
   // Service operations
-  const updateService = (updatedService: Service) => {
-    setServices(prevServices => 
-      prevServices.map(service => 
-        service.id === updatedService.id ? updatedService : service
-      )
-    );
-    toast({
-      title: "Service Updated",
-      description: `"${updatedService.title}" has been updated successfully.`,
-    });
+  const updateService = async (updatedService: Service) => {
+    try {
+      const { error } = await supabase
+        .from('kiel_portfolio_services')
+        .update({
+          title: updatedService.title,
+          description: updatedService.description,
+          icon: updatedService.icon,
+          features: updatedService.features
+        })
+        .eq('id', updatedService.id);
+      
+      if (error) throw error;
+      
+      // Update local state
+      setServices(prevServices => 
+        prevServices.map(service => 
+          service.id === updatedService.id ? updatedService : service
+        )
+      );
+      
+      toast({
+        title: "Service Updated",
+        description: `"${updatedService.title}" has been updated successfully.`,
+      });
+    } catch (error) {
+      console.error("Error updating service:", error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update service. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const deleteService = (id: number) => {
-    setServices(prevServices => prevServices.filter(service => service.id !== id));
-    toast({
-      title: "Service Deleted",
-      description: "Service has been deleted successfully.",
-    });
+  const deleteService = async (id: number) => {
+    try {
+      const { error } = await supabase
+        .from('kiel_portfolio_services')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      
+      // Update local state
+      setServices(prevServices => prevServices.filter(service => service.id !== id));
+      
+      toast({
+        title: "Service Deleted",
+        description: "Service has been deleted successfully.",
+      });
+    } catch (error) {
+      console.error("Error deleting service:", error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete service. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const addService = (newService: Omit<Service, 'id'>) => {
-    const id = services.length > 0 ? Math.max(...services.map(s => s.id)) + 1 : 1;
-    setServices(prevServices => [...prevServices, { ...newService, id }]);
-    toast({
-      title: "Service Added",
-      description: `"${newService.title}" has been added successfully.`,
-    });
+  const addService = async (newService: Omit<Service, 'id'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('kiel_portfolio_services')
+        .insert({
+          title: newService.title,
+          description: newService.description,
+          icon: newService.icon,
+          features: newService.features
+        })
+        .select();
+        
+      if (error) throw error;
+      
+      if (data && data[0]) {
+        // Add to local state with the new ID from Supabase
+        const serviceWithId = { 
+          id: data[0].id, 
+          ...newService 
+        };
+        setServices(prevServices => [...prevServices, serviceWithId]);
+        
+        toast({
+          title: "Service Added",
+          description: `"${newService.title}" has been added successfully.`,
+        });
+      }
+    } catch (error) {
+      console.error("Error adding service:", error);
+      toast({
+        title: "Add Failed",
+        description: "Failed to add service. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   // Project operations
-  const updateProject = (updatedProject: Project) => {
-    setProjects(prevProjects => 
-      prevProjects.map(project => 
-        project.id === updatedProject.id ? updatedProject : project
-      )
-    );
-    toast({
-      title: "Project Updated",
-      description: `"${updatedProject.title}" has been updated successfully.`,
-    });
+  const updateProject = async (updatedProject: Project) => {
+    try {
+      const { error } = await supabase
+        .from('kiel_portfolio_projects')
+        .update({
+          title: updatedProject.title,
+          description: updatedProject.description,
+          image: updatedProject.image,
+          demo_link: updatedProject.demoLink,
+          github_link: updatedProject.githubLink,
+          tech: updatedProject.tech
+        })
+        .eq('id', updatedProject.id);
+        
+      if (error) throw error;
+      
+      // Update local state
+      setProjects(prevProjects => 
+        prevProjects.map(project => 
+          project.id === updatedProject.id ? updatedProject : project
+        )
+      );
+      
+      toast({
+        title: "Project Updated",
+        description: `"${updatedProject.title}" has been updated successfully.`,
+      });
+    } catch (error) {
+      console.error("Error updating project:", error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update project. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const deleteProject = (id: number) => {
-    setProjects(prevProjects => prevProjects.filter(project => project.id !== id));
-    toast({
-      title: "Project Deleted",
-      description: "Project has been deleted successfully.",
-    });
+  const deleteProject = async (id: number) => {
+    try {
+      const { error } = await supabase
+        .from('kiel_portfolio_projects')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      
+      // Update local state
+      setProjects(prevProjects => prevProjects.filter(project => project.id !== id));
+      
+      toast({
+        title: "Project Deleted",
+        description: "Project has been deleted successfully.",
+      });
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete project. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const addProject = (newProject: Omit<Project, 'id'>) => {
-    const id = projects.length > 0 ? Math.max(...projects.map(p => p.id)) + 1 : 1;
-    setProjects(prevProjects => [...prevProjects, { ...newProject, id }]);
-    toast({
-      title: "Project Added",
-      description: `"${newProject.title}" has been added successfully.`,
-    });
+  const addProject = async (newProject: Omit<Project, 'id'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('kiel_portfolio_projects')
+        .insert({
+          title: newProject.title,
+          description: newProject.description,
+          image: newProject.image,
+          demo_link: newProject.demoLink,
+          github_link: newProject.githubLink,
+          tech: newProject.tech
+        })
+        .select();
+        
+      if (error) throw error;
+      
+      if (data && data[0]) {
+        // Add to local state with the new ID from Supabase
+        const projectWithId = { 
+          id: data[0].id, 
+          ...newProject 
+        };
+        setProjects(prevProjects => [...prevProjects, projectWithId]);
+        
+        toast({
+          title: "Project Added",
+          description: `"${newProject.title}" has been added successfully.`,
+        });
+      }
+    } catch (error) {
+      console.error("Error adding project:", error);
+      toast({
+        title: "Add Failed",
+        description: "Failed to add project. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   // Skill operations
-  const updateSkill = (updatedSkill: Skill) => {
-    setSkills(prevSkills => 
-      prevSkills.map(skill => 
-        skill.id === updatedSkill.id ? updatedSkill : skill
-      )
-    );
-    toast({
-      title: "Skill Updated",
-      description: `"${updatedSkill.name}" has been updated successfully.`,
-    });
+  const updateSkill = async (updatedSkill: Skill) => {
+    try {
+      const { error } = await supabase
+        .from('kiel_portfolio_skills')
+        .update({
+          name: updatedSkill.name,
+          icon: updatedSkill.icon,
+          level: updatedSkill.level,
+          category: updatedSkill.category
+        })
+        .eq('id', updatedSkill.id);
+        
+      if (error) throw error;
+      
+      // Update local state
+      setSkills(prevSkills => 
+        prevSkills.map(skill => 
+          skill.id === updatedSkill.id ? updatedSkill : skill
+        )
+      );
+      
+      toast({
+        title: "Skill Updated",
+        description: `"${updatedSkill.name}" has been updated successfully.`,
+      });
+    } catch (error) {
+      console.error("Error updating skill:", error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update skill. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const deleteSkill = (id: number) => {
-    setSkills(prevSkills => prevSkills.filter(skill => skill.id !== id));
-    toast({
-      title: "Skill Deleted",
-      description: "Skill has been deleted successfully.",
-    });
+  const deleteSkill = async (id: number) => {
+    try {
+      const { error } = await supabase
+        .from('kiel_portfolio_skills')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      
+      // Update local state
+      setSkills(prevSkills => prevSkills.filter(skill => skill.id !== id));
+      
+      toast({
+        title: "Skill Deleted",
+        description: "Skill has been deleted successfully.",
+      });
+    } catch (error) {
+      console.error("Error deleting skill:", error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete skill. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const addSkill = (newSkill: Omit<Skill, 'id'>) => {
-    const id = skills.length > 0 ? Math.max(...skills.map(s => s.id)) + 1 : 1;
-    setSkills(prevSkills => [...prevSkills, { ...newSkill, id }]);
-    toast({
-      title: "Skill Added",
-      description: `"${newSkill.name}" has been added successfully.`,
-    });
+  const addSkill = async (newSkill: Omit<Skill, 'id'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('kiel_portfolio_skills')
+        .insert({
+          name: newSkill.name,
+          icon: newSkill.icon,
+          level: newSkill.level,
+          category: newSkill.category
+        })
+        .select();
+        
+      if (error) throw error;
+      
+      if (data && data[0]) {
+        // Add to local state with the new ID from Supabase
+        const skillWithId = { 
+          id: data[0].id, 
+          ...newSkill 
+        };
+        setSkills(prevSkills => [...prevSkills, skillWithId]);
+        
+        toast({
+          title: "Skill Added",
+          description: `"${newSkill.name}" has been added successfully.`,
+        });
+      }
+    } catch (error) {
+      console.error("Error adding skill:", error);
+      toast({
+        title: "Add Failed",
+        description: "Failed to add skill. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   // Education operations
-  const updateEducation = (updatedEducation: Education) => {
-    setEducation(prevEducation => 
-      prevEducation.map(edu => 
-        edu.id === updatedEducation.id ? updatedEducation : edu
-      )
-    );
-    toast({
-      title: "Education Updated",
-      description: `"${updatedEducation.provider}" has been updated successfully.`,
-    });
+  const updateEducation = async (updatedEducation: Education) => {
+    try {
+      // Update education provider
+      const { error: providerError } = await supabase
+        .from('kiel_portfolio_education')
+        .update({ provider: updatedEducation.provider })
+        .eq('id', updatedEducation.id);
+        
+      if (providerError) throw providerError;
+      
+      // Delete existing courses for this provider
+      const { error: deleteError } = await supabase
+        .from('kiel_portfolio_education_courses')
+        .delete()
+        .eq('education_id', updatedEducation.id);
+        
+      if (deleteError) throw deleteError;
+      
+      // Insert updated courses
+      if (updatedEducation.courses.length > 0) {
+        const coursesToInsert = updatedEducation.courses.map(course => ({
+          education_id: updatedEducation.id,
+          name: course.name,
+          link: course.link
+        }));
+        
+        const { error: insertError } = await supabase
+          .from('kiel_portfolio_education_courses')
+          .insert(coursesToInsert);
+          
+        if (insertError) throw insertError;
+      }
+      
+      // Update local state
+      setEducation(prevEducation => 
+        prevEducation.map(edu => 
+          edu.id === updatedEducation.id ? updatedEducation : edu
+        )
+      );
+      
+      toast({
+        title: "Education Updated",
+        description: `"${updatedEducation.provider}" has been updated successfully.`,
+      });
+    } catch (error) {
+      console.error("Error updating education:", error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update education. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const deleteEducation = (id: number) => {
-    setEducation(prevEducation => prevEducation.filter(edu => edu.id !== id));
-    toast({
-      title: "Education Provider Deleted",
-      description: "Education provider has been deleted successfully.",
-    });
+  const deleteEducation = async (id: number) => {
+    try {
+      // Cascade delete will handle removing courses
+      const { error } = await supabase
+        .from('kiel_portfolio_education')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      
+      // Update local state
+      setEducation(prevEducation => prevEducation.filter(edu => edu.id !== id));
+      
+      toast({
+        title: "Education Provider Deleted",
+        description: "Education provider has been deleted successfully.",
+      });
+    } catch (error) {
+      console.error("Error deleting education:", error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete education provider. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const addEducation = (newEducation: Omit<Education, 'id'>) => {
-    const id = education.length > 0 ? Math.max(...education.map(e => e.id)) + 1 : 1;
-    setEducation(prevEducation => [...prevEducation, { ...newEducation, id }]);
-    toast({
-      title: "Education Provider Added",
-      description: `"${newEducation.provider}" has been added successfully.`,
-    });
+  const addEducation = async (newEducation: Omit<Education, 'id'>) => {
+    try {
+      // First insert the education provider
+      const { data, error } = await supabase
+        .from('kiel_portfolio_education')
+        .insert({ provider: newEducation.provider })
+        .select();
+        
+      if (error) throw error;
+      
+      if (data && data[0]) {
+        const educationId = data[0].id;
+        
+        // Then insert courses
+        if (newEducation.courses.length > 0) {
+          const coursesToInsert = newEducation.courses.map(course => ({
+            education_id: educationId,
+            name: course.name,
+            link: course.link
+          }));
+          
+          const { error: coursesError } = await supabase
+            .from('kiel_portfolio_education_courses')
+            .insert(coursesToInsert);
+            
+          if (coursesError) throw coursesError;
+        }
+        
+        // Add to local state with the new ID from Supabase
+        const educationWithId = { 
+          id: educationId, 
+          ...newEducation 
+        };
+        setEducation(prevEducation => [...prevEducation, educationWithId]);
+        
+        toast({
+          title: "Education Provider Added",
+          description: `"${newEducation.provider}" has been added successfully.`,
+        });
+      }
+    } catch (error) {
+      console.error("Error adding education:", error);
+      toast({
+        title: "Add Failed",
+        description: "Failed to add education provider. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const value = {
@@ -523,7 +966,9 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     addSkill,
     updateEducation,
     deleteEducation,
-    addEducation
+    addEducation,
+    isLoading,
+    error
   };
 
   return (

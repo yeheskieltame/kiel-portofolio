@@ -3,7 +3,17 @@ import SkillCard from "./SkillCard";
 import { useAdminData } from "./admin/AdminDataContext";
 
 const Skills = () => {
-  const { skills } = useAdminData();
+  const { skills, isLoading } = useAdminData();
+
+  if (isLoading) {
+    return (
+      <section id="skills" className="py-20 px-6 md:px-10 bg-gray-50">
+        <div className="max-w-7xl mx-auto text-center">
+          <p>Loading skills...</p>
+        </div>
+      </section>
+    );
+  }
 
   // Group skills by category
   const programmingSkills = skills.filter(skill => skill.category === 'programming');
