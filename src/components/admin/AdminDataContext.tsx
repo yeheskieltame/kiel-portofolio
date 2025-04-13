@@ -1,6 +1,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { 
   PortfolioService, 
   PortfolioProject, 
@@ -39,95 +40,6 @@ interface AdminContextType {
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
-// Sample data for development (will be replaced with API calls)
-const initialServices: Service[] = [
-  {
-    id: 1,
-    title: "Machine Learning Development",
-    description: "Custom machine learning solutions for your business needs",
-    icon: "BrainCircuit",
-    features: ["Algorithm Development", "Model Training", "Performance Tuning"]
-  },
-  {
-    id: 2,
-    title: "Data Analysis & Visualization",
-    description: "Transform your data into actionable insights",
-    icon: "BarChart",
-    features: ["Exploratory Analysis", "Interactive Dashboards", "Statistical Modeling"]
-  },
-  {
-    id: 3,
-    title: "Full-Stack Web Development",
-    description: "End-to-end web solutions with modern technologies",
-    icon: "Code",
-    features: ["Frontend Development", "Backend APIs", "Database Design"]
-  }
-];
-
-const initialProjects: Project[] = [
-  {
-    id: 1,
-    title: "Sentiment Analysis Tool",
-    description: "A machine learning model for analyzing customer sentiment from product reviews",
-    image: "/placeholder.svg",
-    demo_link: "https://example.com/demo",
-    github_link: "https://github.com/example/sentiment",
-    tech: ["Python", "TensorFlow", "NLTK", "Flask"]
-  },
-  {
-    id: 2,
-    title: "Portfolio Website",
-    description: "A modern, responsive portfolio website built with React and TypeScript",
-    image: "/placeholder.svg",
-    demo_link: "https://example.com",
-    github_link: "https://github.com/example/portfolio",
-    tech: ["React", "TypeScript", "Tailwind CSS"]
-  }
-];
-
-const initialSkills: Skill[] = [
-  {
-    id: 1,
-    name: "Python",
-    icon: "/placeholder.svg",
-    level: 95,
-    category: "programming"
-  },
-  {
-    id: 2,
-    name: "TensorFlow",
-    icon: "/placeholder.svg",
-    level: 85,
-    category: "ml"
-  },
-  {
-    id: 3,
-    name: "React",
-    icon: "/placeholder.svg",
-    level: 90,
-    category: "webdev"
-  }
-];
-
-const initialEducation: Education[] = [
-  {
-    id: 1,
-    provider: "Coursera",
-    courses: [
-      { id: 1, education_id: 1, name: "Machine Learning by Stanford", link: "https://coursera.org/verify/ML12345" },
-      { id: 2, education_id: 1, name: "Deep Learning Specialization", link: "https://coursera.org/verify/DL67890" }
-    ]
-  },
-  {
-    id: 2,
-    provider: "Udemy",
-    courses: [
-      { id: 3, education_id: 2, name: "Modern React with Redux", link: "https://udemy.com/certificate/12345" },
-      { id: 4, education_id: 2, name: "Complete Python Developer", link: "https://udemy.com/certificate/67890" }
-    ]
-  }
-];
-
 export const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [services, setServices] = useState<Service[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -136,29 +48,67 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load initial data
+  // Fetch data from Supabase
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       setError(null);
       
       try {
-        // For now, just use the initialized data until we create the actual tables in Supabase
-        // In a real app, we'd connect to the Supabase API here
+        // Fetch services
+        const { data: servicesData, error: servicesError } = await supabase
+          .from('kiel_portfolio_services')
+          .select('*');
+          
+        if (servicesError) throw servicesError;
         
-        // Try to load data from localStorage first (if it exists)
-        const savedServices = localStorage.getItem('adminServices');
-        const savedProjects = localStorage.getItem('adminProjects');
-        const savedSkills = localStorage.getItem('adminSkills');
-        const savedEducation = localStorage.getItem('adminEducation');
+        // Fetch projects
+        const { data: projectsData, error: projectsError } = await supabase
+          .from('kiel_portfolio_projects')
+          .select('*');
+          
+        if (projectsError) throw projectsError;
         
-        setServices(savedServices ? JSON.parse(savedServices) : initialServices);
-        setProjects(savedProjects ? JSON.parse(savedProjects) : initialProjects);
-        setSkills(savedSkills ? JSON.parse(savedSkills) : initialSkills);
-        setEducation(savedEducation ? JSON.parse(savedEducation) : initialEducation);
+        // Fetch skills
+        const { data: skillsData, error: skillsError } = await supabase
+          .from('kiel_portfolio_skills')
+          .select('*');
+          
+        if (skillsError) throw skillsError;
+        
+        // Fetch education with courses
+        const { data: educationData, error: educationError } = await supabase
+          .from('kiel_portfolio_education')
+          .select('*');
+          
+        if (educationError) throw educationError;
+        
+        // Fetch courses for each education
+        const educationWithCourses = await Promise.all(
+          educationData.map(async (edu) => {
+            const { data: coursesData, error: coursesError } = await supabase
+              .from('kiel_portfolio_education_courses')
+              .select('*')
+              .eq('education_id', edu.id);
+              
+            if (coursesError) throw coursesError;
+            
+            return {
+              ...edu,
+              courses: coursesData
+            };
+          })
+        );
+        
+        setServices(servicesData || []);
+        setProjects(projectsData || []);
+        setSkills(skillsData || []);
+        setEducation(educationWithCourses);
       } catch (error) {
-        console.error('Error loading data:', error);
-        setError('Failed to load data');
+        console.error('Error fetching data:', error);
+        setError('Failed to load data from database');
+        // Fall back to local storage if database fails
+        loadFromLocalStorage();
       } finally {
         setIsLoading(false);
       }
@@ -167,7 +117,22 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     fetchData();
   }, []);
 
-  // Save to localStorage whenever data changes
+  // Fallback to local storage if database fetch fails
+  const loadFromLocalStorage = () => {
+    const savedServices = localStorage.getItem('adminServices');
+    if (savedServices) setServices(JSON.parse(savedServices));
+    
+    const savedProjects = localStorage.getItem('adminProjects');
+    if (savedProjects) setProjects(JSON.parse(savedProjects));
+    
+    const savedSkills = localStorage.getItem('adminSkills');
+    if (savedSkills) setSkills(JSON.parse(savedSkills));
+    
+    const savedEducation = localStorage.getItem('adminEducation');
+    if (savedEducation) setEducation(JSON.parse(savedEducation));
+  };
+
+  // Save to localStorage whenever data changes as a backup
   useEffect(() => {
     localStorage.setItem('adminServices', JSON.stringify(services));
   }, [services]);
@@ -187,7 +152,13 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
   // Service operations
   const updateService = async (updatedService: Service) => {
     try {
-      // Update local state
+      const { error } = await supabase
+        .from('kiel_portfolio_services')
+        .update(updatedService)
+        .eq('id', updatedService.id);
+        
+      if (error) throw error;
+      
       setServices(prevServices => 
         prevServices.map(service => 
           service.id === updatedService.id ? updatedService : service
@@ -210,7 +181,13 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteService = async (id: number) => {
     try {
-      // Update local state
+      const { error } = await supabase
+        .from('kiel_portfolio_services')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      
       setServices(prevServices => prevServices.filter(service => service.id !== id));
       
       toast({
@@ -229,12 +206,16 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const addService = async (newService: Omit<Service, 'id'>) => {
     try {
-      // Generate a new ID locally (in a real app, this would come from the database)
-      const id = services.length > 0 ? Math.max(...services.map(s => s.id)) + 1 : 1;
+      const { data, error } = await supabase
+        .from('kiel_portfolio_services')
+        .insert(newService)
+        .select();
+        
+      if (error) throw error;
+      if (!data || data.length === 0) throw new Error('No data returned');
       
-      // Add to local state
-      const serviceToAdd = { ...newService, id } as Service;
-      setServices(prevServices => [...prevServices, serviceToAdd]);
+      const addedService = data[0] as Service;
+      setServices(prevServices => [...prevServices, addedService]);
       
       toast({
         title: "Service Added",
@@ -247,13 +228,23 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         description: "Failed to add service. Please try again.",
         variant: "destructive",
       });
+      
+      // Fallback to client-side ID generation for UI
+      const id = services.length > 0 ? Math.max(...services.map(s => s.id)) + 1 : 1;
+      setServices(prevServices => [...prevServices, { ...newService, id } as Service]);
     }
   };
 
   // Project operations
   const updateProject = async (updatedProject: Project) => {
     try {
-      // Update local state
+      const { error } = await supabase
+        .from('kiel_portfolio_projects')
+        .update(updatedProject)
+        .eq('id', updatedProject.id);
+        
+      if (error) throw error;
+      
       setProjects(prevProjects => 
         prevProjects.map(project => 
           project.id === updatedProject.id ? updatedProject : project
@@ -276,7 +267,13 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteProject = async (id: number) => {
     try {
-      // Update local state
+      const { error } = await supabase
+        .from('kiel_portfolio_projects')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      
       setProjects(prevProjects => prevProjects.filter(project => project.id !== id));
       
       toast({
@@ -295,12 +292,16 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const addProject = async (newProject: Omit<Project, 'id'>) => {
     try {
-      // Generate a new ID locally
-      const id = projects.length > 0 ? Math.max(...projects.map(p => p.id)) + 1 : 1;
+      const { data, error } = await supabase
+        .from('kiel_portfolio_projects')
+        .insert(newProject)
+        .select();
+        
+      if (error) throw error;
+      if (!data || data.length === 0) throw new Error('No data returned');
       
-      // Add to local state
-      const projectToAdd = { ...newProject, id } as Project;
-      setProjects(prevProjects => [...prevProjects, projectToAdd]);
+      const addedProject = data[0] as Project;
+      setProjects(prevProjects => [...prevProjects, addedProject]);
       
       toast({
         title: "Project Added",
@@ -313,13 +314,23 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         description: "Failed to add project. Please try again.",
         variant: "destructive",
       });
+      
+      // Fallback to client-side ID generation for UI
+      const id = projects.length > 0 ? Math.max(...projects.map(p => p.id)) + 1 : 1;
+      setProjects(prevProjects => [...prevProjects, { ...newProject, id } as Project]);
     }
   };
 
   // Skill operations
   const updateSkill = async (updatedSkill: Skill) => {
     try {
-      // Update local state
+      const { error } = await supabase
+        .from('kiel_portfolio_skills')
+        .update(updatedSkill)
+        .eq('id', updatedSkill.id);
+        
+      if (error) throw error;
+      
       setSkills(prevSkills => 
         prevSkills.map(skill => 
           skill.id === updatedSkill.id ? updatedSkill : skill
@@ -342,7 +353,13 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteSkill = async (id: number) => {
     try {
-      // Update local state
+      const { error } = await supabase
+        .from('kiel_portfolio_skills')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      
       setSkills(prevSkills => prevSkills.filter(skill => skill.id !== id));
       
       toast({
@@ -361,12 +378,16 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const addSkill = async (newSkill: Omit<Skill, 'id'>) => {
     try {
-      // Generate a new ID locally
-      const id = skills.length > 0 ? Math.max(...skills.map(s => s.id)) + 1 : 1;
+      const { data, error } = await supabase
+        .from('kiel_portfolio_skills')
+        .insert(newSkill)
+        .select();
+        
+      if (error) throw error;
+      if (!data || data.length === 0) throw new Error('No data returned');
       
-      // Add to local state
-      const skillToAdd = { ...newSkill, id } as Skill;
-      setSkills(prevSkills => [...prevSkills, skillToAdd]);
+      const addedSkill = data[0] as Skill;
+      setSkills(prevSkills => [...prevSkills, addedSkill]);
       
       toast({
         title: "Skill Added",
@@ -379,13 +400,47 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         description: "Failed to add skill. Please try again.",
         variant: "destructive",
       });
+      
+      // Fallback to client-side ID generation for UI
+      const id = skills.length > 0 ? Math.max(...skills.map(s => s.id)) + 1 : 1;
+      setSkills(prevSkills => [...prevSkills, { ...newSkill, id } as Skill]);
     }
   };
 
   // Education operations
   const updateEducation = async (updatedEducation: Education) => {
     try {
-      // Update local state
+      // First update the education provider
+      const { error: eduError } = await supabase
+        .from('kiel_portfolio_education')
+        .update({ provider: updatedEducation.provider })
+        .eq('id', updatedEducation.id);
+        
+      if (eduError) throw eduError;
+      
+      // Delete existing courses
+      const { error: deleteError } = await supabase
+        .from('kiel_portfolio_education_courses')
+        .delete()
+        .eq('education_id', updatedEducation.id);
+        
+      if (deleteError) throw deleteError;
+      
+      // Add updated courses
+      if (updatedEducation.courses.length > 0) {
+        const coursesToInsert = updatedEducation.courses.map(course => ({
+          education_id: updatedEducation.id,
+          name: course.name,
+          link: course.link
+        }));
+        
+        const { error: insertError } = await supabase
+          .from('kiel_portfolio_education_courses')
+          .insert(coursesToInsert);
+          
+        if (insertError) throw insertError;
+      }
+      
       setEducation(prevEducation => 
         prevEducation.map(edu => 
           edu.id === updatedEducation.id ? updatedEducation : edu
@@ -408,7 +463,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const deleteEducation = async (id: number) => {
     try {
-      // Update local state
+      // Delete education will cascade delete courses due to foreign key constraint
+      const { error } = await supabase
+        .from('kiel_portfolio_education')
+        .delete()
+        .eq('id', id);
+        
+      if (error) throw error;
+      
       setEducation(prevEducation => prevEducation.filter(edu => edu.id !== id));
       
       toast({
@@ -427,24 +489,39 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   const addEducation = async (newEducation: Omit<Education, 'id'>) => {
     try {
-      // Generate a new ID locally
-      const id = education.length > 0 ? Math.max(...education.map(e => e.id)) + 1 : 1;
+      // First insert education provider
+      const { data: eduData, error: eduError } = await supabase
+        .from('kiel_portfolio_education')
+        .insert({ provider: newEducation.provider })
+        .select();
+        
+      if (eduError) throw eduError;
+      if (!eduData || eduData.length === 0) throw new Error('No education data returned');
       
-      // Create course IDs as well
-      const coursesWithIds = newEducation.courses.map((course, index) => ({
-        ...course,
-        id: index + 1,
-        education_id: id
-      }));
+      const educationId = eduData[0].id;
       
-      // Add to local state
-      const educationToAdd = { 
-        ...newEducation,
-        id,
-        courses: coursesWithIds 
+      // Then insert courses
+      if (newEducation.courses.length > 0) {
+        const coursesToInsert = newEducation.courses.map(course => ({
+          education_id: educationId,
+          name: course.name,
+          link: course.link
+        }));
+        
+        const { error: coursesError } = await supabase
+          .from('kiel_portfolio_education_courses')
+          .insert(coursesToInsert);
+          
+        if (coursesError) throw coursesError;
+      }
+      
+      // Add new education to state with ID
+      const addedEducation = { 
+        ...newEducation, 
+        id: educationId 
       } as Education;
       
-      setEducation(prevEducation => [...prevEducation, educationToAdd]);
+      setEducation(prevEducation => [...prevEducation, addedEducation]);
       
       toast({
         title: "Education Provider Added",
@@ -457,6 +534,10 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         description: "Failed to add education provider. Please try again.",
         variant: "destructive",
       });
+      
+      // Fallback to client-side ID generation for UI
+      const id = education.length > 0 ? Math.max(...education.map(e => e.id)) + 1 : 1;
+      setEducation(prevEducation => [...prevEducation, { ...newEducation, id } as Education]);
     }
   };
 

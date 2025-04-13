@@ -1,4 +1,5 @@
 
+
 // Custom types for our portfolio application that work with Supabase
 export interface PortfolioService {
   id: number;
@@ -56,3 +57,4 @@ export interface PortfolioAdmin {
   created_at?: string;
   updated_at?: string;
 }
+
