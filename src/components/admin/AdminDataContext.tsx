@@ -14,7 +14,8 @@ import {
 export type Service = PortfolioService;
 export type Project = PortfolioProject;
 export type Skill = PortfolioSkill;
-export type Education = PortfolioEducation & { courses: { name: string; link: string }[] };
+export type Education = PortfolioEducation;
+export type EducationCourse = PortfolioEducationCourse;
 
 interface AdminContextType {
   services: Service[];
@@ -94,17 +95,14 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
             
             return {
               ...edu,
-              courses: coursesData.map(course => ({
-                name: course.name,
-                link: course.link
-              }))
+              courses: coursesData
             };
           })
         );
         
-        setServices(servicesData);
-        setProjects(projectsData);
-        setSkills(skillsData);
+        setServices(servicesData || []);
+        setProjects(projectsData || []);
+        setSkills(skillsData || []);
         setEducation(educationWithCourses);
       } catch (error) {
         console.error('Error fetching data:', error);

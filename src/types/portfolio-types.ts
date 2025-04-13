@@ -1,4 +1,5 @@
 
+
 // Custom types for our portfolio application that work with Supabase
 export interface PortfolioService {
   id: number;
@@ -41,8 +42,8 @@ export interface PortfolioEducation {
 }
 
 export interface PortfolioEducationCourse {
-  id: number;
-  education_id: number;
+  id?: number;
+  education_id?: number;
   name: string;
   link: string;
   created_at?: string;
@@ -56,3 +57,4 @@ export interface PortfolioAdmin {
   created_at?: string;
   updated_at?: string;
 }
+

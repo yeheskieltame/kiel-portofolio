@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useAdminData, Education } from './AdminDataContext';
+import { useAdminData, Education, EducationCourse } from './AdminDataContext';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -17,7 +17,10 @@ export const AdminEducation = () => {
   const [currentEducation, setCurrentEducation] = useState<Education | null>(null);
   const [newEducation, setNewEducation] = useState<Omit<Education, 'id'>>({
     provider: '',
-    courses: [{ name: '', link: '' }],
+    courses: [{
+      name: '',
+      link: ''
+    }],
   });
 
   const handleEditEducation = (edu: Education) => {
@@ -76,7 +79,10 @@ export const AdminEducation = () => {
     setIsAddDialogOpen(false);
     setNewEducation({
       provider: '',
-      courses: [{ name: '', link: '' }],
+      courses: [{
+        name: '',
+        link: ''
+      }],
     });
   };
 
@@ -349,7 +355,10 @@ export const AdminEducation = () => {
                 setIsAddDialogOpen(false);
                 setNewEducation({
                   provider: '',
-                  courses: [{ name: '', link: '' }],
+                  courses: [{
+                    name: '',
+                    link: ''
+                  }],
                 });
               }}
             >
