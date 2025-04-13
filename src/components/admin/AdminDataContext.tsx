@@ -1,12 +1,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from '@/hooks/use-toast';
-import { createClient } from '@supabase/supabase-js';
-
-// Initialize Supabase client
-const supabaseUrl = 'https://deeoqzyrvwudgtqcqpdc.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRlZW9xenlydnd1ZGd0cWNxcGRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyNTU0NzgsImV4cCI6MjA1OTgzMTQ3OH0.QR9vcNevBsVNIf22Le5JAndqUhNHMVRbGwsVUftgN0w';
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from '@/integrations/supabase/client';
 
 // Types for our data
 export interface Service {
@@ -443,6 +438,8 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
             icon: service.icon,
             features: service.features
           })));
+        } else {
+          setServices(defaultServices);
         }
         
         if (projectsData) {
@@ -455,6 +452,8 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
             githubLink: project.github_link,
             tech: project.tech
           })));
+        } else {
+          setProjects(defaultProjects);
         }
         
         if (skillsData) {
@@ -465,9 +464,15 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
             level: skill.level,
             category: skill.category as 'programming' | 'ml' | 'webdev'
           })));
+        } else {
+          setSkills(defaultSkills);
         }
         
-        setEducation(educationWithCourses);
+        if (educationWithCourses.length > 0) {
+          setEducation(educationWithCourses);
+        } else {
+          setEducation(defaultEducation);
+        }
         
       } catch (error) {
         console.error("Error fetching data from Supabase:", error);
