@@ -1,10 +1,12 @@
 
 import { useState } from "react";
-import { Code, BrainCircuit, MessageSquare, Facebook, Shield } from "lucide-react";
+import { Code, BrainCircuit, MessageSquare, Facebook, Shield, Zap, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ServiceRequestDialog from "@/components/ServiceRequestDialog";
+import { useAdminData } from "./admin/AdminDataContext";
 
 const Services = () => {
+  const { services } = useAdminData();
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -18,36 +20,20 @@ const Services = () => {
     setSelectedService(null);
   };
 
-  const services = [
-    {
-      id: 1,
-      title: "Custom Software Development",
-      description: "Tailored software solutions to meet your specific business needs with scalable architecture and clean code.",
-      icon: <Code className="h-8 w-8 text-theme-purple" />,
-      features: ["Web Applications", "Desktop Software", "Mobile Apps", "API Development"],
-    },
-    {
-      id: 2,
-      title: "Machine Learning Solutions",
-      description: "Data-driven ML solutions to optimize processes, predict outcomes, and unlock insights from your data.",
-      icon: <BrainCircuit className="h-8 w-8 text-theme-blue" />,
-      features: ["Predictive Analytics", "Data Classification", "Pattern Recognition", "Computer Vision"],
-    },
-    {
-      id: 3,
-      title: "Chatbot Development",
-      description: "Intelligent conversational agents to enhance customer support and streamline information delivery.",
-      icon: <MessageSquare className="h-8 w-8 text-theme-purple-dark" />,
-      features: ["AI-Powered Chatbots", "Customer Support Bots", "Lead Generation Bots", "Information Retrieval"],
-    },
-    {
-      id: 4,
-      title: "Meta Business Account Setup",
-      description: "Professional setup and optimization of your business presence across Meta platforms (Facebook, Instagram).",
-      icon: <Facebook className="h-8 w-8 text-[#1877F2]" />,
-      features: ["Business Page Creation", "Ad Account Setup", "Content Strategy", "Audience Targeting"],
-    }
-  ];
+  // Function to get the icon component based on the icon name
+  const getIconComponent = (iconName: string) => {
+    const icons: Record<string, React.ReactNode> = {
+      Code: <Code className="h-8 w-8 text-theme-purple" />,
+      BrainCircuit: <BrainCircuit className="h-8 w-8 text-theme-blue" />,
+      MessageSquare: <MessageSquare className="h-8 w-8 text-theme-purple-dark" />,
+      Facebook: <Facebook className="h-8 w-8 text-[#1877F2]" />,
+      Shield: <Shield className="h-8 w-8 text-theme-purple" />,
+      Zap: <Zap className="h-8 w-8 text-theme-blue" />,
+      Database: <Database className="h-8 w-8 text-theme-purple-dark" />
+    };
+    
+    return icons[iconName] || <Code className="h-8 w-8 text-theme-purple" />;
+  };
 
   return (
     <section id="services" className="py-20 px-6 md:px-10 bg-white relative overflow-hidden">
@@ -75,7 +61,7 @@ const Services = () => {
             >
               <div className="flex flex-col h-full">
                 <div className="mb-6 p-3 bg-gradient-to-br from-theme-purple/10 to-theme-blue/10 rounded-lg inline-block">
-                  {service.icon}
+                  {getIconComponent(service.icon)}
                 </div>
                 
                 <h3 className="text-xl font-bold mb-3 text-theme-dark group-hover:text-theme-purple transition-colors">

@@ -54,6 +54,58 @@ This personal portfolio website showcases Yeheskiel's professional skills, proje
 - **Language Selection**: Switch between English and Indonesian for text-to-speech output.
 - **Closing the Chat**: Click the X button in the chat bubble or the X in the top right of the chat window.
 
+### Admin Panel
+- **Accessing Admin**: Navigate to `/admin` path to access the admin panel.
+- **Authentication**: Secure login with password protection.
+- **Content Management**: Edit, add or delete items in the following sections:
+  - Services ("What I Offer")
+  - Projects
+  - Skills & Technologies
+  - Education & Certifications
+- **User-Friendly Interface**: Intuitive tabs and forms for easy content updates.
+
+## Admin Panel User Guide
+
+### Accessing the Admin Panel
+1. Navigate to the `/admin` path in your browser.
+2. Enter your admin password on the login screen.
+3. Upon successful authentication, you'll be directed to the admin dashboard.
+
+### Managing Services
+1. Click the "Services" tab in the admin dashboard.
+2. **Add Service**: Click the "Add Service" button and fill in the required information.
+3. **Edit Service**: Click the edit icon on any service card to modify its details.
+4. **Delete Service**: Click the trash icon on any service card to remove it.
+
+### Managing Projects
+1. Click the "Projects" tab in the admin dashboard.
+2. **Add Project**: Click the "Add Project" button and complete the project form.
+3. **Edit Project**: Click the edit icon on any project card to update its information.
+4. **Delete Project**: Click the trash icon on any project card to remove it.
+5. All projects support images, demo links, GitHub links, and technology tags.
+
+### Managing Skills
+1. Click the "Skills" tab in the admin dashboard.
+2. Skills are categorized into:
+   - Programming Languages
+   - Machine Learning & Data Science
+   - Web Development & Tools
+3. **Add Skill**: Click the "Add Skill" button, select a category, and set proficiency level.
+4. **Edit Skill**: Click the edit icon on any skill card to modify its details.
+5. **Delete Skill**: Click the trash icon on any skill card to remove it.
+
+### Managing Education
+1. Click the "Education" tab in the admin dashboard.
+2. **Add Education Provider**: Click the "Add Education Provider" button and fill in provider details.
+3. **Add Multiple Courses**: Within each provider, add multiple courses/certifications.
+4. **Edit Education**: Click the edit icon on any education card to update provider or course details.
+5. **Delete Education**: Click the trash icon on any education card to remove a provider and all its courses.
+
+### Security Best Practices
+- Log out of the admin panel when you're finished making changes.
+- Periodically change your admin password for enhanced security.
+- The admin panel uses local storage for authentication; clearing browser data will require re-authentication.
+
 ## Technical Information
 
 This project is built with:
@@ -66,6 +118,7 @@ This project is built with:
 - **Lucide React**: Beautiful open-source icons
 - **Speech Recognition API**: For voice input in the chatbot
 - **ElevenLabs API**: For high-quality text-to-speech in the chatbot
+- **Local Storage**: For persisting admin content changes and authentication
 
 ## How to Edit This Project
 

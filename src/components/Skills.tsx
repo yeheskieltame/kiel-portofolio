@@ -1,105 +1,14 @@
 
 import SkillCard from "./SkillCard";
+import { useAdminData } from "./admin/AdminDataContext";
 
 const Skills = () => {
-  const programmingSkills = [
-    {
-      name: "Python",
-      icon: "/placeholder.svg",
-      level: 90,
-    },
-    {
-      name: "JavaScript",
-      icon: "/placeholder.svg",
-      level: 85,
-    },
-    {
-      name: "Java",
-      icon: "/placeholder.svg",
-      level: 80,
-    },
-    {
-      name: "HTML & CSS",
-      icon: "/placeholder.svg",
-      level: 85,
-    },
-    {
-      name: "PHP",
-      icon: "/placeholder.svg",
-      level: 75,
-    },
-    {
-      name: "SQL",
-      icon: "/placeholder.svg",
-      level: 80,
-    },
-  ];
+  const { skills } = useAdminData();
 
-  const mlSkills = [
-    {
-      name: "TensorFlow",
-      icon: "/placeholder.svg",
-      level: 85,
-    },
-    {
-      name: "PyTorch",
-      icon: "/placeholder.svg",
-      level: 75,
-    },
-    {
-      name: "Scikit-learn",
-      icon: "/placeholder.svg",
-      level: 90,
-    },
-    {
-      name: "Pandas",
-      icon: "/placeholder.svg",
-      level: 90,
-    },
-    {
-      name: "NumPy",
-      icon: "/placeholder.svg",
-      level: 85,
-    },
-    {
-      name: "Matplotlib",
-      icon: "/placeholder.svg",
-      level: 80,
-    },
-  ];
-
-  const webDevSkills = [
-    {
-      name: "Laravel",
-      icon: "/placeholder.svg",
-      level: 75,
-    },
-    {
-      name: "Bootstrap",
-      icon: "/placeholder.svg",
-      level: 85,
-    },
-    {
-      name: "TailwindCSS",
-      icon: "/placeholder.svg",
-      level: 80,
-    },
-    {
-      name: "Flask",
-      icon: "/placeholder.svg",
-      level: 75,
-    },
-    {
-      name: "Git & GitHub",
-      icon: "/placeholder.svg",
-      level: 85,
-    },
-    {
-      name: "Google Cloud",
-      icon: "/placeholder.svg",
-      level: 70,
-    },
-  ];
+  // Group skills by category
+  const programmingSkills = skills.filter(skill => skill.category === 'programming');
+  const mlSkills = skills.filter(skill => skill.category === 'ml');
+  const webDevSkills = skills.filter(skill => skill.category === 'webdev');
 
   return (
     <section id="skills" className="py-20 px-6 md:px-10 bg-gray-50">
@@ -120,7 +29,7 @@ const Skills = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {programmingSkills.map((skill, index) => (
                 <SkillCard
-                  key={skill.name}
+                  key={skill.id}
                   name={skill.name}
                   icon={skill.icon}
                   level={skill.level}
@@ -135,7 +44,7 @@ const Skills = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {mlSkills.map((skill, index) => (
                 <SkillCard
-                  key={skill.name}
+                  key={skill.id}
                   name={skill.name}
                   icon={skill.icon}
                   level={skill.level}
@@ -150,7 +59,7 @@ const Skills = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {webDevSkills.map((skill, index) => (
                 <SkillCard
-                  key={skill.name}
+                  key={skill.id}
                   name={skill.name}
                   icon={skill.icon}
                   level={skill.level}

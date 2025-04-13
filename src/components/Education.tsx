@@ -1,75 +1,11 @@
 
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAdminData } from "./admin/AdminDataContext";
 
 const Education = () => {
-  const certifications = [
-    {
-      provider: "DeepLearning.AI",
-      courses: [
-        {
-          name: "Linear Algebra for Machine Learning and Data Science",
-          link: "https://www.coursera.org/account/accomplishments/verify/X1AKSP4V28QN"
-        }
-      ]
-    },
-    {
-      provider: "Dicoding Indonesia",
-      courses: [
-        {
-          name: "Learn Data Analysis with Python",
-          link: "https://www.dicoding.com/certificates/1OP84LG61ZQK"
-        },
-        {
-          name: "Learn the Basics of Data Visualization",
-          link: "https://www.dicoding.com/certificates/GRX54GKJYP0M"
-        },
-        {
-          name: "Belajar Dasar Structured Query Language (SQL)",
-          link: "https://www.dicoding.com/certificates/JMZV1234RXN9"
-        },
-        {
-          name: "Getting Started with Programming Basics to Become a Software Developer",
-          link: "https://www.dicoding.com/certificates/81P2N05WNXOY"
-        },
-        {
-          name: "Introduction to Programming Logic (Programming Logic 101)",
-          link: "https://www.dicoding.com/certificates/JLX17OVD6X72"
-        },
-        {
-          name: "Getting Started with Python Programming",
-          link: "https://www.dicoding.com/certificates/GRX54DW1YP0M"
-        },
-        {
-          name: "Learn Git Basics with GitHub",
-          link: "https://www.dicoding.com/certificates/JMZV3KO5JPN9"
-        }
-      ]
-    },
-    {
-      provider: "SanberCode",
-      courses: [
-        {
-          name: "Laravel Web Development",
-          link: "https://sanbercode.com/certificate/in/c352b903-be13-445f-9aa7-3bc77f2ba2f3"
-        }
-      ]
-    },
-    {
-      provider: "Coursera",
-      courses: [
-        {
-          name: "Crash Course on Python",
-          link: "https://www.coursera.org/account/accomplishments/verify/S6KHEU5OCWWS"
-        },
-        {
-          name: "Using Python to Interact with the Operating System",
-          link: "https://www.coursera.org/account/accomplishments/verify/5D7M81TJ3QZ2"
-        }
-      ]
-    }
-  ];
-
+  const { education } = useAdminData();
+  
   return (
     <section id="education" className="py-20 px-6 md:px-10">
       <div className="max-w-7xl mx-auto">
@@ -110,23 +46,25 @@ const Education = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {certifications.map((cert, index) => (
+            {education.map((cert, index) => (
               <div 
-                key={cert.provider} 
+                key={cert.id} 
                 className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 opacity-0 animate-fade-in hover-scale"
                 style={{ animationDelay: `${0.2 + index * 0.1}s`, animationFillMode: "forwards" }}
               >
                 <h3 className="text-xl font-semibold mb-4">{cert.provider}</h3>
                 <ul className="space-y-3">
-                  {cert.courses.map((course) => (
-                    <li key={course.name} className="flex justify-between items-start">
+                  {cert.courses.map((course, courseIndex) => (
+                    <li key={courseIndex} className="flex justify-between items-start">
                       <span className="text-sm text-muted-foreground">{course.name}</span>
-                      <Button size="sm" variant="ghost" className="p-0 h-auto" asChild>
-                        <a href={course.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs">
-                          <ExternalLink className="h-3 w-3" />
-                          <span>Verify</span>
-                        </a>
-                      </Button>
+                      {course.link && (
+                        <Button size="sm" variant="ghost" className="p-0 h-auto" asChild>
+                          <a href={course.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs">
+                            <ExternalLink className="h-3 w-3" />
+                            <span>Verify</span>
+                          </a>
+                        </Button>
+                      )}
                     </li>
                   ))}
                 </ul>
