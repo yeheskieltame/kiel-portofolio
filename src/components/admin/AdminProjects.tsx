@@ -1,13 +1,13 @@
 
 import { useState } from 'react';
 import { useAdminData, Project } from './AdminDataContext';
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Pencil, Trash2, Plus, Save, X, ExternalLink, Github, PlusCircle, MinusCircle, ImageIcon } from "lucide-react";
+import { Pencil, Trash2, Plus, Save, X, ExternalLink, Github, PlusCircle, MinusCircle } from "lucide-react";
 import { toast } from '@/hooks/use-toast';
 
 export const AdminProjects = () => {
@@ -19,20 +19,15 @@ export const AdminProjects = () => {
   const [newProject, setNewProject] = useState<Omit<Project, 'id'>>({
     title: '',
     description: '',
-    image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d',
-    demo_link: '',
-    github_link: '',
-    tech: []
+    image: '',
+    demoLink: '',
+    githubLink: '',
+    tech: [''],
   });
-
-  // For managing technologies input
-  const [techInput, setTechInput] = useState('');
-  const [newTechInput, setNewTechInput] = useState('');
 
   const handleEditProject = (project: Project) => {
     setCurrentProject({ ...project });
     setIsEditDialogOpen(true);
-    setTechInput(''); // Reset tech input when opening edit dialog
   };
 
   const handleSaveEdit = () => {
@@ -41,7 +36,7 @@ export const AdminProjects = () => {
     if (!currentProject.title || !currentProject.description || !currentProject.image) {
       toast({
         title: "Validation Error",
-        description: "Title, description, and image URL are required.",
+        description: "Title, description and image URL are required.",
         variant: "destructive",
       });
       return;
@@ -56,23 +51,37 @@ export const AdminProjects = () => {
     if (!newProject.title || !newProject.description || !newProject.image) {
       toast({
         title: "Validation Error",
-        description: "Title, description, and image URL are required.",
+        description: "Title, description and image URL are required.",
         variant: "destructive",
       });
       return;
     }
 
-    addProject(newProject);
+    // Filter out empty technologies
+    const cleanedTech = newProject.tech.filter(t => t.trim() !== '');
+    if (cleanedTech.length === 0) {
+      toast({
+        title: "Validation Error",
+        description: "At least one technology is required.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    addProject({
+      ...newProject,
+      tech: cleanedTech
+    });
+    
     setIsAddDialogOpen(false);
     setNewProject({
       title: '',
       description: '',
-      image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d',
-      demo_link: '',
-      github_link: '',
-      tech: []
+      image: '',
+      demoLink: '',
+      githubLink: '',
+      tech: [''],
     });
-    setNewTechInput('');
   };
 
   const handleConfirmDelete = () => {
@@ -83,44 +92,50 @@ export const AdminProjects = () => {
     setCurrentProject(null);
   };
 
-  const handleAddTech = () => {
-    if (techInput.trim() && currentProject) {
-      if (!currentProject.tech.includes(techInput.trim())) {
-        setCurrentProject({
-          ...currentProject,
-          tech: [...currentProject.tech, techInput.trim()]
-        });
-        setTechInput('');
-      }
+  const handleAddTech = (isNew: boolean) => {
+    if (isNew) {
+      setNewProject(prev => ({
+        ...prev,
+        tech: [...prev.tech, '']
+      }));
+    } else if (currentProject) {
+      setCurrentProject(prev => ({
+        ...prev!,
+        tech: [...prev!.tech, '']
+      }));
     }
   };
 
-  const handleAddNewTech = () => {
-    if (newTechInput.trim()) {
-      if (!newProject.tech.includes(newTechInput.trim())) {
-        setNewProject({
-          ...newProject,
-          tech: [...newProject.tech, newTechInput.trim()]
-        });
-        setNewTechInput('');
-      }
+  const handleRemoveTech = (index: number, isNew: boolean) => {
+    if (isNew) {
+      setNewProject(prev => ({
+        ...prev,
+        tech: prev.tech.filter((_, i) => i !== index)
+      }));
+    } else if (currentProject) {
+      setCurrentProject(prev => ({
+        ...prev!,
+        tech: prev!.tech.filter((_, i) => i !== index)
+      }));
     }
   };
 
-  const handleRemoveTech = (tech: string) => {
-    if (currentProject) {
-      setCurrentProject({
-        ...currentProject,
-        tech: currentProject.tech.filter(t => t !== tech)
-      });
+  const handleTechChange = (value: string, index: number, isNew: boolean) => {
+    if (isNew) {
+      const updatedTech = [...newProject.tech];
+      updatedTech[index] = value;
+      setNewProject(prev => ({
+        ...prev,
+        tech: updatedTech
+      }));
+    } else if (currentProject) {
+      const updatedTech = [...currentProject.tech];
+      updatedTech[index] = value;
+      setCurrentProject(prev => ({
+        ...prev!,
+        tech: updatedTech
+      }));
     }
-  };
-
-  const handleRemoveNewTech = (tech: string) => {
-    setNewProject({
-      ...newProject,
-      tech: newProject.tech.filter(t => t !== tech)
-    });
   };
 
   return (
@@ -132,91 +147,91 @@ export const AdminProjects = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {projects.map((project) => (
-          <Card key={project.id} className="overflow-hidden flex flex-col">
-            <div className="aspect-video w-full overflow-hidden">
-              <img 
-                src={project.image} 
-                alt={project.title}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  // Fallback to a placeholder if image fails to load
-                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/600x400?text=Image+Not+Found';
-                }}
-              />
-            </div>
-            <CardContent className="p-6 flex-grow">
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="font-bold text-lg">{project.title}</h3>
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => handleEditProject(project)}
-                    className="h-8 w-8 p-0"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
-                    onClick={() => {
-                      setCurrentProject(project);
-                      setIsDeleteDialogOpen(true);
-                    }}
-                    className="h-8 w-8 p-0"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+          <Card key={project.id} className="overflow-hidden">
+            <CardContent className="p-0">
+              <div className="aspect-video w-full overflow-hidden">
+                <img 
+                  src={project.image} 
+                  alt={project.title} 
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/placeholder.svg";
+                  }}
+                />
+              </div>
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold text-lg line-clamp-1">{project.title}</h3>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleEditProject(project)}
+                      className="h-8 w-8 p-0"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      onClick={() => {
+                        setCurrentProject(project);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                      className="h-8 w-8 p-0"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{project.description}</p>
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {project.tech.map((tech, index) => (
+                    <span 
+                      key={index} 
+                      className="inline-block px-2 py-0.5 bg-gray-100 text-xs rounded-full"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex gap-2 text-xs">
+                  {project.demoLink && (
+                    <a 
+                      href={project.demoLink} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-theme-purple"
+                    >
+                      <ExternalLink className="h-3 w-3" /> Demo
+                    </a>
+                  )}
+                  {project.githubLink && project.githubLink.trim() !== " " && (
+                    <a 
+                      href={project.githubLink} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-gray-600"
+                    >
+                      <Github className="h-3 w-3" /> Repository
+                    </a>
+                  )}
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{project.description}</p>
-              <div className="flex flex-wrap gap-1 mb-3">
-                {project.tech.map((tech, i) => (
-                  <span key={i} className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded">
-                    {tech}
-                  </span>
-                ))}
-              </div>
             </CardContent>
-            <CardFooter className="px-6 py-3 bg-secondary/20 flex justify-between">
-              <div className="flex gap-4">
-                {project.demo_link && (
-                  <a 
-                    href={project.demo_link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-xs text-theme-purple"
-                  >
-                    <ExternalLink className="h-3 w-3" />
-                    <span>Demo</span>
-                  </a>
-                )}
-                {project.github_link && (
-                  <a 
-                    href={project.github_link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-xs text-theme-purple"
-                  >
-                    <Github className="h-3 w-3" />
-                    <span>GitHub</span>
-                  </a>
-                )}
-              </div>
-            </CardFooter>
           </Card>
         ))}
       </div>
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Edit Project</DialogTitle>
             <DialogDescription>
-              Make changes to the project information.
+              Make changes to the project details.
             </DialogDescription>
           </DialogHeader>
           {currentProject && (
@@ -240,75 +255,62 @@ export const AdminProjects = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-image">Image URL</Label>
-                <div className="flex gap-2">
-                  <Input 
-                    id="edit-image" 
-                    value={currentProject.image} 
-                    onChange={(e) => setCurrentProject({...currentProject, image: e.target.value})}
-                    className="flex-1"
-                  />
-                  <div className="h-10 w-10 bg-secondary flex items-center justify-center rounded">
-                    <ImageIcon className="h-5 w-5" />
-                  </div>
-                </div>
-                {currentProject.image && (
-                  <div className="mt-2 aspect-video w-full overflow-hidden rounded">
-                    <img 
-                      src={currentProject.image} 
-                      alt="Preview" 
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        // Fallback to a placeholder if image fails to load
-                        (e.target as HTMLImageElement).src = 'https://via.placeholder.com/600x400?text=Image+Not+Found';
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-demo-link">Demo Link (Optional)</Label>
                 <Input 
-                  id="edit-demo-link" 
-                  value={currentProject.demo_link} 
-                  onChange={(e) => setCurrentProject({...currentProject, demo_link: e.target.value})}
+                  id="edit-image" 
+                  value={currentProject.image} 
+                  onChange={(e) => setCurrentProject({...currentProject, image: e.target.value})}
+                  placeholder="https://example.com/image.jpg"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-github-link">GitHub Link (Optional)</Label>
+                <Label htmlFor="edit-demo">Demo Link</Label>
                 <Input 
-                  id="edit-github-link" 
-                  value={currentProject.github_link} 
-                  onChange={(e) => setCurrentProject({...currentProject, github_link: e.target.value})}
+                  id="edit-demo" 
+                  value={currentProject.demoLink} 
+                  onChange={(e) => setCurrentProject({...currentProject, demoLink: e.target.value})}
+                  placeholder="https://example.com"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Technologies</Label>
-                <div className="flex gap-2 mb-2">
-                  <Input
-                    value={techInput}
-                    onChange={(e) => setTechInput(e.target.value)}
-                    placeholder="Add technology..."
-                    className="flex-1"
-                    onKeyDown={(e) => e.key === 'Enter' && handleAddTech()}
-                  />
+                <Label htmlFor="edit-github">GitHub Link</Label>
+                <Input 
+                  id="edit-github" 
+                  value={currentProject.githubLink} 
+                  onChange={(e) => setCurrentProject({...currentProject, githubLink: e.target.value})}
+                  placeholder="https://github.com/username/repo"
+                />
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label>Technologies</Label>
                   <Button 
-                    onClick={handleAddTech} 
-                    type="button"
-                    variant="outline"
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleAddTech(false)}
+                    className="h-7 px-2"
                   >
-                    <PlusCircle className="h-4 w-4" />
+                    <PlusCircle className="h-3.5 w-3.5 mr-1" /> Add Tech
                   </Button>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="space-y-2">
                   {currentProject.tech.map((tech, index) => (
-                    <div key={index} className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full flex items-center gap-1">
-                      <span className="text-sm">{tech}</span>
-                      <button 
-                        onClick={() => handleRemoveTech(tech)}
-                        className="text-gray-500 hover:text-red-500"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
+                    <div key={index} className="flex items-center gap-2">
+                      <Input
+                        value={tech}
+                        onChange={(e) => handleTechChange(e.target.value, index, false)}
+                        placeholder={`Technology ${index + 1}`}
+                        className="flex-1"
+                      />
+                      {currentProject.tech.length > 1 && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => handleRemoveTech(index, false)}
+                          className="h-9 w-9 p-0"
+                        >
+                          <MinusCircle className="h-4 w-4 text-destructive" />
+                        </Button>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -334,7 +336,7 @@ export const AdminProjects = () => {
 
       {/* Add Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Add New Project</DialogTitle>
             <DialogDescription>
@@ -348,7 +350,7 @@ export const AdminProjects = () => {
                 id="add-title" 
                 value={newProject.title} 
                 onChange={(e) => setNewProject({...newProject, title: e.target.value})}
-                placeholder="e.g., Personal Portfolio Website"
+                placeholder="e.g., E-Commerce Website"
               />
             </div>
             <div className="space-y-2">
@@ -363,78 +365,62 @@ export const AdminProjects = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="add-image">Image URL</Label>
-              <div className="flex gap-2">
-                <Input 
-                  id="add-image" 
-                  value={newProject.image} 
-                  onChange={(e) => setNewProject({...newProject, image: e.target.value})}
-                  className="flex-1"
-                  placeholder="https://example.com/image.jpg"
-                />
-                <div className="h-10 w-10 bg-secondary flex items-center justify-center rounded">
-                  <ImageIcon className="h-5 w-5" />
-                </div>
-              </div>
-              {newProject.image && (
-                <div className="mt-2 aspect-video w-full overflow-hidden rounded">
-                  <img 
-                    src={newProject.image} 
-                    alt="Preview" 
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      // Fallback to a placeholder if image fails to load
-                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/600x400?text=Image+Not+Found';
-                    }}
-                  />
-                </div>
-              )}
+              <Input 
+                id="add-image" 
+                value={newProject.image} 
+                onChange={(e) => setNewProject({...newProject, image: e.target.value})}
+                placeholder="https://example.com/image.jpg"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="add-demo-link">Demo Link (Optional)</Label>
+              <Label htmlFor="add-demo">Demo Link</Label>
               <Input 
-                id="add-demo-link" 
-                value={newProject.demo_link} 
-                onChange={(e) => setNewProject({...newProject, demo_link: e.target.value})}
+                id="add-demo" 
+                value={newProject.demoLink} 
+                onChange={(e) => setNewProject({...newProject, demoLink: e.target.value})}
                 placeholder="https://example.com"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="add-github-link">GitHub Link (Optional)</Label>
+              <Label htmlFor="add-github">GitHub Link</Label>
               <Input 
-                id="add-github-link" 
-                value={newProject.github_link} 
-                onChange={(e) => setNewProject({...newProject, github_link: e.target.value})}
-                placeholder="https://github.com/yourusername/project"
+                id="add-github" 
+                value={newProject.githubLink} 
+                onChange={(e) => setNewProject({...newProject, githubLink: e.target.value})}
+                placeholder="https://github.com/username/repo"
               />
             </div>
             <div className="space-y-2">
-              <Label>Technologies</Label>
-              <div className="flex gap-2 mb-2">
-                <Input
-                  value={newTechInput}
-                  onChange={(e) => setNewTechInput(e.target.value)}
-                  placeholder="Add technology..."
-                  className="flex-1"
-                  onKeyDown={(e) => e.key === 'Enter' && handleAddNewTech()}
-                />
+              <div className="flex justify-between items-center">
+                <Label>Technologies</Label>
                 <Button 
-                  onClick={handleAddNewTech} 
-                  type="button"
-                  variant="outline"
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleAddTech(true)}
+                  className="h-7 px-2"
                 >
-                  <PlusCircle className="h-4 w-4" />
+                  <PlusCircle className="h-3.5 w-3.5 mr-1" /> Add Tech
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="space-y-2">
                 {newProject.tech.map((tech, index) => (
-                  <div key={index} className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full flex items-center gap-1">
-                    <span className="text-sm">{tech}</span>
-                    <button 
-                      onClick={() => handleRemoveNewTech(tech)}
-                      className="text-gray-500 hover:text-red-500"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
+                  <div key={index} className="flex items-center gap-2">
+                    <Input
+                      value={tech}
+                      onChange={(e) => handleTechChange(e.target.value, index, true)}
+                      placeholder={`Technology ${index + 1}`}
+                      className="flex-1"
+                    />
+                    {newProject.tech.length > 1 && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => handleRemoveTech(index, true)}
+                        className="h-9 w-9 p-0"
+                      >
+                        <MinusCircle className="h-4 w-4 text-destructive" />
+                      </Button>
+                    )}
                   </div>
                 ))}
               </div>
@@ -448,12 +434,11 @@ export const AdminProjects = () => {
                 setNewProject({
                   title: '',
                   description: '',
-                  image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d',
-                  demo_link: '',
-                  github_link: '',
-                  tech: []
+                  image: '',
+                  demoLink: '',
+                  githubLink: '',
+                  tech: [''],
                 });
-                setNewTechInput('');
               }}
             >
               <X className="h-4 w-4 mr-2" /> Cancel

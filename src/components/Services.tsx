@@ -4,10 +4,9 @@ import { Code, BrainCircuit, MessageSquare, Facebook, Shield, Zap, Database } fr
 import { Button } from "@/components/ui/button";
 import ServiceRequestDialog from "@/components/ServiceRequestDialog";
 import { useAdminData } from "./admin/AdminDataContext";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const Services = () => {
-  const { services, isLoading } = useAdminData();
+  const { services } = useAdminData();
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -36,9 +35,6 @@ const Services = () => {
     return icons[iconName] || <Code className="h-8 w-8 text-theme-purple" />;
   };
 
-  // Create skeleton array for loading state
-  const skeletonServices = Array(4).fill(0);
-
   return (
     <section id="services" className="py-20 px-6 md:px-10 bg-white relative overflow-hidden">
       <div className="absolute inset-0 bg-circuit bg-cover bg-fixed opacity-5"></div>
@@ -57,84 +53,48 @@ const Services = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {isLoading ? (
-            // Skeleton UI while loading
-            skeletonServices.map((_, index) => (
-              <div 
-                key={`skeleton-${index}`} 
-                className="bg-white/80 backdrop-blur-sm border border-gray-100 rounded-xl p-8 shadow-xl"
-              >
-                <div className="flex flex-col h-full">
-                  <div className="mb-6">
-                    <Skeleton className="h-14 w-14 rounded-lg" />
-                  </div>
-                  <Skeleton className="h-7 w-48 mb-3" />
-                  <Skeleton className="h-4 w-full mb-2" />
-                  <Skeleton className="h-4 w-3/4 mb-6" />
-                  
-                  <div className="mb-6">
-                    <Skeleton className="h-5 w-24 mb-3" />
-                    <div className="grid grid-cols-2 gap-2">
-                      {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="flex items-center gap-2">
-                          <Skeleton className="h-1.5 w-1.5 rounded-full" />
-                          <Skeleton className="h-3 w-20" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="mt-auto">
-                    <Skeleton className="h-9 w-full rounded-md" />
-                  </div>
+          {services.map((service, index) => (
+            <div 
+              key={service.id}
+              className="bg-white/80 backdrop-blur-sm border border-gray-100 rounded-xl p-8 shadow-xl transition-all duration-300 hover:shadow-2xl hover:shadow-theme-purple/10 hover:border-theme-purple/30 group"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="flex flex-col h-full">
+                <div className="mb-6 p-3 bg-gradient-to-br from-theme-purple/10 to-theme-blue/10 rounded-lg inline-block">
+                  {getIconComponent(service.icon)}
                 </div>
-              </div>
-            ))
-          ) : (
-            // Actual services when loaded
-            services.map((service, index) => (
-              <div 
-                key={service.id}
-                className="bg-white/80 backdrop-blur-sm border border-gray-100 rounded-xl p-8 shadow-xl transition-all duration-300 hover:shadow-2xl hover:shadow-theme-purple/10 hover:border-theme-purple/30 group"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="flex flex-col h-full">
-                  <div className="mb-6 p-3 bg-gradient-to-br from-theme-purple/10 to-theme-blue/10 rounded-lg inline-block">
-                    {getIconComponent(service.icon)}
-                  </div>
-                  
-                  <h3 className="text-xl font-bold mb-3 text-theme-dark group-hover:text-theme-purple transition-colors">
-                    {service.title}
-                  </h3>
-                  
-                  <p className="text-muted-foreground mb-6 flex-grow">
-                    {service.description}
-                  </p>
-                  
-                  <div className="mb-6">
-                    <h4 className="text-sm uppercase text-muted-foreground font-medium mb-3">Features</h4>
-                    <ul className="grid grid-cols-2 gap-2">
-                      {service.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center gap-2 text-sm">
-                          <span className="h-1.5 w-1.5 rounded-full bg-theme-purple"></span>
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full border-theme-purple text-theme-purple hover:bg-theme-purple hover:text-white transition-all"
-                    onClick={() => handleRequestService(service.title)}
-                  >
-                    Request Service
-                  </Button>
+                
+                <h3 className="text-xl font-bold mb-3 text-theme-dark group-hover:text-theme-purple transition-colors">
+                  {service.title}
+                </h3>
+                
+                <p className="text-muted-foreground mb-6 flex-grow">
+                  {service.description}
+                </p>
+                
+                <div className="mb-6">
+                  <h4 className="text-sm uppercase text-muted-foreground font-medium mb-3">Features</h4>
+                  <ul className="grid grid-cols-2 gap-2">
+                    {service.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-center gap-2 text-sm">
+                        <span className="h-1.5 w-1.5 rounded-full bg-theme-purple"></span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full border-theme-purple text-theme-purple hover:bg-theme-purple hover:text-white transition-all"
+                  onClick={() => handleRequestService(service.title)}
+                >
+                  Request Service
+                </Button>
               </div>
-            ))
-          )}
+            </div>
+          ))}
         </div>
       </div>
 
