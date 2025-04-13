@@ -3,14 +3,18 @@ import { useState } from "react";
 import ProjectCard from "./ProjectCard";
 import { Button } from "@/components/ui/button";
 import { useAdminData } from "./admin/AdminDataContext";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Projects = () => {
-  const { projects } = useAdminData();
+  const { projects, isLoading } = useAdminData();
   
   const [visibleProjects, setVisibleProjects] = useState(4);
   const showMoreProjects = () => {
     setVisibleProjects(prevVisible => Math.min(prevVisible + 2, projects.length));
   };
+
+  // Create skeleton array for loading state
+  const skeletonArray = Array(4).fill(0);
 
   return (
     <section id="projects" className="py-20 px-6 md:px-10">
@@ -28,21 +32,41 @@ const Projects = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-          {projects.slice(0, visibleProjects).map((project, index) => (
-            <ProjectCard
-              key={project.id}
-              title={project.title}
-              description={project.description}
-              image={project.image}
-              demoLink={project.demoLink}
-              githubLink={project.githubLink}
-              tech={project.tech}
-              index={index}
-            />
-          ))}
+          {isLoading 
+            ? skeletonArray.map((_, index) => (
+                <div key={`skeleton-${index}`} className="rounded-xl overflow-hidden">
+                  <Skeleton className="h-48 w-full" />
+                  <div className="p-6">
+                    <Skeleton className="h-6 w-3/4 mb-2" />
+                    <Skeleton className="h-4 w-full mb-4" />
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {[1, 2, 3].map((i) => (
+                        <Skeleton key={i} className="h-6 w-16 rounded-md" />
+                      ))}
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Skeleton className="h-9 w-24 rounded-full" />
+                      <Skeleton className="h-9 w-24 rounded-full" />
+                    </div>
+                  </div>
+                </div>
+              ))
+            : projects.slice(0, visibleProjects).map((project, index) => (
+                <ProjectCard
+                  key={project.id}
+                  title={project.title}
+                  description={project.description}
+                  image={project.image}
+                  demoLink={project.demoLink || project.demo_link}
+                  githubLink={project.githubLink || project.github_link}
+                  tech={project.tech}
+                  index={index}
+                />
+              ))
+          }
         </div>
 
-        {visibleProjects < projects.length && (
+        {!isLoading && visibleProjects < projects.length && (
           <div className="text-center mt-12">
             <Button 
               onClick={showMoreProjects} 
