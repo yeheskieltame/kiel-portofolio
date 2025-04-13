@@ -2,13 +2,9 @@
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAdminData } from "./admin/AdminDataContext";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const Education = () => {
-  const { education, isLoading } = useAdminData();
-  
-  // Skeleton arrays for loading state
-  const skeletonItems = Array(4).fill(0);
+  const { education } = useAdminData();
   
   return (
     <section id="education" className="py-20 px-6 md:px-10">
@@ -50,47 +46,30 @@ const Education = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {isLoading ? (
-              // Skeleton UI while loading
-              skeletonItems.map((_, index) => (
-                <div key={`skeleton-${index}`} className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-                  <Skeleton className="h-7 w-48 mb-4" />
-                  <div className="space-y-3">
-                    {[1, 2, 3].map((n) => (
-                      <div key={n} className="flex justify-between items-center">
-                        <Skeleton className="h-4 w-3/4" />
-                        <Skeleton className="h-4 w-16" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))
-            ) : (
-              education.map((cert, index) => (
-                <div 
-                  key={cert.id} 
-                  className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 opacity-0 animate-fade-in hover-scale"
-                  style={{ animationDelay: `${0.2 + index * 0.1}s`, animationFillMode: "forwards" }}
-                >
-                  <h3 className="text-xl font-semibold mb-4">{cert.provider}</h3>
-                  <ul className="space-y-3">
-                    {cert.courses.map((course, courseIndex) => (
-                      <li key={courseIndex} className="flex justify-between items-start">
-                        <span className="text-sm text-muted-foreground">{course.name}</span>
-                        {course.link && (
-                          <Button size="sm" variant="ghost" className="p-0 h-auto" asChild>
-                            <a href={course.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs">
-                              <ExternalLink className="h-3 w-3" />
-                              <span>Verify</span>
-                            </a>
-                          </Button>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))
-            )}
+            {education.map((cert, index) => (
+              <div 
+                key={cert.id} 
+                className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 opacity-0 animate-fade-in hover-scale"
+                style={{ animationDelay: `${0.2 + index * 0.1}s`, animationFillMode: "forwards" }}
+              >
+                <h3 className="text-xl font-semibold mb-4">{cert.provider}</h3>
+                <ul className="space-y-3">
+                  {cert.courses.map((course, courseIndex) => (
+                    <li key={courseIndex} className="flex justify-between items-start">
+                      <span className="text-sm text-muted-foreground">{course.name}</span>
+                      {course.link && (
+                        <Button size="sm" variant="ghost" className="p-0 h-auto" asChild>
+                          <a href={course.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs">
+                            <ExternalLink className="h-3 w-3" />
+                            <span>Verify</span>
+                          </a>
+                        </Button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
           
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8 opacity-0 animate-fade-in" style={{ animationDelay: "0.6s", animationFillMode: "forwards" }}>
