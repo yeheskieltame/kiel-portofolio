@@ -3,171 +3,132 @@
 
 ## Project Overview
 
-This personal portfolio website showcases Yeheskiel's professional skills, projects, education, and services. It features a modern, responsive design built with React, TypeScript, and Tailwind CSS, enhanced with shadcn/ui components for a polished user experience.
+This personal portfolio website showcases Yeheskiel's professional skills, projects, education, and services. It features a modern, responsive design built with cutting-edge web technologies to provide an engaging and interactive user experience.
 
 **URL**: https://lovable.dev/projects/a7ee29c4-bf5e-4bf3-8ddd-c97f5cf85ba8
 
-## Features & User Guide
+## 🚀 Tech Stack
 
-### Navigation
+### Frontend
+- **React 18.3.1**: Component-based JavaScript library for building user interfaces
+- **TypeScript**: Strongly typed programming language that enhances JavaScript
+- **Vite**: Next-generation front-end tooling for rapid development
+- **Tailwind CSS**: Utility-first CSS framework for rapid UI development
+- **shadcn/ui**: High-quality, accessible UI components
 
-- **Responsive Navbar**: Adapts to different screen sizes with a hamburger menu on mobile devices.
-- **Section Links**: Quick navigation to Home, Projects, Skills, and Contact sections.
-- **Resume Download**: Click the "Resume" button in the navigation bar to download Yeheskiel's CV in PDF format.
+### State Management & Data Fetching
+- **@tanstack/react-query**: Powerful asynchronous state management and data fetching
+- **React Context API**: For lightweight global state management
 
-### Home Section
-- Introduces Yeheskiel with a brief bio and professional headline.
-- Showcases a professional headshot.
-- Contains call-to-action buttons for contacting or exploring projects.
+### Backend & Database
+- **Supabase**: Open-source Firebase alternative for authentication, database, and backend services
+- **PostgreSQL**: Powerful, open-source relational database
 
-### Services Section
-- Displays the professional services offered by Yeheskiel.
-- Each service card provides a brief description of the service.
-- Users can request services by clicking on service cards, which opens a dialog form.
-
-### Projects Section
-- Showcases Yeheskiel's portfolio of work with descriptive project cards.
-- Each project card includes:
-  - Project title and description
-  - Technologies used
-  - Preview image
-  - Links to live demo and GitHub repository (when available)
-
-### Skills Section
-- Visual representation of technical skills categorized by type.
-- Skill cards display proficiency levels and years of experience.
-
-### Education Section
-- Timeline of educational background and certifications.
-- Includes institution names, degrees, and graduation dates.
-
-### Contact Section
-- Contact form for direct messaging.
-- Links to social media profiles and professional networks.
-- Email and phone contact information.
-
-### Interactive Chatbot Assistant
-- **Accessing the Chatbot**: Click the chat bubble icon in the bottom right corner of the screen.
-- **Sending Messages**: Type your question in the input field and press the send button.
-- **Voice Input**: Click the microphone icon to use speech recognition (requires browser permission).
-- **Text-to-Speech**: Toggle the speaker icon in the chat header to have responses read aloud.
-- **Language Selection**: Switch between English and Indonesian for text-to-speech output.
-- **Closing the Chat**: Click the X button in the chat bubble or the X in the top right of the chat window.
-
-### Admin Panel
-- **Accessing Admin**: Navigate to `/admin` path to access the admin panel.
-- **Authentication**: Secure login with password protection.
-- **Content Management**: Edit, add or delete items in the following sections:
-  - Services ("What I Offer")
-  - Projects
-  - Skills & Technologies
-  - Education & Certifications
-- **User-Friendly Interface**: Intuitive tabs and forms for easy content updates.
-
-## Admin Panel User Guide
-
-### Accessing the Admin Panel
-1. Navigate to the `/admin` path in your browser.
-2. Enter your admin password on the login screen.
-3. Upon successful authentication, you'll be directed to the admin dashboard.
-
-### Managing Services
-1. Click the "Services" tab in the admin dashboard.
-2. **Add Service**: Click the "Add Service" button and fill in the required information.
-3. **Edit Service**: Click the edit icon on any service card to modify its details.
-4. **Delete Service**: Click the trash icon on any service card to remove it.
-
-### Managing Projects
-1. Click the "Projects" tab in the admin dashboard.
-2. **Add Project**: Click the "Add Project" button and complete the project form.
-3. **Edit Project**: Click the edit icon on any project card to update its information.
-4. **Delete Project**: Click the trash icon on any project card to remove it.
-5. All projects support images, demo links, GitHub links, and technology tags.
-
-### Managing Skills
-1. Click the "Skills" tab in the admin dashboard.
-2. Skills are categorized into:
-   - Programming Languages
-   - Machine Learning & Data Science
-   - Web Development & Tools
-3. **Add Skill**: Click the "Add Skill" button, select a category, and set proficiency level.
-4. **Edit Skill**: Click the edit icon on any skill card to modify its details.
-5. **Delete Skill**: Click the trash icon on any skill card to remove it.
-
-### Managing Education
-1. Click the "Education" tab in the admin dashboard.
-2. **Add Education Provider**: Click the "Add Education Provider" button and fill in provider details.
-3. **Add Multiple Courses**: Within each provider, add multiple courses/certifications.
-4. **Edit Education**: Click the edit icon on any education card to update provider or course details.
-5. **Delete Education**: Click the trash icon on any education card to remove a provider and all its courses.
-
-### Security Best Practices
-- Log out of the admin panel when you're finished making changes.
-- Periodically change your admin password for enhanced security.
-- The admin panel uses local storage for authentication; clearing browser data will require re-authentication.
-
-## Technical Information
-
-This project is built with:
-
-- **React**: Front-end library for building user interfaces
-- **TypeScript**: Strongly typed programming language for JavaScript
-- **Tailwind CSS**: Utility-first CSS framework
-- **shadcn/ui**: High-quality UI components
-- **Vite**: Next-generation front-end tooling
+### Additional Libraries
 - **Lucide React**: Beautiful open-source icons
-- **Speech Recognition API**: For voice input in the chatbot
-- **ElevenLabs API**: For high-quality text-to-speech in the chatbot
-- **Local Storage**: For persisting admin content changes and authentication
+- **React Router DOM**: Routing library for single-page applications
+- **Recharts**: Composable charting library for React
+- **Sonner**: Toast notification library
+- **Zod**: TypeScript-first schema validation
 
-## How to Edit This Project
+### Development Tools
+- **ESLint**: JavaScript linting utility
+- **Prettier**: Code formatting tool
 
-### Use Lovable
+## 🌟 Key Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a7ee29c4-bf5e-4bf3-8ddd-c97f5cf85ba8) and start prompting.
+### Responsive Design
+- Fully responsive layout that works seamlessly across devices
+- Mobile-first approach with adaptive navigation
 
-Changes made via Lovable will be committed automatically to this repo.
+### Dynamic Content Management
+- Admin panel for easy content updates
+- Secure authentication for admin access
+- Real-time database updates using Supabase
 
-### Use your preferred IDE
+### Interactive Sections
+- Animated skill cards
+- Project showcase with filtering and pagination
+- Service request functionality
+- Dynamic education and work experience timeline
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Performance & Accessibility
+- Optimized bundle size with Vite
+- Semantic HTML for improved accessibility
+- Smooth animations and transitions
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🔧 Project Structure
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+src/
+├── components/          # Reusable React components
+├── pages/               # Top-level page components
+├── hooks/               # Custom React hooks
+├── lib/                 # Utility functions
+├── integrations/        # Third-party service integrations
+└── styles/              # Global styles and Tailwind configuration
 ```
 
-### Edit a file directly in GitHub
+## 🚀 Getting Started
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Prerequisites
+- Node.js (v18+)
+- npm or Bun
+- Supabase account (optional, for backend features)
 
-### Use GitHub Codespaces
+### Installation Steps
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```bash
+# Clone the repository
+git clone <YOUR_REPOSITORY_URL>
 
-## How to Deploy This Project
+# Navigate to project directory
+cd portfolio-website
 
-Simply open [Lovable](https://lovable.dev/projects/a7ee29c4-bf5e-4bf3-8ddd-c97f5cf85ba8) and click on Share -> Publish.
+# Install dependencies
+npm install  # or 'bun install'
 
-## Custom Domain Setup
+# Start development server
+npm run dev  # or 'bun run dev'
+```
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## 🌐 Deployment
+
+### Lovable
+1. Open the project in Lovable
+2. Click "Publish" in the top right corner
+
+### Alternative Deployment Options
+- Netlify
+- Vercel
+- GitHub Pages
+
+## 🔒 Security
+
+- Admin access protected with password authentication
+- Row Level Security (RLS) in Supabase
+- Secure content management
+
+## 📦 Customization
+
+1. Update content in admin panel
+2. Modify Tailwind CSS configuration
+3. Adjust theme colors in `tailwind.config.ts`
+
+## 📚 Learn More
+
+- [Lovable Documentation](https://docs.lovable.dev/)
+- [React Official Docs](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Supabase Guides](https://supabase.com/docs)
+
+## 📞 Contact
+
+**Yeheskiel Yunus Tame**
+- Email: contact@yeheskiel.com
+- LinkedIn: [Yeheskiel Yunus Tame](https://www.linkedin.com/in/yeheskiel)
+- GitHub: [@yeheskiel](https://github.com/yeheskiel)
+
+## 📄 License
+
+This project is open-source and available under the MIT License.
