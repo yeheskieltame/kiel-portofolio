@@ -5,18 +5,21 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Lock } from "lucide-react";
+import { Lock, Database } from "lucide-react";
 import { AdminServices } from '@/components/admin/AdminServices';
 import { AdminProjects } from '@/components/admin/AdminProjects';
 import { AdminSkills } from '@/components/admin/AdminSkills';
 import { AdminEducation } from '@/components/admin/AdminEducation';
 import { useToast } from '@/hooks/use-toast';
+import { useAdminData } from '@/components/admin/AdminDataContext';
 
 const Admin = () => {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
   const { toast } = useToast();
+  const { initializeDefaultData } = useAdminData();
 
   // Check if there's an authentication token in localStorage
   useEffect(() => {
@@ -56,6 +59,26 @@ const Admin = () => {
       title: "Logged out",
       description: "You have been logged out successfully",
     });
+  };
+
+  const handleInitializeData = async () => {
+    setIsInitializing(true);
+    try {
+      await initializeDefaultData();
+      toast({
+        title: "Database initialized",
+        description: "Default data has been uploaded to the database",
+      });
+    } catch (error) {
+      console.error("Error initializing data:", error);
+      toast({
+        title: "Initialization failed",
+        description: "Failed to upload default data to the database",
+        variant: "destructive",
+      });
+    } finally {
+      setIsInitializing(false);
+    }
   };
 
   if (!isAuthenticated) {
@@ -106,7 +129,18 @@ const Admin = () => {
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <Button variant="outline" onClick={handleLogout}>Logout</Button>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              onClick={handleInitializeData} 
+              disabled={isInitializing}
+              className="flex items-center gap-2"
+            >
+              <Database className="h-4 w-4" />
+              {isInitializing ? "Initializing..." : "Initialize Data"}
+            </Button>
+            <Button variant="outline" onClick={handleLogout}>Logout</Button>
+          </div>
         </div>
 
         <Tabs defaultValue="services" className="w-full">

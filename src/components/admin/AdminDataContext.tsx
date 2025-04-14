@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -56,6 +55,7 @@ interface AdminContextType {
   updateEducation: (education: Education) => Promise<void>;
   deleteEducation: (id: number) => Promise<void>;
   addEducation: (education: Omit<Education, 'id'>) => Promise<void>;
+  initializeDefaultData: () => Promise<void>;
   isLoading: boolean;
   error: string | null;
 }
@@ -957,6 +957,133 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Initialize database with default data
+  const initializeDefaultData = async () => {
+    try {
+      // Clear existing data first
+      await supabase.from('kiel_portfolio_services').delete().neq('id', 0);
+      await supabase.from('kiel_portfolio_projects').delete().neq('id', 0);
+      await supabase.from('kiel_portfolio_skills').delete().neq('id', 0);
+      await supabase.from('kiel_portfolio_education').delete().neq('id', 0);
+      
+      // Insert services
+      for (const service of defaultServices) {
+        // Remove the id as it will be auto-generated
+        const { id, ...serviceData } = service;
+        await supabase.from('kiel_portfolio_services').insert(serviceData);
+      }
+      
+      // Insert projects
+      for (const project of defaultProjects) {
+        const { id, demoLink, githubLink, ...projectData } = project;
+        await supabase.from('kiel_portfolio_projects').insert({
+          ...projectData,
+          demo_link: demoLink,
+          github_link: githubLink
+        });
+      }
+      
+      // Insert skills
+      for (const skill of defaultSkills) {
+        const { id, ...skillData } = skill;
+        await supabase.from('kiel_portfolio_skills').insert(skillData);
+      }
+      
+      // Insert education providers and courses
+      for (const edu of defaultEducation) {
+        const { id, courses, ...eduData } = edu;
+        
+        // Insert education provider
+        const { data: providerData, error: providerError } = await supabase
+          .from('kiel_portfolio_education')
+          .insert(eduData)
+          .select();
+          
+        if (providerError) throw providerError;
+        if (!providerData || !providerData[0]) {
+          throw new Error("Failed to insert education provider");
+        }
+        
+        const educationId = providerData[0].id;
+        
+        // Insert courses for this provider
+        if (courses && courses.length > 0) {
+          const coursesWithEducationId = courses.map(course => ({
+            education_id: educationId,
+            name: course.name,
+            link: course.link
+          }));
+          
+          const { error: coursesError } = await supabase
+            .from('kiel_portfolio_education_courses')
+            .insert(coursesWithEducationId);
+            
+          if (coursesError) throw coursesError;
+        }
+      }
+      
+      // Refetch data to update the UI
+      const fetchData = async () => {
+        const { data: servicesData } = await supabase
+          .from('kiel_portfolio_services')
+          .select('*');
+          
+        const { data: projectsData } = await supabase
+          .from('kiel_portfolio_projects')
+          .select('*');
+          
+        const { data: skillsData } = await supabase
+          .from('kiel_portfolio_skills')
+          .select('*');
+          
+        const educationWithCourses = await fetchEducationWithCourses();
+        
+        if (servicesData) {
+          setServices(servicesData.map((service: any) => ({
+            id: service.id,
+            title: service.title,
+            description: service.description,
+            icon: service.icon,
+            features: service.features
+          })));
+        }
+        
+        if (projectsData) {
+          setProjects(projectsData.map((project: any) => ({
+            id: project.id,
+            title: project.title,
+            description: project.description,
+            image: project.image,
+            demoLink: project.demo_link,
+            githubLink: project.github_link,
+            tech: project.tech
+          })));
+        }
+        
+        if (skillsData) {
+          setSkills(skillsData.map((skill: any) => ({
+            id: skill.id,
+            name: skill.name,
+            icon: skill.icon,
+            level: skill.level,
+            category: skill.category as 'programming' | 'ml' | 'webdev'
+          })));
+        }
+        
+        if (educationWithCourses.length > 0) {
+          setEducation(educationWithCourses);
+        }
+      };
+      
+      await fetchData();
+      
+      return;
+    } catch (error: any) {
+      console.error("Error initializing database with default data:", error);
+      throw error;
+    }
+  };
+
   const value = {
     services,
     projects,
@@ -974,6 +1101,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
     updateEducation,
     deleteEducation,
     addEducation,
+    initializeDefaultData,
     isLoading,
     error
   };
