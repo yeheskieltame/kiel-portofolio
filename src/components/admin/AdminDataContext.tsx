@@ -373,26 +373,28 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
       if (!educationData) return [];
       
       // For each education provider, fetch their courses
-      const educationWithCourses = await Promise.all(educationData.map(async (edu) => {
-        const { data: coursesData, error: coursesError } = await supabase
-          .from('kiel_portfolio_education_courses')
-          .select('*')
-          .eq('education_id', edu.id);
+      const educationWithCourses = await Promise.all(
+        educationData.map(async (edu: any) => {
+          const { data: coursesData, error: coursesError } = await supabase
+            .from('kiel_portfolio_education_courses')
+            .select('*')
+            .eq('education_id', edu.id);
+            
+          if (coursesError) throw new Error(coursesError.message);
           
-        if (coursesError) throw new Error(coursesError.message);
-        
-        return {
-          id: edu.id,
-          provider: edu.provider,
-          courses: coursesData?.map(course => ({
-            name: course.name,
-            link: course.link || ''
-          })) || []
-        };
-      }));
+          return {
+            id: edu.id,
+            provider: edu.provider,
+            courses: coursesData?.map((course: any) => ({
+              name: course.name,
+              link: course.link || ''
+            })) || []
+          };
+        })
+      );
       
       return educationWithCourses;
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error fetching education data:", err);
       throw err;
     }
@@ -431,7 +433,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         
         // Map Supabase data to our expected format
         if (servicesData) {
-          setServices(servicesData.map(service => ({
+          setServices(servicesData.map((service: any) => ({
             id: service.id,
             title: service.title,
             description: service.description,
@@ -443,7 +445,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         }
         
         if (projectsData) {
-          setProjects(projectsData.map(project => ({
+          setProjects(projectsData.map((project: any) => ({
             id: project.id,
             title: project.title,
             description: project.description,
@@ -457,7 +459,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         }
         
         if (skillsData) {
-          setSkills(skillsData.map(skill => ({
+          setSkills(skillsData.map((skill: any) => ({
             id: skill.id,
             name: skill.name,
             icon: skill.icon,
@@ -474,7 +476,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
           setEducation(defaultEducation);
         }
         
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching data from Supabase:", error);
         setError("Failed to load data from server. Using local data instead.");
         
@@ -548,7 +550,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         title: "Service Updated",
         description: `"${updatedService.title}" has been updated successfully.`,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating service:", error);
       toast({
         title: "Update Failed",
@@ -574,7 +576,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         title: "Service Deleted",
         description: "Service has been deleted successfully.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting service:", error);
       toast({
         title: "Delete Failed",
@@ -611,7 +613,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
           description: `"${newService.title}" has been added successfully.`,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error adding service:", error);
       toast({
         title: "Add Failed",
@@ -649,7 +651,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         title: "Project Updated",
         description: `"${updatedProject.title}" has been updated successfully.`,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating project:", error);
       toast({
         title: "Update Failed",
@@ -675,7 +677,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         title: "Project Deleted",
         description: "Project has been deleted successfully.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting project:", error);
       toast({
         title: "Delete Failed",
@@ -714,7 +716,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
           description: `"${newProject.title}" has been added successfully.`,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error adding project:", error);
       toast({
         title: "Add Failed",
@@ -750,7 +752,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         title: "Skill Updated",
         description: `"${updatedSkill.name}" has been updated successfully.`,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating skill:", error);
       toast({
         title: "Update Failed",
@@ -776,7 +778,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         title: "Skill Deleted",
         description: "Skill has been deleted successfully.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting skill:", error);
       toast({
         title: "Delete Failed",
@@ -813,7 +815,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
           description: `"${newSkill.name}" has been added successfully.`,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error adding skill:", error);
       toast({
         title: "Add Failed",
@@ -868,7 +870,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         title: "Education Updated",
         description: `"${updatedEducation.provider}" has been updated successfully.`,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating education:", error);
       toast({
         title: "Update Failed",
@@ -895,7 +897,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         title: "Education Provider Deleted",
         description: "Education provider has been deleted successfully.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting education:", error);
       toast({
         title: "Delete Failed",
@@ -945,7 +947,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
           description: `"${newEducation.provider}" has been added successfully.`,
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error adding education:", error);
       toast({
         title: "Add Failed",

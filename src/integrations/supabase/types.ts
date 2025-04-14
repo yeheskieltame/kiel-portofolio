@@ -9,7 +9,128 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      kiel_portfolio_education: {
+        Row: {
+          id: number
+          provider: string
+        }
+        Insert: {
+          id?: number
+          provider: string
+        }
+        Update: {
+          id?: number
+          provider?: string
+        }
+        Relationships: []
+      }
+      kiel_portfolio_education_courses: {
+        Row: {
+          education_id: number
+          id: number
+          link: string | null
+          name: string
+        }
+        Insert: {
+          education_id: number
+          id?: number
+          link?: string | null
+          name: string
+        }
+        Update: {
+          education_id?: number
+          id?: number
+          link?: string | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kiel_portfolio_education_courses_education_id_fkey"
+            columns: ["education_id"]
+            isOneToOne: false
+            referencedRelation: "kiel_portfolio_education"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kiel_portfolio_projects: {
+        Row: {
+          demo_link: string
+          description: string
+          github_link: string
+          id: number
+          image: string
+          tech: string[]
+          title: string
+        }
+        Insert: {
+          demo_link: string
+          description: string
+          github_link: string
+          id?: number
+          image: string
+          tech?: string[]
+          title: string
+        }
+        Update: {
+          demo_link?: string
+          description?: string
+          github_link?: string
+          id?: number
+          image?: string
+          tech?: string[]
+          title?: string
+        }
+        Relationships: []
+      }
+      kiel_portfolio_services: {
+        Row: {
+          description: string
+          features: string[]
+          icon: string
+          id: number
+          title: string
+        }
+        Insert: {
+          description: string
+          features?: string[]
+          icon: string
+          id?: number
+          title: string
+        }
+        Update: {
+          description?: string
+          features?: string[]
+          icon?: string
+          id?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      kiel_portfolio_skills: {
+        Row: {
+          category: string
+          icon: string
+          id: number
+          level: number
+          name: string
+        }
+        Insert: {
+          category: string
+          icon: string
+          id?: number
+          level: number
+          name: string
+        }
+        Update: {
+          category?: string
+          icon?: string
+          id?: number
+          level?: number
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
