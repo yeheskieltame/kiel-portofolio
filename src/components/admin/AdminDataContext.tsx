@@ -32,6 +32,7 @@ export interface Skill {
 export interface Education {
   id: number;
   provider: string;
+  imageUrl?: string;
   courses: {
     name: string;
     link: string;
@@ -284,6 +285,7 @@ const defaultEducation = [
   {
     id: 1,
     provider: "DeepLearning.AI",
+    imageUrl: "",
     courses: [
       {
         name: "Linear Algebra for Machine Learning and Data Science",
@@ -294,6 +296,7 @@ const defaultEducation = [
   {
     id: 2,
     provider: "Dicoding Indonesia",
+    imageUrl: "",
     courses: [
       {
         name: "Learn Data Analysis with Python",
@@ -328,6 +331,7 @@ const defaultEducation = [
   {
     id: 3,
     provider: "SanberCode",
+    imageUrl: "",
     courses: [
       {
         name: "Laravel Web Development",
@@ -338,6 +342,7 @@ const defaultEducation = [
   {
     id: 4,
     provider: "Coursera",
+    imageUrl: "",
     courses: [
       {
         name: "Crash Course on Python",
@@ -385,6 +390,7 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
           return {
             id: edu.id,
             provider: edu.provider,
+            imageUrl: edu.image_url || '',
             courses: coursesData?.map((course: any) => ({
               name: course.name,
               link: course.link || ''
@@ -831,7 +837,10 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
       // Update education provider
       const { error: providerError } = await supabase
         .from('kiel_portfolio_education')
-        .update({ provider: updatedEducation.provider })
+        .update({ 
+          provider: updatedEducation.provider,
+          image_url: updatedEducation.imageUrl
+        })
         .eq('id', updatedEducation.id);
         
       if (providerError) throw providerError;
@@ -912,7 +921,10 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
       // First insert the education provider
       const { data, error } = await supabase
         .from('kiel_portfolio_education')
-        .insert({ provider: newEducation.provider })
+        .insert({ 
+          provider: newEducation.provider,
+          image_url: newEducation.imageUrl
+        })
         .select();
         
       if (error) throw error;

@@ -17,7 +17,7 @@ export const AdminEducation = () => {
   const [currentEducation, setCurrentEducation] = useState<any | null>(null);
   const [newEducation, setNewEducation] = useState({
     provider: '',
-    imageUrl: '',  // New field for provider image
+    imageUrl: '',  // Already had this field
     courses: [{ name: '', link: '' }]
   });
 
