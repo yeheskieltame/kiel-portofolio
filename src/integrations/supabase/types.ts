@@ -12,14 +12,17 @@ export type Database = {
       kiel_portfolio_education: {
         Row: {
           id: number
+          image_url: string | null
           provider: string
         }
         Insert: {
           id?: number
+          image_url?: string | null
           provider: string
         }
         Update: {
           id?: number
+          image_url?: string | null
           provider?: string
         }
         Relationships: []
