@@ -9,6 +9,11 @@ interface SkillCardProps {
 }
 
 const SkillCard = ({ name, icon, level, index }: SkillCardProps) => {
+  // Check if icon is a URL or a predefined icon
+  const isImageUrl = (icon: string) => {
+    return icon.startsWith('http') || icon.startsWith('/');
+  };
+
   return (
     <div 
       className={cn(

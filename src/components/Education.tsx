@@ -52,7 +52,18 @@ const Education = () => {
                 className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 opacity-0 animate-fade-in hover-scale"
                 style={{ animationDelay: `${0.2 + index * 0.1}s`, animationFillMode: "forwards" }}
               >
-                <h3 className="text-xl font-semibold mb-4">{cert.provider}</h3>
+                <h3 className="text-xl font-semibold mb-3">{cert.provider}</h3>
+                
+                {cert.imageUrl && (
+                  <div className="mb-4">
+                    <img 
+                      src={cert.imageUrl} 
+                      alt={cert.provider} 
+                      className="h-16 object-contain rounded"
+                    />
+                  </div>
+                )}
+                
                 <ul className="space-y-3">
                   {cert.courses.map((course, courseIndex) => (
                     <li key={courseIndex} className="flex justify-between items-start">

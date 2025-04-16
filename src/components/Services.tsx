@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Code, BrainCircuit, MessageSquare, Facebook, Shield, Zap, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,8 +19,14 @@ const Services = () => {
     setSelectedService(null);
   };
 
-  // Function to get the icon component based on the icon name
-  const getIconComponent = (iconName: string) => {
+  // Function to get the icon component based on the icon name or URL
+  const getIconComponent = (icon: string) => {
+    // Check if icon is a URL
+    if (icon.startsWith('http') || icon.startsWith('/')) {
+      return <img src={icon} alt="Service icon" className="h-8 w-8 object-contain" />;
+    }
+
+    // Otherwise, use predefined icon components
     const icons: Record<string, React.ReactNode> = {
       Code: <Code className="h-8 w-8 text-theme-purple" />,
       BrainCircuit: <BrainCircuit className="h-8 w-8 text-theme-blue" />,
@@ -32,7 +37,7 @@ const Services = () => {
       Database: <Database className="h-8 w-8 text-theme-purple-dark" />
     };
     
-    return icons[iconName] || <Code className="h-8 w-8 text-theme-purple" />;
+    return icons[icon] || <Code className="h-8 w-8 text-theme-purple" />;
   };
   
   if (isLoading) {

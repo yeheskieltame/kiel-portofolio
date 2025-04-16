@@ -177,6 +177,15 @@ export const AdminSkills = () => {
                 />
               </div>
               <div className="space-y-2">
+                <Label htmlFor="edit-icon">Icon URL</Label>
+                <Input 
+                  id="edit-icon" 
+                  value={currentSkill.icon} 
+                  onChange={(e) => setCurrentSkill({...currentSkill, icon: e.target.value})}
+                  placeholder="URL to icon image (e.g., https://example.com/icon.png)"
+                />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="edit-category">Category</Label>
                 <Select 
                   value={currentSkill.category} 
@@ -243,6 +252,15 @@ export const AdminSkills = () => {
                 value={newSkill.name} 
                 onChange={(e) => setNewSkill({...newSkill, name: e.target.value})}
                 placeholder="e.g., React"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="add-icon">Icon URL</Label>
+              <Input 
+                id="add-icon" 
+                value={newSkill.icon} 
+                onChange={(e) => setNewSkill({...newSkill, icon: e.target.value})}
+                placeholder="URL to icon image (e.g., https://example.com/icon.png)"
               />
             </div>
             <div className="space-y-2">

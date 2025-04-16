@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Pencil, Trash2, Plus, Save, X, PlusCircle, MinusCircle } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from '@/hooks/use-toast';
 
 export const AdminServices = () => {
@@ -23,17 +22,6 @@ export const AdminServices = () => {
     icon: 'Code',
     features: ['']
   });
-
-  // Icons available for services
-  const availableIcons = [
-    { name: 'Code', label: 'Code' },
-    { name: 'BrainCircuit', label: 'Brain Circuit' },
-    { name: 'MessageSquare', label: 'Message Square' },
-    { name: 'Facebook', label: 'Facebook' },
-    { name: 'Shield', label: 'Shield' },
-    { name: 'Zap', label: 'Lightning' },
-    { name: 'Database', label: 'Database' }
-  ];
 
   const handleEditService = (service: Service) => {
     setCurrentService({ ...service });
@@ -146,6 +134,11 @@ export const AdminServices = () => {
     }
   };
 
+  // Check if the icon is a URL or a named icon
+  const isImageUrl = (icon: string) => {
+    return icon.startsWith('http') || icon.startsWith('/');
+  };
+
   return (
     <div className="space-y-6 py-4">
       <div className="flex justify-between items-center">
@@ -231,22 +224,16 @@ export const AdminServices = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-icon">Icon</Label>
-                <Select 
+                <Label htmlFor="edit-icon">Icon (URL or Icon Name)</Label>
+                <Input
+                  id="edit-icon"
                   value={currentService.icon}
-                  onValueChange={(value) => setCurrentService({...currentService, icon: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select an icon" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableIcons.map((icon) => (
-                      <SelectItem key={icon.name} value={icon.name}>
-                        {icon.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  onChange={(e) => setCurrentService({...currentService, icon: e.target.value})}
+                  placeholder="Enter an icon name (e.g., Code) or image URL"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Enter a URL to use a custom image or use a predefined icon name (Code, BrainCircuit, etc.)
+                </p>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
@@ -332,22 +319,16 @@ export const AdminServices = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="add-icon">Icon</Label>
-              <Select 
-                value={newService.icon} 
-                onValueChange={(value) => setNewService({...newService, icon: value})}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select an icon" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableIcons.map((icon) => (
-                    <SelectItem key={icon.name} value={icon.name}>
-                      {icon.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label htmlFor="add-icon">Icon (URL or Icon Name)</Label>
+              <Input
+                id="add-icon"
+                value={newService.icon}
+                onChange={(e) => setNewService({...newService, icon: e.target.value})}
+                placeholder="Enter an icon name (e.g., Code) or image URL"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Enter a URL to use a custom image or use a predefined icon name (Code, BrainCircuit, etc.)
+              </p>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
