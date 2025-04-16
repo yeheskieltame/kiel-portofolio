@@ -1,5 +1,5 @@
 
-import { Bot, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -8,7 +8,6 @@ import { ChatMessages } from "./chatbot/ChatMessages";
 import { ChatInput } from "./chatbot/ChatInput";
 import { useChatbot } from "./chatbot/useChatbot";
 import { useEffect, useState } from "react";
-import { toast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Chatbot = () => {
@@ -32,10 +31,10 @@ const Chatbot = () => {
     const timer = setTimeout(() => {
       if (!isOpen) {
         setShowNotification(true);
-        // Auto-hide notification after 7 seconds
+        // Auto-hide notification after 10 seconds
         const hideTimer = setTimeout(() => {
           setShowNotification(false);
-        }, 7000);
+        }, 10000);
         return () => clearTimeout(hideTimer);
       }
     }, 10000);
@@ -55,25 +54,36 @@ const Chatbot = () => {
       {/* Chat button (fixed position) */}
       <div className="fixed bottom-8 right-8 z-50">
         {showNotification && (
-          <Alert className="absolute bottom-20 right-0 w-48 mb-2 bg-white border border-theme-purple/30 p-3 rounded-lg shadow-lg animate-fade-in">
-            <AlertDescription className="text-sm font-medium">
-              Butuh bantuan?
-            </AlertDescription>
-          </Alert>
+          <div className="absolute bottom-20 right-0 mb-2 animate-bounce-slow">
+            <div className="relative">
+              <div className="w-56 p-3 rounded-lg shadow-lg bg-gradient-to-r from-theme-purple to-theme-blue text-white">
+                <div className="absolute -bottom-2 right-6 w-0 h-0 border-8 border-solid border-theme-purple border-t-transparent border-r-transparent border-b-theme-purple border-l-transparent transform rotate-180"></div>
+                <AlertDescription className="text-sm font-bold drop-shadow-md">
+                  Butuh bantuan?
+                </AlertDescription>
+              </div>
+            </div>
+          </div>
         )}
         
         <Button
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            "rounded-full w-16 h-16 p-0 shadow-lg bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90",
-            isOpen && "bg-gray-600 hover:bg-gray-700"
+            "rounded-full w-16 h-16 p-0 shadow-lg",
+            isOpen 
+              ? "bg-gray-600 hover:bg-gray-700" 
+              : "bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90 overflow-hidden"
           )}
           aria-label={isOpen ? "Close chat" : "Open chat"}
         >
           {isOpen ? (
             <X className="h-6 w-6" />
           ) : (
-            <Bot className="h-7 w-7" />
+            <img 
+              src="/lovable-uploads/5124f14c-8aff-4401-99b7-a71f7b16f696.png"
+              alt="Chatbot"
+              className="h-12 w-12 object-contain"
+            />
           )}
         </Button>
       </div>
