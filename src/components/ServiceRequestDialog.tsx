@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Dialog, 
   DialogContent, 
@@ -13,6 +13,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Send } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ServiceRequestDialogProps {
   isOpen: boolean;
@@ -32,6 +40,38 @@ const ServiceRequestDialog = ({ isOpen, onClose, serviceName }: ServiceRequestDi
     timeline: "",
     requirements: "",
   });
+  const [availableServices, setAvailableServices] = useState<string[]>([]);
+  const [selectedService, setSelectedService] = useState(serviceName);
+
+  // Fetch available services from Supabase
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('kiel_portfolio_services')
+          .select('title')
+          .order('title');
+          
+        if (error) {
+          console.error("Error fetching services:", error);
+          return;
+        }
+        
+        if (data && data.length > 0) {
+          setAvailableServices(data.map(service => service.title));
+        }
+      } catch (error) {
+        console.error("Failed to fetch services:", error);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
+  // Update selected service when serviceName prop changes or when dialog opens
+  useEffect(() => {
+    setSelectedService(serviceName);
+  }, [serviceName, isOpen]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -40,13 +80,17 @@ const ServiceRequestDialog = ({ isOpen, onClose, serviceName }: ServiceRequestDi
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleServiceChange = (value: string) => {
+    setSelectedService(value);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
       // Prepare the email content
-      const emailSubject = `[Service Request] ${serviceName} - ${formData.name}`;
+      const emailSubject = `[Service Request] ${selectedService} - ${formData.name}`;
       const emailBody = `
 Name: ${formData.name}
 Email: ${formData.email}
@@ -58,7 +102,7 @@ Timeline: ${formData.timeline}
 Project Requirements:
 ${formData.requirements}
 
-Service Requested: ${serviceName}
+Service Requested: ${selectedService}
       `;
 
       // Open email client with pre-populated fields
@@ -102,13 +146,31 @@ Service Requested: ${serviceName}
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Request {serviceName} Service</DialogTitle>
+          <DialogTitle>Request Service</DialogTitle>
           <DialogDescription>
-            Please fill out the form below to request our {serviceName} service. We'll get back to you as soon as possible.
+            Please fill out the form below to request our service. We'll get back to you as soon as possible.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
+          <div className="space-y-2">
+            <label htmlFor="service" className="text-sm font-medium">
+              Service *
+            </label>
+            <Select value={selectedService} onValueChange={handleServiceChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a service" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableServices.map((service) => (
+                  <SelectItem key={service} value={service}>
+                    {service}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">

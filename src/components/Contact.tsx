@@ -1,11 +1,11 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { toast } from "@/components/ui/use-toast";
 import { Mail, Phone, MapPin, Send, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -14,9 +14,55 @@ const Contact = () => {
     email: "",
     subject: "",
     message: "",
-    service: "Custom Software", // Default selected service
+    service: "", // Default will be set after fetching services
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [availableServices, setAvailableServices] = useState<string[]>([]);
+  const [isLoadingServices, setIsLoadingServices] = useState(true);
+
+  // Fetch available services from Supabase
+  useEffect(() => {
+    const fetchServices = async () => {
+      setIsLoadingServices(true);
+      try {
+        const { data, error } = await supabase
+          .from('kiel_portfolio_services')
+          .select('title')
+          .order('title');
+          
+        if (error) {
+          console.error("Error fetching services:", error);
+          throw error;
+        }
+        
+        if (data && data.length > 0) {
+          const servicesTitles = data.map(service => service.title);
+          setAvailableServices(servicesTitles);
+          // Set default selected service to first one
+          setFormData(prev => ({ ...prev, service: servicesTitles[0] }));
+        } else {
+          // Fallback to default service if none found
+          setAvailableServices(["Custom Software Development"]);
+          setFormData(prev => ({ ...prev, service: "Custom Software Development" }));
+        }
+      } catch (error) {
+        console.error("Failed to fetch services:", error);
+        // Fallback to default services if fetch fails
+        setAvailableServices([
+          "Custom Software Development",
+          "Machine Learning Solutions",
+          "Chatbot Development",
+          "Meta Business Account Setup",
+          "Other Services"
+        ]);
+        setFormData(prev => ({ ...prev, service: "Custom Software Development" }));
+      } finally {
+        setIsLoadingServices(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -55,7 +101,7 @@ const Contact = () => {
         email: "",
         subject: "",
         message: "",
-        service: "Custom Software",
+        service: availableServices[0] || "Custom Software Development",
       });
     } catch (error) {
       toast({
@@ -209,13 +255,18 @@ const Contact = () => {
                   value={formData.service}
                   onChange={handleChange}
                   required
+                  disabled={isLoadingServices}
                   className="w-full rounded-xl border-gray-200 focus:border-theme-purple focus:ring-theme-purple/20 py-2 px-3"
                 >
-                  <option value="Custom Software">Custom Software Development</option>
-                  <option value="Machine Learning">Machine Learning Solutions</option>
-                  <option value="Chatbot">Chatbot Development</option>
-                  <option value="Meta Business">Meta Business Account Setup</option>
-                  <option value="Other">Other Services</option>
+                  {isLoadingServices ? (
+                    <option value="">Loading services...</option>
+                  ) : (
+                    availableServices.map((service) => (
+                      <option key={service} value={service}>
+                        {service}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
               
@@ -253,7 +304,7 @@ const Contact = () => {
               <Button 
                 type="submit" 
                 className="w-full rounded-xl py-6 gap-2 bg-gradient-to-r from-theme-purple to-theme-blue hover:opacity-90 transition-all duration-300" 
-                disabled={isSubmitting}
+                disabled={isSubmitting || isLoadingServices}
               >
                 {isSubmitting ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
