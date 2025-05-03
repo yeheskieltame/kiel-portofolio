@@ -22,14 +22,8 @@ export const ChatMessages = ({ messages, ttsEnabled, onSpeakMessage }: ChatMessa
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Replace all occurrences of "p-597196.lovable.app" with "Kiel Tame" in messages
+  // Process messages
   const processedMessages = messages.map(msg => {
-    if (msg.sender === "bot") {
-      return {
-        ...msg,
-        content: msg.content.replace(/p-597196\.lovable\.app/g, "Kiel Tame")
-      };
-    }
     return msg;
   });
 

@@ -134,6 +134,241 @@ export type Database = {
         }
         Relationships: []
       }
+      tame_unbfnd_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: number
+          post_id: number | null
+          user_email: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: number
+          post_id?: number | null
+          user_email: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: number
+          post_id?: number | null
+          user_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tame_unbfnd_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "tame_unbfnd_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tame_unbfnd_follows: {
+        Row: {
+          created_at: string
+          follower_email: string
+          following_email: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          follower_email: string
+          following_email: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          follower_email?: string
+          following_email?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      tame_unbfnd_likes: {
+        Row: {
+          created_at: string
+          id: number
+          post_id: number | null
+          user_email: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          post_id?: number | null
+          user_email: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          post_id?: number | null
+          user_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tame_unbfnd_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "tame_unbfnd_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tame_unbfnd_posts: {
+        Row: {
+          caption: string | null
+          created_at: string
+          id: number
+          image_url: string
+          likes_count: number | null
+          updated_at: string
+          user_email: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          id?: number
+          image_url: string
+          likes_count?: number | null
+          updated_at?: string
+          user_email: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          id?: number
+          image_url?: string
+          likes_count?: number | null
+          updated_at?: string
+          user_email?: string
+        }
+        Relationships: []
+      }
+      tame_unbfnd_profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          full_name: string | null
+          id: number
+          updated_at: string
+          user_email: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: number
+          updated_at?: string
+          user_email: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: number
+          updated_at?: string
+          user_email?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      tameverse_products: {
+        Row: {
+          color: string
+          created_at: string | null
+          description: string
+          features: string[] | null
+          hero_image: string | null
+          icon_name: string
+          id: string
+          tagline: string | null
+          title: string
+          use_cases: string[] | null
+        }
+        Insert: {
+          color: string
+          created_at?: string | null
+          description: string
+          features?: string[] | null
+          hero_image?: string | null
+          icon_name: string
+          id?: string
+          tagline?: string | null
+          title: string
+          use_cases?: string[] | null
+        }
+        Update: {
+          color?: string
+          created_at?: string | null
+          description?: string
+          features?: string[] | null
+          hero_image?: string | null
+          icon_name?: string
+          id?: string
+          tagline?: string | null
+          title?: string
+          use_cases?: string[] | null
+        }
+        Relationships: []
+      }
+      tameverse_stats: {
+        Row: {
+          created_at: string | null
+          icon_name: string
+          id: string
+          label: string
+          value: string
+        }
+        Insert: {
+          created_at?: string | null
+          icon_name: string
+          id?: string
+          label: string
+          value: string
+        }
+        Update: {
+          created_at?: string | null
+          icon_name?: string
+          id?: string
+          label?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      tameverse_team_members: {
+        Row: {
+          bio: string | null
+          created_at: string | null
+          id: string
+          image: string | null
+          name: string
+          role: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string | null
+          id?: string
+          image?: string | null
+          name: string
+          role: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string | null
+          id?: string
+          image?: string | null
+          name?: string
+          role?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

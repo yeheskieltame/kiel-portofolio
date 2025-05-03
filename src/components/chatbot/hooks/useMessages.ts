@@ -13,8 +13,9 @@ export const useMessages = (stopSpeaking: () => void) => {
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  // Set the fixed webhook URL - no longer configurable by users
-  const n8nWebhookUrl = "https://kieltame.app.n8n.cloud/webhook/643ff32a-6743-4406-a9f5-573a3120ff03";
+  
+  // Groq API key (replace n8n webhook)
+  const groqApiKey = "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";
 
   const handleSendMessage = async (inputMessage: string) => {
     const userMessage: Message = {
@@ -32,71 +33,40 @@ export const useMessages = (stopSpeaking: () => void) => {
     stopSpeaking();
 
     try {
-      // Send message to n8n webhook
-      const response = await fetch(n8nWebhookUrl, {
+      // Send message to Groq API
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
+          "Authorization": `Bearer ${groqApiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: inputMessage,
-          timestamp: new Date().toISOString(),
+          model: "llama3-8b-8192",
+          messages: [
+            {
+              role: "system",
+              content: "You are Yeheskiel Tame's assistant. You help answer questions about his services, projects, skills, and experience. Be friendly, helpful, and professional. If you don't know something specific about Yeheskiel, you can say so and try to answer based on the general knowledge you have. Always refer to Yeheskiel as 'Kiel Tame' in responses."
+            },
+            {
+              role: "user",
+              content: inputMessage
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 500,
         }),
       });
 
-      // Process the response from n8n
       const data = await response.json();
-      console.log("Response from n8n:", data);
+      console.log("Response from Groq:", data);
       
-      // Extract the response from the n8n response
-      let botReply = "Sorry, I couldn't process your request.";
-      
-      // Improved parsing logic to handle various n8n response structures
-      if (data) {
-        console.log("Response structure:", JSON.stringify(data));
-        
-        // Check if data is an array (new n8n format)
-        if (Array.isArray(data) && data.length > 0 && data[0].output) {
-          botReply = data[0].output;
-        }
-        // Check if data is an object with nested structure
-        else if (typeof data === 'object' && data !== null) {
-          // Try to find the 'output' property at any level
-          const findOutput = (obj: any): string | null => {
-            if (obj && typeof obj === 'object') {
-              // If the object has an output property directly
-              if (obj.output && typeof obj.output === 'string') {
-                return obj.output;
-              }
-              
-              // Recursively look for the output in nested properties
-              for (const key in obj) {
-                if (typeof obj[key] === 'object') {
-                  const found = findOutput(obj[key]);
-                  if (found) return found;
-                }
-              }
-            }
-            return null;
-          };
-          
-          const output = findOutput(data);
-          if (output) {
-            botReply = output;
-          } else {
-            // Fall back to first key if we can't find an output property
-            const firstKey = Object.keys(data)[0];
-            if (firstKey && typeof firstKey === 'string') {
-              botReply = firstKey;
-            }
-          }
-        } else if (typeof data === 'string') {
-          // If data is directly a string
-          botReply = data;
-        }
+      if (!response.ok) {
+        throw new Error(data.error?.message || "Failed to get response from Groq");
       }
-
-      console.log("Extracted bot reply:", botReply);
+      
+      // Extract the response from Groq
+      const botReply = data.choices && data.choices[0]?.message?.content || 
+                      "Sorry, I couldn't process your request.";
 
       // Add bot reply to chat
       const botMessage: Message = {
@@ -108,7 +78,7 @@ export const useMessages = (stopSpeaking: () => void) => {
 
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
-      console.error("Error sending message to n8n:", error);
+      console.error("Error sending message to Groq:", error);
       
       // Add error message to chat
       const errorMessage: Message = {
@@ -122,7 +92,7 @@ export const useMessages = (stopSpeaking: () => void) => {
       
       toast({
         title: "Connection Error",
-        description: "Failed to send message to n8n webhook.",
+        description: "Failed to get response from AI assistant.",
         variant: "destructive",
       });
     } finally {
