@@ -67,10 +67,10 @@ const AdminContext = createContext<AdminContextType | undefined>(undefined);
 const defaultServices = [
   {
     id: 1,
-    title: "Custom Software Development",
-    description: "Tailored software solutions to meet your specific business needs with scalable architecture and clean code.",
+    title: "Blockchain Development",
+    description: "Full-stack Web3 applications with smart contract integration, DeFi solutions, and decentralized systems architecture.",
     icon: "Code",
-    features: ["Web Applications", "Desktop Software", "Mobile Apps", "API Development"],
+    features: ["Smart Contract Development", "Web3 Integration", "DeFi Applications", "Blockchain Analytics"],
   },
   {
     id: 2,
@@ -81,75 +81,30 @@ const defaultServices = [
   },
   {
     id: 3,
-    title: "Chatbot Development",
-    description: "Intelligent conversational agents to enhance customer support and streamline information delivery.",
+    title: "Full-Stack Web Development",
+    description: "Modern web applications with advanced UI/UX, real-time features, and scalable backend architecture.",
     icon: "MessageSquare",
-    features: ["AI-Powered Chatbots", "Customer Support Bots", "Lead Generation Bots", "Information Retrieval"],
+    features: ["React/TypeScript Applications", "Real-time Analytics", "Responsive Design", "API Development"],
   },
   {
     id: 4,
-    title: "Meta Business Account Setup",
-    description: "Professional setup and optimization of your business presence across Meta platforms (Facebook, Instagram).",
+    title: "System Architecture & Analytics",
+    description: "Complex system design with multi-role dashboards, data visualization, and performance optimization.",
     icon: "Facebook",
-    features: ["Business Page Creation", "Ad Account Setup", "Content Strategy", "Audience Targeting"],
+    features: ["Dashboard Development", "Data Visualization", "Performance Monitoring", "System Integration"],
   }
 ];
 
 const defaultProjects = [
   {
     id: 1,
-    title: "Bike Rental Data Analysis",
-    description: "Analyzed bike rental patterns using Python libraries to identify trends and predict future demand.",
-    image: "https://images.unsplash.com/photo-1556155092-490a1ba16284",
-    demoLink: "https://zsoeyhh3bvdl7bwvenk5ma.streamlit.app",
-    githubLink: "https://github.com/yeheskieltame/Project-Data-Analist.git",
-    tech: ["Python", "Pandas", "Matplotlib"],
-  },
-  {
-    id: 2,
-    title: "Machine Learning Time Management System",
-    description: "Developed a system that optimizes study and rest times using machine learning, predicting optimal break intervals.",
-    image: "https://images.unsplash.com/photo-1606761568499-6d2451b23c66",
-    demoLink: "https://time-management-system.streamlit.app",
-    githubLink: "https://github.com/yeheskieltame/Time-Management-System.git",
-    tech: ["Python", "Matplotlib", "JSON", "Google Colab", "Pandas"],
-  },
-  {
-    id: 3,
-    title: "Student Route and Dispenser Recommendation",
-    description: "Built a machine learning model to predict the fastest routes for students on campus, including nearest dispensers.",
-    image: "https://images.unsplash.com/photo-1519750783826-e2420f4d687f",
-    demoLink: "https://github.com/yeheskieltame/rekomendasi_dispenser.git",
-    githubLink: "https://github.com/yeheskieltame/rekomendasi_dispenser.git",
-    tech: ["Python", "Dijkstra's Algorithm", "Matplotlib"],
-  },
-  {
-    id: 4,
-    title: "Data Visualization Dashboard",
-    description: "Created an interactive dashboard using Streamlit for exploring large datasets with intuitive visualizations.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71",
-    demoLink: "https://zsoeyhh3bvdl7bwvenk5ma.streamlit.app/",
-    githubLink: "https://github.com/yeheskieltame",
-    tech: ["Python", "Streamlit", "Pandas", "Matplotlib"],
-  },
-  {
-    id: 5,
-    title: "Personal Portfolio Website",
-    description: "Developed a modern and responsive portfolio website showcasing my projects.",
-    image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-    demoLink: "https://spend-save-analyze.lovable.app",
-    githubLink: " ",
-    tech: ["Typescript", "Vite"],
-  },
-  {
-    id: 6,
-    title: "Laravel Web Development Project",
-    description: "Created a full-stack web application with Laravel featuring user authentication, database integration, and responsive design.",
-    image: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5",
+    title: "🏢 Report It Right Now - Blockchain Reporting System",
+    description: "Revolutionary Web3 application for transparent blockchain-based reporting system with decentralized validation, multi-role dashboards, and economic incentive mechanisms. Features smart contract integration, real-time analytics, and comprehensive validation system.",
+    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0",
     demoLink: "https://github.com/yeheskieltame",
     githubLink: "https://github.com/yeheskieltame",
-    tech: ["Laravel", "PHP", "MySQL", "Bootstrap"],
-  },
+    tech: ["React", "TypeScript", "Blockchain", "Web3", "Smart Contracts", "MetaMask", "Recharts", "Shadcn/UI", "Tailwind CSS"],
+  }
 ];
 
 const defaultSkills = [
