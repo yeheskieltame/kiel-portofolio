@@ -54,10 +54,10 @@ const Education = () => {
               >
                 <h3 className="text-xl font-semibold mb-3">{cert.provider}</h3>
                 
-                {cert.imageUrl && (
+                {cert.image_url && (
                   <div className="mb-4">
                     <img 
-                      src={cert.imageUrl} 
+                      src={cert.image_url} 
                       alt={cert.provider} 
                       className="h-16 object-contain rounded"
                     />

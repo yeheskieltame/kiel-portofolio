@@ -8,14 +8,14 @@ import Index from "./pages/Index";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
-import { AdminProvider } from "./components/admin/AdminDataContext";
+import { AdminDataProvider } from "./components/admin/AdminDataContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AdminProvider>
+      <AdminDataProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
@@ -27,7 +27,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-      </AdminProvider>
+      </AdminDataProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

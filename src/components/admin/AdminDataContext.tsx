@@ -57,6 +57,7 @@ interface AdminDataContextType {
   addEducation: (education: Omit<Education, 'id'>) => void;
   updateEducation: (education: Education) => void;
   deleteEducation: (id: number) => void;
+  initializeDefaultData: () => Promise<void>;
 }
 
 const AdminDataContext = createContext<AdminDataContextType | undefined>(undefined);
@@ -326,6 +327,28 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
     } catch (error) {
       console.error('Error initializing default education:', error);
+    }
+  };
+
+  const initializeDefaultData = async () => {
+    try {
+      await Promise.all([
+        initializeDefaultServices(),
+        initializeDefaultSkills(),
+        initializeDefaultEducation()
+      ]);
+      
+      toast({
+        title: "Success",
+        description: "Default data initialized successfully",
+      });
+    } catch (error) {
+      console.error('Error initializing default data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to initialize default data",
+        variant: "destructive",
+      });
     }
   };
 
@@ -747,7 +770,8 @@ export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     deleteSkill,
     addEducation,
     updateEducation,
-    deleteEducation
+    deleteEducation,
+    initializeDefaultData
   };
 
   return (
