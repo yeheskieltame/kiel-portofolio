@@ -1,15 +1,6 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { toast } from '@/hooks/use-toast';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-
-// Types for our data
-export interface Service {
-  id: number;
-  title: string;
-  description: string;
-  icon: string;
-  features: string[];
-}
+import { toast } from '@/hooks/use-toast';
 
 export interface Project {
   id: number;
@@ -21,603 +12,407 @@ export interface Project {
   tech: string[];
 }
 
+export interface Service {
+  id: number;
+  title: string;
+  description: string;
+  icon: string;
+  features: string[];
+}
+
 export interface Skill {
   id: number;
   name: string;
-  icon: string;
   level: number;
-  category: 'programming' | 'ml' | 'webdev';
+  category: string;
+  icon: string;
 }
 
 export interface Education {
   id: number;
   provider: string;
-  imageUrl?: string;
+  image_url?: string;
   courses: {
+    id: number;
     name: string;
-    link: string;
+    link?: string;
   }[];
 }
 
-interface AdminContextType {
-  services: Service[];
+interface AdminDataContextType {
   projects: Project[];
+  services: Service[];
   skills: Skill[];
   education: Education[];
-  updateService: (service: Service) => Promise<void>;
-  deleteService: (id: number) => Promise<void>;
-  addService: (service: Omit<Service, 'id'>) => Promise<void>;
-  updateProject: (project: Project) => Promise<void>;
-  deleteProject: (id: number) => Promise<void>;
-  addProject: (project: Omit<Project, 'id'>) => Promise<void>;
-  updateSkill: (skill: Skill) => Promise<void>;
-  deleteSkill: (id: number) => Promise<void>;
-  addSkill: (skill: Omit<Skill, 'id'>) => Promise<void>;
-  updateEducation: (education: Education) => Promise<void>;
-  deleteEducation: (id: number) => Promise<void>;
-  addEducation: (education: Omit<Education, 'id'>) => Promise<void>;
-  initializeDefaultData: () => Promise<void>;
   isLoading: boolean;
-  error: string | null;
+  addProject: (project: Omit<Project, 'id'>) => void;
+  updateProject: (project: Project) => void;
+  deleteProject: (id: number) => void;
+  addService: (service: Omit<Service, 'id'>) => void;
+  updateService: (service: Service) => void;
+  deleteService: (id: number) => void;
+  addSkill: (skill: Omit<Skill, 'id'>) => void;
+  updateSkill: (skill: Skill) => void;
+  deleteSkill: (id: number) => void;
+  addEducation: (education: Omit<Education, 'id'>) => void;
+  updateEducation: (education: Education) => void;
+  deleteEducation: (id: number) => void;
 }
 
-const AdminContext = createContext<AdminContextType | undefined>(undefined);
+const AdminDataContext = createContext<AdminDataContextType | undefined>(undefined);
 
-// Default data as fallback
-const defaultServices = [
+// Default services data focusing on Web3 and blockchain expertise
+const defaultServices: Omit<Service, 'id'>[] = [
   {
-    id: 1,
-    title: "Blockchain Development",
-    description: "Full-stack Web3 applications with smart contract integration, DeFi solutions, and decentralized systems architecture.",
-    icon: "Code",
-    features: ["Smart Contract Development", "Web3 Integration", "DeFi Applications", "Blockchain Analytics"],
-  },
-  {
-    id: 2,
-    title: "Machine Learning Solutions",
-    description: "Data-driven ML solutions to optimize processes, predict outcomes, and unlock insights from your data.",
-    icon: "BrainCircuit",
-    features: ["Predictive Analytics", "Data Classification", "Pattern Recognition", "Computer Vision"],
-  },
-  {
-    id: 3,
-    title: "Full-Stack Web Development",
-    description: "Modern web applications with advanced UI/UX, real-time features, and scalable backend architecture.",
-    icon: "MessageSquare",
-    features: ["React/TypeScript Applications", "Real-time Analytics", "Responsive Design", "API Development"],
-  },
-  {
-    id: 4,
-    title: "System Architecture & Analytics",
-    description: "Complex system design with multi-role dashboards, data visualization, and performance optimization.",
-    icon: "Facebook",
-    features: ["Dashboard Development", "Data Visualization", "Performance Monitoring", "System Integration"],
-  }
-];
-
-const defaultProjects = [
-  {
-    id: 1,
-    title: "🏢 Report It Right Now - Blockchain Reporting System",
-    description: "Revolutionary Web3 application for transparent blockchain-based reporting system with decentralized validation, multi-role dashboards, and economic incentive mechanisms. Features smart contract integration, real-time analytics, and comprehensive validation system.",
-    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0",
-    demoLink: "https://github.com/yeheskieltame",
-    githubLink: "https://github.com/yeheskieltame",
-    tech: ["React", "TypeScript", "Blockchain", "Web3", "Smart Contracts", "MetaMask", "Recharts", "Shadcn/UI", "Tailwind CSS"],
-  }
-];
-
-const defaultSkills = [
-  {
-    id: 1,
-    name: "Python",
-    icon: "/placeholder.svg",
-    level: 90,
-    category: "programming" as const,
-  },
-  {
-    id: 2,
-    name: "JavaScript",
-    icon: "/placeholder.svg",
-    level: 85,
-    category: "programming" as const,
-  },
-  {
-    id: 3,
-    name: "Java",
-    icon: "/placeholder.svg",
-    level: 80,
-    category: "programming" as const,
-  },
-  {
-    id: 4,
-    name: "HTML & CSS",
-    icon: "/placeholder.svg",
-    level: 85,
-    category: "programming" as const,
-  },
-  {
-    id: 5,
-    name: "PHP",
-    icon: "/placeholder.svg",
-    level: 75,
-    category: "programming" as const,
-  },
-  {
-    id: 6,
-    name: "SQL",
-    icon: "/placeholder.svg",
-    level: 80,
-    category: "programming" as const,
-  },
-  {
-    id: 7,
-    name: "TensorFlow",
-    icon: "/placeholder.svg",
-    level: 85,
-    category: "ml" as const,
-  },
-  {
-    id: 8,
-    name: "PyTorch",
-    icon: "/placeholder.svg",
-    level: 75,
-    category: "ml" as const,
-  },
-  {
-    id: 9,
-    name: "Scikit-learn",
-    icon: "/placeholder.svg",
-    level: 90,
-    category: "ml" as const,
-  },
-  {
-    id: 10,
-    name: "Pandas",
-    icon: "/placeholder.svg",
-    level: 90,
-    category: "ml" as const,
-  },
-  {
-    id: 11,
-    name: "NumPy",
-    icon: "/placeholder.svg",
-    level: 85,
-    category: "ml" as const,
-  },
-  {
-    id: 12,
-    name: "Matplotlib",
-    icon: "/placeholder.svg",
-    level: 80,
-    category: "ml" as const,
-  },
-  {
-    id: 13,
-    name: "Laravel",
-    icon: "/placeholder.svg",
-    level: 75,
-    category: "webdev" as const,
-  },
-  {
-    id: 14,
-    name: "Bootstrap",
-    icon: "/placeholder.svg",
-    level: 85,
-    category: "webdev" as const,
-  },
-  {
-    id: 15,
-    name: "TailwindCSS",
-    icon: "/placeholder.svg",
-    level: 80,
-    category: "webdev" as const,
-  },
-  {
-    id: 16,
-    name: "Flask",
-    icon: "/placeholder.svg",
-    level: 75,
-    category: "webdev" as const,
-  },
-  {
-    id: 17,
-    name: "Git & GitHub",
-    icon: "/placeholder.svg",
-    level: 85,
-    category: "webdev" as const,
-  },
-  {
-    id: 18,
-    name: "Google Cloud",
-    icon: "/placeholder.svg",
-    level: 70,
-    category: "webdev" as const,
-  }
-];
-
-const defaultEducation = [
-  {
-    id: 1,
-    provider: "DeepLearning.AI",
-    imageUrl: "",
-    courses: [
-      {
-        name: "Linear Algebra for Machine Learning and Data Science",
-        link: "https://www.coursera.org/account/accomplishments/verify/X1AKSP4V28QN"
-      }
+    title: "Blockchain Integration",
+    description: "Complete Web3 application development with smart contract integration, wallet connectivity, and decentralized features.",
+    icon: "Blocks",
+    features: [
+      "Smart Contract Development & Integration",
+      "MetaMask & Multi-Wallet Support", 
+      "DeFi Protocol Integration",
+      "NFT Marketplace Development",
+      "Cross-chain Bridge Solutions"
     ]
   },
   {
-    id: 2,
-    provider: "Dicoding Indonesia",
-    imageUrl: "",
-    courses: [
-      {
-        name: "Learn Data Analysis with Python",
-        link: "https://www.dicoding.com/certificates/1OP84LG61ZQK"
-      },
-      {
-        name: "Learn the Basics of Data Visualization",
-        link: "https://www.dicoding.com/certificates/GRX54GKJYP0M"
-      },
-      {
-        name: "Belajar Dasar Structured Query Language (SQL)",
-        link: "https://www.dicoding.com/certificates/JMZV1234RXN9"
-      },
-      {
-        name: "Getting Started with Programming Basics to Become a Software Developer",
-        link: "https://www.dicoding.com/certificates/81P2N05WNXOY"
-      },
-      {
-        name: "Introduction to Programming Logic (Programming Logic 101)",
-        link: "https://www.dicoding.com/certificates/JLX17OVD6X72"
-      },
-      {
-        name: "Getting Started with Python Programming",
-        link: "https://www.dicoding.com/certificates/GRX54DW1YP0M"
-      },
-      {
-        name: "Learn Git Basics with GitHub",
-        link: "https://www.dicoding.com/certificates/JMZV3KO5JPN9"
-      }
+    title: "Multi-Role Dashboard Systems",
+    description: "Complex dashboard architectures supporting multiple user roles with real-time data and advanced analytics.",
+    icon: "LayoutDashboard",
+    features: [
+      "Role-based Access Control",
+      "Real-time Analytics & Charts",
+      "Multi-tenant Architecture",
+      "Admin Panel Development",
+      "User Management Systems"
     ]
   },
   {
-    id: 3,
-    provider: "SanberCode",
-    imageUrl: "",
-    courses: [
-      {
-        name: "Laravel Web Development",
-        link: "https://sanbercode.com/certificate/in/c352b903-be13-445f-9aa7-3bc77f2ba2f3"
-      }
+    title: "Real-time Analytics & Reporting",
+    description: "Advanced data visualization and analytics systems with live updates and comprehensive reporting capabilities.",
+    icon: "BarChart3",
+    features: [
+      "Interactive Charts & Graphs",
+      "Real-time Data Processing",
+      "Custom Report Generation",
+      "Performance Monitoring",
+      "Business Intelligence Tools"
     ]
   },
   {
-    id: 4,
-    provider: "Coursera",
-    imageUrl: "",
-    courses: [
-      {
-        name: "Crash Course on Python",
-        link: "https://www.coursera.org/account/accomplishments/verify/S6KHEU5OCWWS"
-      },
-      {
-        name: "Using Python to Interact with the Operating System",
-        link: "https://www.coursera.org/account/accomplishments/verify/5D7M81TJ3QZ2"
-      }
+    title: "Decentralized Validation Systems",
+    description: "Build transparent and trustless validation mechanisms with economic incentives and reputation systems.",
+    icon: "Shield",
+    features: [
+      "Consensus Mechanism Design",
+      "Validator Reward Systems",
+      "Reputation Management",
+      "Appeal & Dispute Resolution",
+      "Governance Token Integration"
     ]
   }
 ];
 
-export const AdminProvider = ({ children }: { children: ReactNode }) => {
-  // State for storing fetched data
-  const [services, setServices] = useState<Service[]>([]);
+const defaultSkills: Omit<Skill, 'id'>[] = [
+  { name: "React", level: 95, category: "Frontend", icon: "Code" },
+  { name: "TypeScript", level: 90, category: "Frontend", icon: "FileText" },
+  { name: "Blockchain", level: 85, category: "Web3", icon: "Link" },
+  { name: "Smart Contracts", level: 80, category: "Web3", icon: "FileContract" },
+  { name: "Web3.js/Ethers.js", level: 85, category: "Web3", icon: "Globe" },
+  { name: "Solidity", level: 75, category: "Web3", icon: "Code2" },
+  { name: "Node.js", level: 85, category: "Backend", icon: "Server" },
+  { name: "Python", level: 80, category: "Backend", icon: "Code" },
+  { name: "Machine Learning", level: 75, category: "AI/ML", icon: "Brain" },
+  { name: "Data Analysis", level: 80, category: "AI/ML", icon: "BarChart" },
+  { name: "PostgreSQL", level: 85, category: "Database", icon: "Database" },
+  { name: "MongoDB", level: 75, category: "Database", icon: "Database" }
+];
+
+const defaultEducation: Omit<Education, 'id'>[] = [
+  {
+    provider: "Google",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
+    courses: [
+      { id: 1, name: "Google Data Analytics Professional Certificate", link: "https://www.coursera.org/professional-certificates/google-data-analytics" },
+      { id: 2, name: "Google IT Support Professional Certificate", link: "https://www.coursera.org/professional-certificates/google-it-support" }
+    ]
+  },
+  {
+    provider: "Meta",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
+    courses: [
+      { id: 3, name: "Meta Front-End Developer Professional Certificate", link: "https://www.coursera.org/professional-certificates/meta-front-end-developer" },
+      { id: 4, name: "Meta Back-End Developer Professional Certificate", link: "https://www.coursera.org/professional-certificates/meta-back-end-developer" }
+    ]
+  }
+];
+
+export const AdminDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [education, setEducation] = useState<Education[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  
-  // Function to fetch education with courses
-  const fetchEducationWithCourses = async () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchProjects = async () => {
     try {
-      // Fetch education providers
-      const { data: educationData, error: educationError } = await supabase
-        .from('kiel_portfolio_education')
-        .select('*');
-        
-      if (educationError) throw new Error(educationError.message);
-      
-      if (!educationData) return [];
-      
-      // For each education provider, fetch their courses
-      const educationWithCourses = await Promise.all(
-        educationData.map(async (edu: any) => {
-          const { data: coursesData, error: coursesError } = await supabase
-            .from('kiel_portfolio_education_courses')
-            .select('*')
-            .eq('education_id', edu.id);
-            
-          if (coursesError) throw new Error(coursesError.message);
-          
-          return {
-            id: edu.id,
-            provider: edu.provider,
-            imageUrl: edu.image_url || '',
-            courses: coursesData?.map((course: any) => ({
-              name: course.name,
-              link: course.link || ''
-            })) || []
-          };
-        })
-      );
-      
-      return educationWithCourses;
-    } catch (err: any) {
-      console.error("Error fetching education data:", err);
-      throw err;
-    }
-  };
+      const { data, error } = await supabase
+        .from('kiel_portfolio_projects')
+        .select('*')
+        .order('id', { ascending: true });
 
-  // Fetch data from Supabase on component mount
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        // Fetch services
-        const { data: servicesData, error: servicesError } = await supabase
-          .from('kiel_portfolio_services')
-          .select('*');
-          
-        if (servicesError) throw new Error(servicesError.message);
-        
-        // Fetch projects
-        const { data: projectsData, error: projectsError } = await supabase
-          .from('kiel_portfolio_projects')
-          .select('*');
-          
-        if (projectsError) throw new Error(projectsError.message);
-        
-        // Fetch skills
-        const { data: skillsData, error: skillsError } = await supabase
-          .from('kiel_portfolio_skills')
-          .select('*');
-          
-        if (skillsError) throw new Error(skillsError.message);
-        
-        // Fetch education with courses
-        const educationWithCourses = await fetchEducationWithCourses();
-        
-        // Map Supabase data to our expected format
-        if (servicesData) {
-          setServices(servicesData.map((service: any) => ({
-            id: service.id,
-            title: service.title,
-            description: service.description,
-            icon: service.icon,
-            features: service.features
-          })));
-        } else {
-          setServices(defaultServices);
-        }
-        
-        if (projectsData) {
-          setProjects(projectsData.map((project: any) => ({
-            id: project.id,
-            title: project.title,
-            description: project.description,
-            image: project.image,
-            demoLink: project.demo_link,
-            githubLink: project.github_link,
-            tech: project.tech
-          })));
-        } else {
-          setProjects(defaultProjects);
-        }
-        
-        if (skillsData) {
-          setSkills(skillsData.map((skill: any) => ({
-            id: skill.id,
-            name: skill.name,
-            icon: skill.icon,
-            level: skill.level,
-            category: skill.category as 'programming' | 'ml' | 'webdev'
-          })));
-        } else {
-          setSkills(defaultSkills);
-        }
-        
-        if (educationWithCourses.length > 0) {
-          setEducation(educationWithCourses);
-        } else {
-          setEducation(defaultEducation);
-        }
-        
-      } catch (error: any) {
-        console.error("Error fetching data from Supabase:", error);
-        setError("Failed to load data from server. Using local data instead.");
-        
-        // Fallback to localStorage if Supabase fails
-        const savedServices = localStorage.getItem('adminServices');
-        const savedProjects = localStorage.getItem('adminProjects');
-        const savedSkills = localStorage.getItem('adminSkills');
-        const savedEducation = localStorage.getItem('adminEducation');
-        
-        setServices(savedServices ? JSON.parse(savedServices) : defaultServices);
-        setProjects(savedProjects ? JSON.parse(savedProjects) : defaultProjects);
-        setSkills(savedSkills ? JSON.parse(savedSkills) : defaultSkills);
-        setEducation(savedEducation ? JSON.parse(savedEducation) : defaultEducation);
-        
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchData();
-  }, []);
-
-  // Save to localStorage as backup whenever data changes
-  useEffect(() => {
-    if (services.length > 0) {
-      localStorage.setItem('adminServices', JSON.stringify(services));
-    }
-  }, [services]);
-  
-  useEffect(() => {
-    if (projects.length > 0) {
-      localStorage.setItem('adminProjects', JSON.stringify(projects));
-    }
-  }, [projects]);
-  
-  useEffect(() => {
-    if (skills.length > 0) {
-      localStorage.setItem('adminSkills', JSON.stringify(skills));
-    }
-  }, [skills]);
-  
-  useEffect(() => {
-    if (education.length > 0) {
-      localStorage.setItem('adminEducation', JSON.stringify(education));
-    }
-  }, [education]);
-
-  // Service operations
-  const updateService = async (updatedService: Service) => {
-    try {
-      const { error } = await supabase
-        .from('kiel_portfolio_services')
-        .update({
-          title: updatedService.title,
-          description: updatedService.description,
-          icon: updatedService.icon,
-          features: updatedService.features
-        })
-        .eq('id', updatedService.id);
-      
       if (error) throw error;
-      
-      // Update local state
-      setServices(prevServices => 
-        prevServices.map(service => 
-          service.id === updatedService.id ? updatedService : service
-        )
-      );
-      
-      toast({
-        title: "Service Updated",
-        description: `"${updatedService.title}" has been updated successfully.`,
-      });
-    } catch (error: any) {
-      console.error("Error updating service:", error);
-      toast({
-        title: "Update Failed",
-        description: "Failed to update service. Please try again.",
-        variant: "destructive"
-      });
+
+      const mappedProjects = data?.map(project => ({
+        id: project.id,
+        title: project.title,
+        description: project.description,
+        image: project.image,
+        demoLink: project.demo_link,
+        githubLink: project.github_link,
+        tech: project.tech || []
+      })) || [];
+
+      setProjects(mappedProjects);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      setProjects([]);
     }
   };
 
-  const deleteService = async (id: number) => {
-    try {
-      const { error } = await supabase
-        .from('kiel_portfolio_services')
-        .delete()
-        .eq('id', id);
-        
-      if (error) throw error;
-      
-      // Update local state
-      setServices(prevServices => prevServices.filter(service => service.id !== id));
-      
-      toast({
-        title: "Service Deleted",
-        description: "Service has been deleted successfully.",
-      });
-    } catch (error: any) {
-      console.error("Error deleting service:", error);
-      toast({
-        title: "Delete Failed",
-        description: "Failed to delete service. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const addService = async (newService: Omit<Service, 'id'>) => {
+  const fetchServices = async () => {
     try {
       const { data, error } = await supabase
         .from('kiel_portfolio_services')
-        .insert({
-          title: newService.title,
-          description: newService.description,
-          icon: newService.icon,
-          features: newService.features
-        })
-        .select();
-        
+        .select('*')
+        .order('id', { ascending: true });
+
       if (error) throw error;
-      
-      if (data && data[0]) {
-        // Add to local state with the new ID from Supabase
-        const serviceWithId = { 
-          id: data[0].id, 
-          ...newService 
-        };
-        setServices(prevServices => [...prevServices, serviceWithId]);
-        
-        toast({
-          title: "Service Added",
-          description: `"${newService.title}" has been added successfully.`,
-        });
+
+      if (data && data.length > 0) {
+        const mappedServices = data.map(service => ({
+          id: service.id,
+          title: service.title,
+          description: service.description,
+          icon: service.icon,
+          features: service.features || []
+        }));
+        setServices(mappedServices);
+      } else {
+        // If no services in database, initialize with defaults
+        await initializeDefaultServices();
       }
-    } catch (error: any) {
-      console.error("Error adding service:", error);
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      await initializeDefaultServices();
+    }
+  };
+
+  const fetchSkills = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('kiel_portfolio_skills')
+        .select('*')
+        .order('id', { ascending: true });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        setSkills(data);
+      } else {
+        // If no skills in database, initialize with defaults
+        await initializeDefaultSkills();
+      }
+    } catch (error) {
+      console.error('Error fetching skills:', error);
+      await initializeDefaultSkills();
+    }
+  };
+
+  const fetchEducation = async () => {
+    try {
+      const { data: educationData, error: educationError } = await supabase
+        .from('kiel_portfolio_education')
+        .select('*')
+        .order('id', { ascending: true });
+
+      if (educationError) throw educationError;
+
+      if (educationData && educationData.length > 0) {
+        const { data: coursesData, error: coursesError } = await supabase
+          .from('kiel_portfolio_education_courses')
+          .select('*')
+          .order('id', { ascending: true });
+
+        if (coursesError) throw coursesError;
+
+        const educationWithCourses = educationData.map(edu => ({
+          ...edu,
+          courses: coursesData?.filter(course => course.education_id === edu.id) || []
+        }));
+
+        setEducation(educationWithCourses);
+      } else {
+        // If no education in database, initialize with defaults
+        await initializeDefaultEducation();
+      }
+    } catch (error) {
+      console.error('Error fetching education:', error);
+      await initializeDefaultEducation();
+    }
+  };
+
+  const initializeDefaultServices = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('kiel_portfolio_services')
+        .insert(defaultServices)
+        .select();
+
+      if (error) throw error;
+      if (data) setServices(data);
+    } catch (error) {
+      console.error('Error initializing default services:', error);
+    }
+  };
+
+  const initializeDefaultSkills = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('kiel_portfolio_skills')
+        .insert(defaultSkills)
+        .select();
+
+      if (error) throw error;
+      if (data) setSkills(data);
+    } catch (error) {
+      console.error('Error initializing default skills:', error);
+    }
+  };
+
+  const initializeDefaultEducation = async () => {
+    try {
+      // Insert education providers
+      const { data: educationData, error: educationError } = await supabase
+        .from('kiel_portfolio_education')
+        .insert(defaultEducation.map(({ courses, ...edu }) => edu))
+        .select();
+
+      if (educationError) throw educationError;
+
+      // Insert courses for each education provider
+      if (educationData) {
+        const coursesToInsert = defaultEducation.flatMap((edu, index) => 
+          edu.courses.map(course => ({
+            ...course,
+            education_id: educationData[index].id
+          }))
+        );
+
+        const { data: coursesData, error: coursesError } = await supabase
+          .from('kiel_portfolio_education_courses')
+          .insert(coursesToInsert)
+          .select();
+
+        if (coursesError) throw coursesError;
+
+        // Combine education with courses
+        const educationWithCourses = educationData.map(edu => ({
+          ...edu,
+          courses: coursesData?.filter(course => course.education_id === edu.id) || []
+        }));
+
+        setEducation(educationWithCourses);
+      }
+    } catch (error) {
+      console.error('Error initializing default education:', error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setIsLoading(true);
+      await Promise.all([
+        fetchProjects(),
+        fetchServices(),
+        fetchSkills(),
+        fetchEducation()
+      ]);
+      setIsLoading(false);
+    };
+
+    fetchAllData();
+  }, []);
+
+  const addProject = async (project: Omit<Project, 'id'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('kiel_portfolio_projects')
+        .insert([{
+          title: project.title,
+          description: project.description,
+          image: project.image,
+          demo_link: project.demoLink,
+          github_link: project.githubLink,
+          tech: project.tech
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newProject = {
+        id: data.id,
+        title: data.title,
+        description: data.description,
+        image: data.image,
+        demoLink: data.demo_link,
+        githubLink: data.github_link,
+        tech: data.tech || []
+      };
+
+      setProjects(prev => [...prev, newProject]);
       toast({
-        title: "Add Failed",
-        description: "Failed to add service. Please try again.",
-        variant: "destructive"
+        title: "Success",
+        description: "Project added successfully",
+      });
+    } catch (error) {
+      console.error('Error adding project:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add project",
+        variant: "destructive",
       });
     }
   };
 
-  // Project operations
-  const updateProject = async (updatedProject: Project) => {
+  const updateProject = async (project: Project) => {
     try {
       const { error } = await supabase
         .from('kiel_portfolio_projects')
         .update({
-          title: updatedProject.title,
-          description: updatedProject.description,
-          image: updatedProject.image,
-          demo_link: updatedProject.demoLink,
-          github_link: updatedProject.githubLink,
-          tech: updatedProject.tech
+          title: project.title,
+          description: project.description,
+          image: project.image,
+          demo_link: project.demoLink,
+          github_link: project.githubLink,
+          tech: project.tech
         })
-        .eq('id', updatedProject.id);
-        
+        .eq('id', project.id);
+
       if (error) throw error;
-      
-      // Update local state
-      setProjects(prevProjects => 
-        prevProjects.map(project => 
-          project.id === updatedProject.id ? updatedProject : project
-        )
-      );
-      
+
+      setProjects(prev => prev.map(p => p.id === project.id ? project : p));
       toast({
-        title: "Project Updated",
-        description: `"${updatedProject.title}" has been updated successfully.`,
+        title: "Success",
+        description: "Project updated successfully",
       });
-    } catch (error: any) {
-      console.error("Error updating project:", error);
+    } catch (error) {
+      console.error('Error updating project:', error);
       toast({
-        title: "Update Failed",
-        description: "Failed to update project. Please try again.",
-        variant: "destructive"
+        title: "Error",
+        description: "Failed to update project",
+        variant: "destructive",
       });
     }
   };
@@ -628,97 +423,142 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         .from('kiel_portfolio_projects')
         .delete()
         .eq('id', id);
-        
+
       if (error) throw error;
-      
-      // Update local state
-      setProjects(prevProjects => prevProjects.filter(project => project.id !== id));
-      
+
+      setProjects(prev => prev.filter(p => p.id !== id));
       toast({
-        title: "Project Deleted",
-        description: "Project has been deleted successfully.",
+        title: "Success",
+        description: "Project deleted successfully",
       });
-    } catch (error: any) {
-      console.error("Error deleting project:", error);
+    } catch (error) {
+      console.error('Error deleting project:', error);
       toast({
-        title: "Delete Failed",
-        description: "Failed to delete project. Please try again.",
-        variant: "destructive"
+        title: "Error",
+        description: "Failed to delete project",
+        variant: "destructive",
       });
     }
   };
 
-  const addProject = async (newProject: Omit<Project, 'id'>) => {
+  const addService = async (service: Omit<Service, 'id'>) => {
     try {
       const { data, error } = await supabase
-        .from('kiel_portfolio_projects')
-        .insert({
-          title: newProject.title,
-          description: newProject.description,
-          image: newProject.image,
-          demo_link: newProject.demoLink,
-          github_link: newProject.githubLink,
-          tech: newProject.tech
-        })
-        .select();
-        
+        .from('kiel_portfolio_services')
+        .insert([service])
+        .select()
+        .single();
+
       if (error) throw error;
-      
-      if (data && data[0]) {
-        // Add to local state with the new ID from Supabase
-        const projectWithId = { 
-          id: data[0].id, 
-          ...newProject 
-        };
-        setProjects(prevProjects => [...prevProjects, projectWithId]);
-        
-        toast({
-          title: "Project Added",
-          description: `"${newProject.title}" has been added successfully.`,
-        });
-      }
-    } catch (error: any) {
-      console.error("Error adding project:", error);
+
+      setServices(prev => [...prev, data]);
       toast({
-        title: "Add Failed",
-        description: "Failed to add project. Please try again.",
-        variant: "destructive"
+        title: "Success",
+        description: "Service added successfully",
+      });
+    } catch (error) {
+      console.error('Error adding service:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add service",
+        variant: "destructive",
       });
     }
   };
 
-  // Skill operations
-  const updateSkill = async (updatedSkill: Skill) => {
+  const updateService = async (service: Service) => {
+    try {
+      const { error } = await supabase
+        .from('kiel_portfolio_services')
+        .update(service)
+        .eq('id', service.id);
+
+      if (error) throw error;
+
+      setServices(prev => prev.map(s => s.id === service.id ? service : s));
+      toast({
+        title: "Success",
+        description: "Service updated successfully",
+      });
+    } catch (error) {
+      console.error('Error updating service:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update service",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteService = async (id: number) => {
+    try {
+      const { error } = await supabase
+        .from('kiel_portfolio_services')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setServices(prev => prev.filter(s => s.id !== id));
+      toast({
+        title: "Success",
+        description: "Service deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete service",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const addSkill = async (skill: Omit<Skill, 'id'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('kiel_portfolio_skills')
+        .insert([skill])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setSkills(prev => [...prev, data]);
+      toast({
+        title: "Success",
+        description: "Skill added successfully",
+      });
+    } catch (error) {
+      console.error('Error adding skill:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add skill",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const updateSkill = async (skill: Skill) => {
     try {
       const { error } = await supabase
         .from('kiel_portfolio_skills')
-        .update({
-          name: updatedSkill.name,
-          icon: updatedSkill.icon,
-          level: updatedSkill.level,
-          category: updatedSkill.category
-        })
-        .eq('id', updatedSkill.id);
-        
+        .update(skill)
+        .eq('id', skill.id);
+
       if (error) throw error;
-      
-      // Update local state
-      setSkills(prevSkills => 
-        prevSkills.map(skill => 
-          skill.id === updatedSkill.id ? updatedSkill : skill
-        )
-      );
-      
+
+      setSkills(prev => prev.map(s => s.id === skill.id ? skill : s));
       toast({
-        title: "Skill Updated",
-        description: `"${updatedSkill.name}" has been updated successfully.`,
+        title: "Success",
+        description: "Skill updated successfully",
       });
-    } catch (error: any) {
-      console.error("Error updating skill:", error);
+    } catch (error) {
+      console.error('Error updating skill:', error);
       toast({
-        title: "Update Failed",
-        description: "Failed to update skill. Please try again.",
-        variant: "destructive"
+        title: "Error",
+        description: "Failed to update skill",
+        variant: "destructive",
       });
     }
   };
@@ -729,361 +569,198 @@ export const AdminProvider = ({ children }: { children: ReactNode }) => {
         .from('kiel_portfolio_skills')
         .delete()
         .eq('id', id);
-        
+
       if (error) throw error;
-      
-      // Update local state
-      setSkills(prevSkills => prevSkills.filter(skill => skill.id !== id));
-      
+
+      setSkills(prev => prev.filter(s => s.id !== id));
       toast({
-        title: "Skill Deleted",
-        description: "Skill has been deleted successfully.",
+        title: "Success",
+        description: "Skill deleted successfully",
       });
-    } catch (error: any) {
-      console.error("Error deleting skill:", error);
+    } catch (error) {
+      console.error('Error deleting skill:', error);
       toast({
-        title: "Delete Failed",
-        description: "Failed to delete skill. Please try again.",
-        variant: "destructive"
+        title: "Error",
+        description: "Failed to delete skill",
+        variant: "destructive",
       });
     }
   };
 
-  const addSkill = async (newSkill: Omit<Skill, 'id'>) => {
+  const addEducation = async (education: Omit<Education, 'id'>) => {
     try {
-      const { data, error } = await supabase
-        .from('kiel_portfolio_skills')
-        .insert({
-          name: newSkill.name,
-          icon: newSkill.icon,
-          level: newSkill.level,
-          category: newSkill.category
-        })
-        .select();
-        
-      if (error) throw error;
-      
-      if (data && data[0]) {
-        // Add to local state with the new ID from Supabase
-        const skillWithId = { 
-          id: data[0].id, 
-          ...newSkill 
-        };
-        setSkills(prevSkills => [...prevSkills, skillWithId]);
-        
-        toast({
-          title: "Skill Added",
-          description: `"${newSkill.name}" has been added successfully.`,
-        });
-      }
-    } catch (error: any) {
-      console.error("Error adding skill:", error);
-      toast({
-        title: "Add Failed",
-        description: "Failed to add skill. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  // Education operations
-  const updateEducation = async (updatedEducation: Education) => {
-    try {
-      // Update education provider
-      const { error: providerError } = await supabase
+      const { data: educationData, error: educationError } = await supabase
         .from('kiel_portfolio_education')
-        .update({ 
-          provider: updatedEducation.provider,
-          image_url: updatedEducation.imageUrl
+        .insert([{
+          provider: education.provider,
+          image_url: education.image_url
+        }])
+        .select()
+        .single();
+
+      if (educationError) throw educationError;
+
+      if (education.courses && education.courses.length > 0) {
+        const coursesToInsert = education.courses.map(course => ({
+          name: course.name,
+          link: course.link,
+          education_id: educationData.id
+        }));
+
+        const { data: coursesData, error: coursesError } = await supabase
+          .from('kiel_portfolio_education_courses')
+          .insert(coursesToInsert)
+          .select();
+
+        if (coursesError) throw coursesError;
+
+        const newEducation = {
+          ...educationData,
+          courses: coursesData || []
+        };
+
+        setEducation(prev => [...prev, newEducation]);
+      } else {
+        setEducation(prev => [...prev, { ...educationData, courses: [] }]);
+      }
+
+      toast({
+        title: "Success",
+        description: "Education added successfully",
+      });
+    } catch (error) {
+      console.error('Error adding education:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add education",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const updateEducation = async (education: Education) => {
+    try {
+      const { error: educationError } = await supabase
+        .from('kiel_portfolio_education')
+        .update({
+          provider: education.provider,
+          image_url: education.image_url
         })
-        .eq('id', updatedEducation.id);
-        
-      if (providerError) throw providerError;
-      
-      // Delete existing courses for this provider
-      const { error: deleteError } = await supabase
+        .eq('id', education.id);
+
+      if (educationError) throw educationError;
+
+      // Delete existing courses
+      const { error: deleteCoursesError } = await supabase
         .from('kiel_portfolio_education_courses')
         .delete()
-        .eq('education_id', updatedEducation.id);
-        
-      if (deleteError) throw deleteError;
-      
+        .eq('education_id', education.id);
+
+      if (deleteCoursesError) throw deleteCoursesError;
+
       // Insert updated courses
-      if (updatedEducation.courses.length > 0) {
-        const coursesToInsert = updatedEducation.courses.map(course => ({
-          education_id: updatedEducation.id,
+      if (education.courses && education.courses.length > 0) {
+        const coursesToInsert = education.courses.map(course => ({
           name: course.name,
-          link: course.link
+          link: course.link,
+          education_id: education.id
         }));
-        
-        const { error: insertError } = await supabase
+
+        const { data: coursesData, error: coursesError } = await supabase
           .from('kiel_portfolio_education_courses')
-          .insert(coursesToInsert);
-          
-        if (insertError) throw insertError;
+          .insert(coursesToInsert)
+          .select();
+
+        if (coursesError) throw coursesError;
+
+        const updatedEducation = {
+          ...education,
+          courses: coursesData || []
+        };
+
+        setEducation(prev => prev.map(e => e.id === education.id ? updatedEducation : e));
+      } else {
+        setEducation(prev => prev.map(e => e.id === education.id ? { ...education, courses: [] } : e));
       }
-      
-      // Update local state
-      setEducation(prevEducation => 
-        prevEducation.map(edu => 
-          edu.id === updatedEducation.id ? updatedEducation : edu
-        )
-      );
-      
+
       toast({
-        title: "Education Updated",
-        description: `"${updatedEducation.provider}" has been updated successfully.`,
+        title: "Success",
+        description: "Education updated successfully",
       });
-    } catch (error: any) {
-      console.error("Error updating education:", error);
+    } catch (error) {
+      console.error('Error updating education:', error);
       toast({
-        title: "Update Failed",
-        description: "Failed to update education. Please try again.",
-        variant: "destructive"
+        title: "Error",
+        description: "Failed to update education",
+        variant: "destructive",
       });
     }
   };
 
   const deleteEducation = async (id: number) => {
     try {
-      // Cascade delete will handle removing courses
-      const { error } = await supabase
+      // Delete courses first (due to foreign key constraint)
+      const { error: deleteCoursesError } = await supabase
+        .from('kiel_portfolio_education_courses')
+        .delete()
+        .eq('education_id', id);
+
+      if (deleteCoursesError) throw deleteCoursesError;
+
+      // Delete education
+      const { error: deleteEducationError } = await supabase
         .from('kiel_portfolio_education')
         .delete()
         .eq('id', id);
-        
-      if (error) throw error;
-      
-      // Update local state
-      setEducation(prevEducation => prevEducation.filter(edu => edu.id !== id));
-      
-      toast({
-        title: "Education Provider Deleted",
-        description: "Education provider has been deleted successfully.",
-      });
-    } catch (error: any) {
-      console.error("Error deleting education:", error);
-      toast({
-        title: "Delete Failed",
-        description: "Failed to delete education provider. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
 
-  const addEducation = async (newEducation: Omit<Education, 'id'>) => {
-    try {
-      // First insert the education provider
-      const { data, error } = await supabase
-        .from('kiel_portfolio_education')
-        .insert({ 
-          provider: newEducation.provider,
-          image_url: newEducation.imageUrl
-        })
-        .select();
-        
-      if (error) throw error;
-      
-      if (data && data[0]) {
-        const educationId = data[0].id;
-        
-        // Then insert courses
-        if (newEducation.courses.length > 0) {
-          const coursesToInsert = newEducation.courses.map(course => ({
-            education_id: educationId,
-            name: course.name,
-            link: course.link
-          }));
-          
-          const { error: coursesError } = await supabase
-            .from('kiel_portfolio_education_courses')
-            .insert(coursesToInsert);
-            
-          if (coursesError) throw coursesError;
-        }
-        
-        // Add to local state with the new ID from Supabase
-        const educationWithId = { 
-          id: educationId, 
-          ...newEducation 
-        };
-        setEducation(prevEducation => [...prevEducation, educationWithId]);
-        
-        toast({
-          title: "Education Provider Added",
-          description: `"${newEducation.provider}" has been added successfully.`,
-        });
-      }
-    } catch (error: any) {
-      console.error("Error adding education:", error);
-      toast({
-        title: "Add Failed",
-        description: "Failed to add education provider. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
+      if (deleteEducationError) throw deleteEducationError;
 
-  // Initialize database with default data
-  const initializeDefaultData = async () => {
-    try {
-      // Clear existing data first
-      await supabase.from('kiel_portfolio_services').delete().neq('id', 0);
-      await supabase.from('kiel_portfolio_projects').delete().neq('id', 0);
-      await supabase.from('kiel_portfolio_skills').delete().neq('id', 0);
-      await supabase.from('kiel_portfolio_education').delete().neq('id', 0);
-      
-      // Insert services
-      for (const service of defaultServices) {
-        // Remove the id as it will be auto-generated
-        const { id, ...serviceData } = service;
-        await supabase.from('kiel_portfolio_services').insert(serviceData);
-      }
-      
-      // Insert projects
-      for (const project of defaultProjects) {
-        const { id, demoLink, githubLink, ...projectData } = project;
-        await supabase.from('kiel_portfolio_projects').insert({
-          ...projectData,
-          demo_link: demoLink,
-          github_link: githubLink
-        });
-      }
-      
-      // Insert skills
-      for (const skill of defaultSkills) {
-        const { id, ...skillData } = skill;
-        await supabase.from('kiel_portfolio_skills').insert(skillData);
-      }
-      
-      // Insert education providers and courses
-      for (const edu of defaultEducation) {
-        const { id, courses, ...eduData } = edu;
-        
-        // Insert education provider
-        const { data: providerData, error: providerError } = await supabase
-          .from('kiel_portfolio_education')
-          .insert(eduData)
-          .select();
-          
-        if (providerError) throw providerError;
-        if (!providerData || !providerData[0]) {
-          throw new Error("Failed to insert education provider");
-        }
-        
-        const educationId = providerData[0].id;
-        
-        // Insert courses for this provider
-        if (courses && courses.length > 0) {
-          const coursesWithEducationId = courses.map(course => ({
-            education_id: educationId,
-            name: course.name,
-            link: course.link
-          }));
-          
-          const { error: coursesError } = await supabase
-            .from('kiel_portfolio_education_courses')
-            .insert(coursesWithEducationId);
-            
-          if (coursesError) throw coursesError;
-        }
-      }
-      
-      // Refetch data to update the UI
-      const fetchData = async () => {
-        const { data: servicesData } = await supabase
-          .from('kiel_portfolio_services')
-          .select('*');
-          
-        const { data: projectsData } = await supabase
-          .from('kiel_portfolio_projects')
-          .select('*');
-          
-        const { data: skillsData } = await supabase
-          .from('kiel_portfolio_skills')
-          .select('*');
-          
-        const educationWithCourses = await fetchEducationWithCourses();
-        
-        if (servicesData) {
-          setServices(servicesData.map((service: any) => ({
-            id: service.id,
-            title: service.title,
-            description: service.description,
-            icon: service.icon,
-            features: service.features
-          })));
-        }
-        
-        if (projectsData) {
-          setProjects(projectsData.map((project: any) => ({
-            id: project.id,
-            title: project.title,
-            description: project.description,
-            image: project.image,
-            demoLink: project.demo_link,
-            githubLink: project.github_link,
-            tech: project.tech
-          })));
-        }
-        
-        if (skillsData) {
-          setSkills(skillsData.map((skill: any) => ({
-            id: skill.id,
-            name: skill.name,
-            icon: skill.icon,
-            level: skill.level,
-            category: skill.category as 'programming' | 'ml' | 'webdev'
-          })));
-        }
-        
-        if (educationWithCourses.length > 0) {
-          setEducation(educationWithCourses);
-        }
-      };
-      
-      await fetchData();
-      
-      return;
-    } catch (error: any) {
-      console.error("Error initializing database with default data:", error);
-      throw error;
+      setEducation(prev => prev.filter(e => e.id !== id));
+      toast({
+        title: "Success",
+        description: "Education deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting education:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete education",
+        variant: "destructive",
+      });
     }
   };
 
   const value = {
-    services,
     projects,
+    services,
     skills,
     education,
-    updateService,
-    deleteService,
-    addService,
+    isLoading,
+    addProject,
     updateProject,
     deleteProject,
-    addProject,
+    addService,
+    updateService,
+    deleteService,
+    addSkill,
     updateSkill,
     deleteSkill,
-    addSkill,
-    updateEducation,
-    deleteEducation,
     addEducation,
-    initializeDefaultData,
-    isLoading,
-    error
+    updateEducation,
+    deleteEducation
   };
 
   return (
-    <AdminContext.Provider value={value}>
+    <AdminDataContext.Provider value={value}>
       {children}
-    </AdminContext.Provider>
+    </AdminDataContext.Provider>
   );
 };
 
 export const useAdminData = () => {
-  const context = useContext(AdminContext);
+  const context = useContext(AdminDataContext);
   if (context === undefined) {
-    throw new Error('useAdminData must be used within an AdminProvider');
+    throw new Error('useAdminData must be used within an AdminDataProvider');
   }
   return context;
 };
