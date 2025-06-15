@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -62,7 +63,7 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom RGB theme
+				// Enhanced theme colors for blockchain/AI aesthetic
 				"theme-purple": {
 					light: "#9b87f5",
 					DEFAULT: "#7E69AB",
@@ -123,7 +124,7 @@ export default {
 				},
 				'float': {
 					'0%, 100%': { transform: 'translateY(0)' },
-					'50%': { transform: 'translateY(-5px)' }
+					'50%': { transform: 'translateY(-10px)' }
 				},
 				'typing': {
 					'0%': { width: '0%' },
@@ -141,6 +142,18 @@ export default {
 					'0%': { backgroundPosition: '0% 50%' },
 					'50%': { backgroundPosition: '100% 50%' },
 					'100%': { backgroundPosition: '0% 50%' }
+				},
+				'glow': {
+					'0%, 100%': { boxShadow: '0 0 20px rgba(139, 92, 246, 0.3)' },
+					'50%': { boxShadow: '0 0 30px rgba(139, 92, 246, 0.6)' }
+				},
+				'pulse-slow': {
+					'0%, 100%': { opacity: '0.3' },
+					'50%': { opacity: '0.8' }
+				},
+				'rotate-slow': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
 				}
 			},
 			animation: {
@@ -157,12 +170,18 @@ export default {
 				'typing': 'typing 3.5s steps(40, end)',
 				'caret': 'blink 0.75s step-end infinite',
 				'bounce-slow': 'bounce-slow 3s infinite',
-				'gradient-shift': 'gradient-shift 8s ease infinite'
+				'gradient-shift': 'gradient-shift 8s ease infinite',
+				'glow': 'glow 2s ease-in-out infinite',
+				'pulse-slow': 'pulse-slow 3s ease-in-out infinite',
+				'rotate-slow': 'rotate-slow 10s linear infinite'
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'purple-grid': "url('/grid-pattern-purple.svg')",
 				'circuit': "url('/circuit-pattern.svg')"
+			},
+			backgroundSize: {
+				'300%': '300%',
 			}
 		}
 	},
