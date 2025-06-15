@@ -16,20 +16,20 @@ const SkillCard = ({ name, icon, level, index }: SkillCardProps) => {
     <div 
       className={cn(
         "group relative p-6 rounded-2xl border border-white/10 backdrop-blur-sm",
-        "bg-gradient-to-br from-white/5 to-white/10 hover:from-white/10 hover:to-white/20",
-        "transition-all duration-500 hover:scale-105 hover:border-purple-500/50",
+        "bg-gradient-to-br from-white/5 to-white/10",
+        "transition-all duration-500 hover:scale-105 hover:border-purple-500/50 hover:from-white/10 hover:to-white/20",
         "opacity-0 animate-fade-in overflow-hidden"
       )}
       style={{ animationDelay: `${0.1 + index * 0.05}s`, animationFillMode: "forwards" }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Hover Glow Effect - moved to back with reduced opacity */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+      {/* Subtle Hover Border Animation */}
+      <div className="absolute inset-0 rounded-2xl border-2 border-transparent bg-gradient-to-r from-purple-500/0 via-blue-500/0 to-purple-500/0 opacity-0 group-hover:opacity-100 group-hover:from-purple-500/30 group-hover:via-blue-500/30 group-hover:to-purple-500/30 transition-all duration-500"></div>
       
-      {/* Floating Particles - reduced opacity */}
-      <div className="absolute top-2 right-2 w-1 h-1 bg-purple-400/60 rounded-full opacity-0 group-hover:opacity-100 animate-pulse"></div>
-      <div className="absolute top-4 right-6 w-1 h-1 bg-blue-400/60 rounded-full opacity-0 group-hover:opacity-100 animate-pulse" style={{ animationDelay: "0.3s" }}></div>
+      {/* Floating Particles - very subtle */}
+      <div className="absolute top-2 right-2 w-1 h-1 bg-purple-400/40 rounded-full opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-500"></div>
+      <div className="absolute top-4 right-6 w-1 h-1 bg-blue-400/40 rounded-full opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-500" style={{ animationDelay: "0.3s" }}></div>
       
       <div className="relative z-10 flex items-center space-x-4">
         {/* Icon Container */}
@@ -37,7 +37,7 @@ const SkillCard = ({ name, icon, level, index }: SkillCardProps) => {
           <div className={cn(
             "w-14 h-14 flex items-center justify-center rounded-xl",
             "bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-white/20",
-            "group-hover:scale-110 transition-transform duration-300"
+            "group-hover:scale-110 group-hover:border-white/30 transition-all duration-300"
           )}>
             <img 
               src={icon} 
@@ -46,8 +46,8 @@ const SkillCard = ({ name, icon, level, index }: SkillCardProps) => {
             />
           </div>
           
-          {/* Pulse Ring - reduced opacity */}
-          <div className="absolute inset-0 rounded-xl border-2 border-purple-400/0 group-hover:border-purple-400/30 group-hover:scale-125 transition-all duration-500"></div>
+          {/* Subtle Pulse Ring */}
+          <div className="absolute inset-0 rounded-xl border border-purple-400/0 group-hover:border-purple-400/20 group-hover:scale-110 transition-all duration-500"></div>
         </div>
 
         {/* Content */}
@@ -70,9 +70,6 @@ const SkillCard = ({ name, icon, level, index }: SkillCardProps) => {
             
             {/* Progress Bar */}
             <div className="relative h-2 bg-white/10 rounded-full overflow-hidden">
-              {/* Background Glow - reduced opacity */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
               {/* Progress Fill */}
               <div 
                 className={cn(
@@ -84,16 +81,16 @@ const SkillCard = ({ name, icon, level, index }: SkillCardProps) => {
                   transitionDelay: "300ms"
                 }}
               >
-                {/* Shimmer Effect - reduced opacity */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-slide-in-right"></div>
+                {/* Subtle Shimmer Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Corner Accent - reduced opacity */}
-      <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-purple-500/10 to-transparent rounded-bl-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      {/* Corner Accent - very subtle */}
+      <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-purple-500/5 to-transparent rounded-bl-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
     </div>
   );
 };

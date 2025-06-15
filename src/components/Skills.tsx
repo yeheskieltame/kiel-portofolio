@@ -9,10 +9,9 @@ const Skills = () => {
   if (isLoading) {
     return (
       <section id="skills" className="py-20 px-6 md:px-10 relative overflow-hidden">
-        {/* Animated Background - moved to back with reduced opacity */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-900 via-purple-900/10 to-slate-900">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(120,119,198,0.15),transparent_50%)] animate-pulse-slow"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,119,198,0.15),transparent_50%)] animate-pulse-slow" style={{ animationDelay: "1s" }}></div>
+        {/* Subtle Background Pattern */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_24%,rgba(120,119,198,0.05)_25%,rgba(120,119,198,0.05)_26%,transparent_27%,transparent_74%,rgba(120,119,198,0.05)_75%,rgba(120,119,198,0.05)_76%,transparent_77%)] bg-[length:60px_60px] animate-pulse-slow"></div>
         </div>
         
         <div className="max-w-7xl mx-auto text-center relative z-10">
@@ -61,12 +60,11 @@ const Skills = () => {
 
   return (
     <section id="skills" className="py-20 px-6 md:px-10 relative overflow-hidden">
-      {/* Animated Background - moved to back with reduced opacity */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-900 via-purple-900/10 to-slate-900">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(120,119,198,0.15),transparent_50%)] animate-pulse-slow"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,119,198,0.15),transparent_50%)] animate-pulse-slow" style={{ animationDelay: "1s" }}></div>
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_24%,rgba(120,119,198,0.05)_25%,rgba(120,119,198,0.05)_26%,transparent_27%,transparent_74%,rgba(120,119,198,0.05)_75%,rgba(120,119,198,0.05)_76%,transparent_77%)] bg-[length:60px_60px] animate-pulse-slow"></div>
         
-        {/* Floating Geometric Shapes - moved to back */}
+        {/* Floating Geometric Shapes with subtle animation */}
         <div className="absolute top-20 left-10 w-20 h-20 border border-purple-500/20 rotate-45 animate-float"></div>
         <div className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full animate-bounce-slow"></div>
         <div className="absolute bottom-20 left-1/4 w-12 h-12 border-2 border-cyan-500/20 animate-rotate-slow"></div>
@@ -102,7 +100,7 @@ const Skills = () => {
             >
               {/* Category Header */}
               <div className="flex items-center gap-4 mb-8">
-                <div className={`p-3 rounded-xl bg-gradient-to-r ${category.gradient} border border-white/10`}>
+                <div className={`p-3 rounded-xl bg-gradient-to-r ${category.gradient} border border-white/10 hover:border-white/20 transition-all duration-300`}>
                   <category.icon className={`h-6 w-6 ${category.iconColor}`} />
                 </div>
                 <h3 className="text-2xl font-bold text-white">{category.title}</h3>
@@ -127,7 +125,7 @@ const Skills = () => {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16 opacity-0 animate-fade-in" style={{ animationDelay: "0.8s", animationFillMode: "forwards" }}>
-          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium hover:scale-105 transition-transform cursor-pointer">
+          <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium hover:scale-105 transition-transform cursor-pointer border border-white/10">
             <span>Explore My Projects</span>
             <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
           </div>
