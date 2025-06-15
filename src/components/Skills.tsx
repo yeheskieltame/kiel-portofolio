@@ -8,14 +8,13 @@ const Skills = () => {
 
   if (isLoading) {
     return (
-      <section id="skills" className="py-20 px-6 md:px-10 relative overflow-hidden">
-        {/* Subtle Background Pattern */}
+      <section id="skills" className="py-16 px-6 md:px-10 relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
           <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_24%,rgba(120,119,198,0.05)_25%,rgba(120,119,198,0.05)_26%,transparent_27%,transparent_74%,rgba(120,119,198,0.05)_75%,rgba(120,119,198,0.05)_76%,transparent_77%)] bg-[length:60px_60px] animate-pulse-slow"></div>
         </div>
         
         <div className="max-w-7xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 mb-6">
             <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
             <span className="text-purple-300 text-sm font-medium">Loading Tech Stack...</span>
           </div>
@@ -36,21 +35,21 @@ const Skills = () => {
 
   const categories = [
     {
-      title: "Programming Languages",
+      title: "Programming",
       icon: Code,
       skills: programmingSkills,
       gradient: "from-blue-500/20 to-cyan-500/20",
       iconColor: "text-blue-400"
     },
     {
-      title: "Machine Learning & AI",
+      title: "ML & AI",
       icon: Brain,
       skills: mlSkills,
       gradient: "from-purple-500/20 to-pink-500/20",
       iconColor: "text-purple-400"
     },
     {
-      title: "Web Development & Tools",
+      title: "Web Dev",
       icon: Globe,
       skills: webDevSkills,
       gradient: "from-green-500/20 to-emerald-500/20",
@@ -59,39 +58,34 @@ const Skills = () => {
   ];
 
   return (
-    <section id="skills" className="py-20 px-6 md:px-10 relative overflow-hidden">
-      {/* Subtle Background Pattern */}
+    <section id="skills" className="py-16 px-6 md:px-10 relative overflow-hidden">
+      {/* Background Pattern */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_24%,rgba(120,119,198,0.05)_25%,rgba(120,119,198,0.05)_26%,transparent_27%,transparent_74%,rgba(120,119,198,0.05)_75%,rgba(120,119,198,0.05)_76%,transparent_77%)] bg-[length:60px_60px] animate-pulse-slow"></div>
-        
-        {/* Floating Geometric Shapes with subtle animation */}
-        <div className="absolute top-20 left-10 w-20 h-20 border border-purple-500/20 rotate-45 animate-float"></div>
-        <div className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full animate-bounce-slow"></div>
-        <div className="absolute bottom-20 left-1/4 w-12 h-12 border-2 border-cyan-500/20 animate-rotate-slow"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Header */}
-        <div className="text-center mb-16 opacity-0 animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 mb-6">
+        {/* Compact Header */}
+        <div className="text-center mb-12 opacity-0 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 mb-4">
             <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
             <span className="text-purple-300 text-sm font-medium">Tech Stack</span>
           </div>
           
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-white via-purple-200 to-cyan-200 bg-clip-text text-transparent">
             Skills & Technologies
           </h2>
           
-          <p className="text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed">
-            A comprehensive overview of my technical expertise in{" "}
-            <span className="text-purple-400 font-semibold">blockchain development</span>,{" "}
-            <span className="text-blue-400 font-semibold">artificial intelligence</span>, and{" "}
+          <p className="text-gray-300 max-w-2xl mx-auto text-base leading-relaxed">
+            Comprehensive expertise in{" "}
+            <span className="text-purple-400 font-semibold">blockchain</span>,{" "}
+            <span className="text-blue-400 font-semibold">AI</span>, and{" "}
             <span className="text-cyan-400 font-semibold">web technologies</span>
           </p>
         </div>
 
-        {/* Skills Categories */}
-        <div className="space-y-16">
+        {/* Compact Skills Grid - 3 columns layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {categories.map((category, categoryIndex) => (
             <div
               key={category.title}
@@ -99,16 +93,15 @@ const Skills = () => {
               style={{ animationDelay: `${0.2 + categoryIndex * 0.1}s`, animationFillMode: "forwards" }}
             >
               {/* Category Header */}
-              <div className="flex items-center gap-4 mb-8">
-                <div className={`p-3 rounded-xl bg-gradient-to-r ${category.gradient} border border-white/10 hover:border-white/20 transition-all duration-300`}>
-                  <category.icon className={`h-6 w-6 ${category.iconColor}`} />
+              <div className="flex items-center gap-3 mb-6">
+                <div className={`p-2.5 rounded-xl bg-gradient-to-r ${category.gradient} border border-white/10`}>
+                  <category.icon className={`h-5 w-5 ${category.iconColor}`} />
                 </div>
-                <h3 className="text-2xl font-bold text-white">{category.title}</h3>
-                <div className="flex-1 h-px bg-gradient-to-r from-purple-500/50 to-transparent"></div>
+                <h3 className="text-lg font-bold text-white">{category.title}</h3>
               </div>
 
-              {/* Skills Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Compact Skills List */}
+              <div className="space-y-3">
                 {category.skills.map((skill, index) => (
                   <SkillCard
                     key={skill.id}
@@ -116,6 +109,7 @@ const Skills = () => {
                     icon={skill.icon}
                     level={skill.level}
                     index={index + categoryIndex * 10}
+                    compact={true}
                   />
                 ))}
               </div>
@@ -123,10 +117,10 @@ const Skills = () => {
           ))}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="text-center mt-16 opacity-0 animate-fade-in" style={{ animationDelay: "0.8s", animationFillMode: "forwards" }}>
+        {/* Compact Bottom CTA */}
+        <div className="text-center mt-12 opacity-0 animate-fade-in" style={{ animationDelay: "0.6s", animationFillMode: "forwards" }}>
           <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium hover:scale-105 transition-transform cursor-pointer border border-white/10">
-            <span>Explore My Projects</span>
+            <span>View Projects</span>
             <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
           </div>
         </div>
