@@ -9,6 +9,48 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      kiel_portfolio_activities: {
+        Row: {
+          activity_date: string
+          category: string
+          created_at: string | null
+          description: string
+          id: number
+          image_url: string
+          is_featured: boolean | null
+          location: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          activity_date: string
+          category?: string
+          created_at?: string | null
+          description: string
+          id?: number
+          image_url: string
+          is_featured?: boolean | null
+          location?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          activity_date?: string
+          category?: string
+          created_at?: string | null
+          description?: string
+          id?: number
+          image_url?: string
+          is_featured?: boolean | null
+          location?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       kiel_portfolio_education: {
         Row: {
           id: number
