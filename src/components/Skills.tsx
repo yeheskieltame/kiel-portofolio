@@ -9,10 +9,10 @@ const Skills = () => {
   if (isLoading) {
     return (
       <section id="skills" className="py-20 px-6 md:px-10 relative overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(120,119,198,0.3),transparent_50%)] animate-pulse-slow"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,119,198,0.3),transparent_50%)] animate-pulse-slow" style={{ animationDelay: "1s" }}></div>
+        {/* Animated Background - moved to back with reduced opacity */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-900 via-purple-900/10 to-slate-900">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(120,119,198,0.15),transparent_50%)] animate-pulse-slow"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,119,198,0.15),transparent_50%)] animate-pulse-slow" style={{ animationDelay: "1s" }}></div>
         </div>
         
         <div className="max-w-7xl mx-auto text-center relative z-10">
@@ -61,15 +61,15 @@ const Skills = () => {
 
   return (
     <section id="skills" className="py-20 px-6 md:px-10 relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(120,119,198,0.3),transparent_50%)] animate-pulse-slow"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,119,198,0.3),transparent_50%)] animate-pulse-slow" style={{ animationDelay: "1s" }}></div>
+      {/* Animated Background - moved to back with reduced opacity */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-900 via-purple-900/10 to-slate-900">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(120,119,198,0.15),transparent_50%)] animate-pulse-slow"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,119,198,0.15),transparent_50%)] animate-pulse-slow" style={{ animationDelay: "1s" }}></div>
         
-        {/* Floating Geometric Shapes */}
-        <div className="absolute top-20 left-10 w-20 h-20 border border-purple-500/30 rotate-45 animate-float"></div>
-        <div className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full animate-bounce-slow"></div>
-        <div className="absolute bottom-20 left-1/4 w-12 h-12 border-2 border-cyan-500/40 animate-rotate-slow"></div>
+        {/* Floating Geometric Shapes - moved to back */}
+        <div className="absolute top-20 left-10 w-20 h-20 border border-purple-500/20 rotate-45 animate-float"></div>
+        <div className="absolute top-40 right-20 w-16 h-16 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full animate-bounce-slow"></div>
+        <div className="absolute bottom-20 left-1/4 w-12 h-12 border-2 border-cyan-500/20 animate-rotate-slow"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">

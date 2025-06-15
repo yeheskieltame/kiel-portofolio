@@ -8,15 +8,15 @@ const Education = () => {
   
   return (
     <section id="education" className="py-20 px-6 md:px-10 relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900/20 to-slate-900">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.3),transparent_50%)] animate-pulse-slow"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(147,51,234,0.3),transparent_50%)] animate-pulse-slow" style={{ animationDelay: "1.5s" }}></div>
+      {/* Animated Background - moved to back with reduced opacity */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-900 via-blue-900/10 to-slate-900">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(59,130,246,0.15),transparent_50%)] animate-pulse-slow"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(147,51,234,0.15),transparent_50%)] animate-pulse-slow" style={{ animationDelay: "1.5s" }}></div>
         
-        {/* Floating Elements */}
-        <div className="absolute top-16 left-16 w-16 h-16 border border-blue-500/30 rotate-12 animate-float"></div>
-        <div className="absolute top-32 right-24 w-12 h-12 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full animate-bounce-slow"></div>
-        <div className="absolute bottom-24 left-1/3 w-8 h-8 border-2 border-cyan-500/40 animate-rotate-slow"></div>
+        {/* Floating Elements - moved to back with reduced opacity */}
+        <div className="absolute top-16 left-16 w-16 h-16 border border-blue-500/20 rotate-12 animate-float"></div>
+        <div className="absolute top-32 right-24 w-12 h-12 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-full animate-bounce-slow"></div>
+        <div className="absolute bottom-24 left-1/3 w-8 h-8 border-2 border-cyan-500/20 animate-rotate-slow"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -42,7 +42,8 @@ const Education = () => {
         <div className="space-y-12">
           {/* Current Focus Section */}
           <div className="relative group opacity-0 animate-fade-in" style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}>
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+            {/* Background glow moved to back with reduced opacity */}
+            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-purple-500/5 to-blue-500/5 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
             
             <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-8 hover:border-purple-500/30 transition-all duration-500">
               {/* Header */}
@@ -102,8 +103,8 @@ const Education = () => {
                 className="group relative opacity-0 animate-fade-in"
                 style={{ animationDelay: `${0.2 + index * 0.1}s`, animationFillMode: "forwards" }}
               >
-                {/* Background Glow */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500 opacity-0 group-hover:opacity-100"></div>
+                {/* Background Glow - moved to back with reduced opacity */}
+                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500 opacity-0 group-hover:opacity-100"></div>
                 
                 <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-6 hover:border-blue-500/30 transition-all duration-500 hover:scale-105">
                   {/* Provider Header */}
@@ -156,7 +157,8 @@ const Education = () => {
           
           {/* Community Section */}
           <div className="relative group opacity-0 animate-fade-in" style={{ animationDelay: "0.6s", animationFillMode: "forwards" }}>
-            <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-cyan-500/10 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+            {/* Background glow moved to back with reduced opacity */}
+            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-green-500/5 to-cyan-500/5 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
             
             <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm rounded-3xl border border-white/10 p-8 hover:border-green-500/30 transition-all duration-500">
               {/* Header */}

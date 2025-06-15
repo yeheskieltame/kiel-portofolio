@@ -24,12 +24,12 @@ const SkillCard = ({ name, icon, level, index }: SkillCardProps) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Hover Glow Effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+      {/* Hover Glow Effect - moved to back with reduced opacity */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
       
-      {/* Floating Particles */}
-      <div className="absolute top-2 right-2 w-1 h-1 bg-purple-400 rounded-full opacity-0 group-hover:opacity-100 animate-pulse"></div>
-      <div className="absolute top-4 right-6 w-1 h-1 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 animate-pulse" style={{ animationDelay: "0.3s" }}></div>
+      {/* Floating Particles - reduced opacity */}
+      <div className="absolute top-2 right-2 w-1 h-1 bg-purple-400/60 rounded-full opacity-0 group-hover:opacity-100 animate-pulse"></div>
+      <div className="absolute top-4 right-6 w-1 h-1 bg-blue-400/60 rounded-full opacity-0 group-hover:opacity-100 animate-pulse" style={{ animationDelay: "0.3s" }}></div>
       
       <div className="relative z-10 flex items-center space-x-4">
         {/* Icon Container */}
@@ -46,8 +46,8 @@ const SkillCard = ({ name, icon, level, index }: SkillCardProps) => {
             />
           </div>
           
-          {/* Pulse Ring */}
-          <div className="absolute inset-0 rounded-xl border-2 border-purple-400/0 group-hover:border-purple-400/50 group-hover:scale-125 transition-all duration-500"></div>
+          {/* Pulse Ring - reduced opacity */}
+          <div className="absolute inset-0 rounded-xl border-2 border-purple-400/0 group-hover:border-purple-400/30 group-hover:scale-125 transition-all duration-500"></div>
         </div>
 
         {/* Content */}
@@ -70,8 +70,8 @@ const SkillCard = ({ name, icon, level, index }: SkillCardProps) => {
             
             {/* Progress Bar */}
             <div className="relative h-2 bg-white/10 rounded-full overflow-hidden">
-              {/* Background Glow */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-blue-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              {/* Background Glow - reduced opacity */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               
               {/* Progress Fill */}
               <div 
@@ -84,16 +84,16 @@ const SkillCard = ({ name, icon, level, index }: SkillCardProps) => {
                   transitionDelay: "300ms"
                 }}
               >
-                {/* Shimmer Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-slide-in-right"></div>
+                {/* Shimmer Effect - reduced opacity */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-slide-in-right"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Corner Accent */}
-      <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-purple-500/20 to-transparent rounded-bl-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      {/* Corner Accent - reduced opacity */}
+      <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-br from-purple-500/10 to-transparent rounded-bl-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
     </div>
   );
 };
