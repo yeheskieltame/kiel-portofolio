@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ServiceRequestDialog } from "./ServiceRequestDialog";
+import ServiceRequestDialog from "./ServiceRequestDialog";
 import { useAdminData } from "./admin/AdminDataContext";
 import { Blocks, BrainCircuit, Code, Database, Sparkles, Zap, Network, Cpu, Shield, Rocket } from "lucide-react";
 
@@ -15,6 +15,18 @@ const Services = () => {
   const handleServiceClick = (service: any) => {
     setSelectedService(service);
     setIsDialogOpen(true);
+  };
+
+  // Map service titles to categories and icons
+  const getServiceCategory = (title: string) => {
+    const titleLower = title.toLowerCase();
+    if (titleLower.includes('blockchain') || titleLower.includes('crypto') || titleLower.includes('web3')) return 'blockchain';
+    if (titleLower.includes('ai') || titleLower.includes('machine learning') || titleLower.includes('neural')) return 'ai';
+    if (titleLower.includes('web') || titleLower.includes('frontend') || titleLower.includes('react')) return 'web';
+    if (titleLower.includes('mobile') || titleLower.includes('app')) return 'mobile';
+    if (titleLower.includes('data') || titleLower.includes('database')) return 'data';
+    if (titleLower.includes('security') || titleLower.includes('audit')) return 'security';
+    return 'innovation';
   };
 
   const iconMap: { [key: string]: any } = {
@@ -33,6 +45,27 @@ const Services = () => {
   const getServiceIcon = (category: string) => {
     const IconComponent = iconMap[category.toLowerCase()] || Code;
     return IconComponent;
+  };
+
+  // Parse tech stack from description or use default
+  const getTechStack = (description: string) => {
+    const techKeywords = ['React', 'Node.js', 'Python', 'JavaScript', 'TypeScript', 'Blockchain', 'AI', 'Machine Learning', 'Web3', 'Smart Contracts'];
+    const foundTech = techKeywords.filter(tech => 
+      description.toLowerCase().includes(tech.toLowerCase())
+    );
+    return foundTech.length > 0 ? foundTech : ['Custom Solution', 'Modern Tech'];
+  };
+
+  // Generate price based on service complexity
+  const getServicePrice = (title: string, description: string) => {
+    const basePrice = 500;
+    let multiplier = 1;
+    
+    if (title.toLowerCase().includes('enterprise') || description.toLowerCase().includes('enterprise')) multiplier = 3;
+    else if (title.toLowerCase().includes('advanced') || description.toLowerCase().includes('advanced')) multiplier = 2;
+    else if (title.toLowerCase().includes('basic') || description.toLowerCase().includes('basic')) multiplier = 0.5;
+    
+    return Math.round(basePrice * multiplier);
   };
 
   if (isLoading) {
@@ -82,7 +115,11 @@ const Services = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => {
-            const IconComponent = getServiceIcon(service.category);
+            const category = getServiceCategory(service.title);
+            const IconComponent = getServiceIcon(category);
+            const techStack = getTechStack(service.description);
+            const price = getServicePrice(service.title, service.description);
+            
             return (
               <Card 
                 key={service.id}
@@ -106,7 +143,7 @@ const Services = () => {
                       variant="secondary"
                       className="bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 border-purple-200"
                     >
-                      {service.category}
+                      {category}
                     </Badge>
                   </div>
                   <CardTitle className="text-xl font-bold text-gray-800 group-hover:text-purple-700 transition-colors">
@@ -119,7 +156,7 @@ const Services = () => {
                 
                 <CardContent className="relative z-10 pt-0">
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {service.tech.map((tech: string, techIndex: number) => (
+                    {techStack.map((tech: string, techIndex: number) => (
                       <span
                         key={techIndex}
                         className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 border border-gray-200"
@@ -131,7 +168,7 @@ const Services = () => {
                   
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-purple-600">
-                      ${service.price}
+                      ${price}
                     </span>
                     <Button 
                       className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 rounded-xl group-hover:scale-105 transition-transform"

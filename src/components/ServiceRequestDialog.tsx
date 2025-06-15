@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { 
   Dialog, 
@@ -25,10 +24,10 @@ import {
 interface ServiceRequestDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  serviceName: string;
+  service: any;
 }
 
-const ServiceRequestDialog = ({ isOpen, onClose, serviceName }: ServiceRequestDialogProps) => {
+const ServiceRequestDialog = ({ isOpen, onClose, service }: ServiceRequestDialogProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -41,7 +40,7 @@ const ServiceRequestDialog = ({ isOpen, onClose, serviceName }: ServiceRequestDi
     requirements: "",
   });
   const [availableServices, setAvailableServices] = useState<string[]>([]);
-  const [selectedService, setSelectedService] = useState(serviceName);
+  const [selectedService, setSelectedService] = useState("");
 
   // Fetch available services from Supabase
   useEffect(() => {
@@ -68,10 +67,12 @@ const ServiceRequestDialog = ({ isOpen, onClose, serviceName }: ServiceRequestDi
     fetchServices();
   }, []);
 
-  // Update selected service when serviceName prop changes or when dialog opens
+  // Update selected service when service prop changes or when dialog opens
   useEffect(() => {
-    setSelectedService(serviceName);
-  }, [serviceName, isOpen]);
+    if (service && service.title) {
+      setSelectedService(service.title);
+    }
+  }, [service, isOpen]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
