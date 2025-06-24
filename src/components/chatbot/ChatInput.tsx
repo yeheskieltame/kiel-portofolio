@@ -1,9 +1,9 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mic, Send, Settings } from "lucide-react";
+import { Mic, Send, Settings, MessageCircle } from "lucide-react";
 import { useState, useRef } from "react";
 import { toast } from "@/components/ui/use-toast";
+import { useKommo } from "./hooks/useKommo";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => Promise<void>;
@@ -21,6 +21,7 @@ export const ChatInput = ({
   const [inputMessage, setInputMessage] = useState("");
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
+  const { showKommoWidget } = useKommo();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,6 +125,23 @@ export const ChatInput = ({
             >
               <Settings className="h-3 w-3 mr-1" />
               Setup
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {isConnected && (
+        <div className="mb-3 p-2 bg-green-50 rounded-lg border border-green-200">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-green-800">Kommo CRM Connected - Enhanced chat available</span>
+            <Button 
+              size="sm" 
+              onClick={showKommoWidget}
+              variant="outline"
+              className="border-green-300 text-green-700 hover:bg-green-100"
+            >
+              <MessageCircle className="h-3 w-3 mr-1" />
+              Open CRM Chat
             </Button>
           </div>
         </div>

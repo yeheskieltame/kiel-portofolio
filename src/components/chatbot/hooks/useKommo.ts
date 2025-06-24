@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 
@@ -7,6 +6,8 @@ interface KommoConfig {
   clientId: string;
   clientSecret: string;
   redirectUri: string;
+  widgetId: string;
+  widgetHash: string;
 }
 
 interface KommoAuth {
@@ -24,15 +25,20 @@ export const useKommo = () => {
   
   const [isConnected, setIsConnected] = useState(false);
   
-  // Kommo configuration - these should be set in your Kommo app settings
+  // Kommo configuration with your actual domain and widget details
   const kommoConfig: KommoConfig = {
-    domain: "your-domain.kommo.com", // Replace with your Kommo domain
-    clientId: "your-client-id", // Replace with your Kommo Client ID
-    clientSecret: "your-client-secret", // Replace with your Kommo Client Secret
-    redirectUri: window.location.origin + "/kommo-callback"
+    domain: "riorblade09.kommo.com",
+    clientId: "your-client-id", // You'll need to get this from Kommo integrations
+    clientSecret: "your-client-secret", // You'll need to get this from Kommo integrations
+    redirectUri: window.location.origin + "/kommo-callback",
+    widgetId: "1046136",
+    widgetHash: "f2edac3055e0ee9f04312978c5f5382d8b0b5803f72da0bf3bd81bcf38a209d2"
   };
 
   useEffect(() => {
+    // Load Kommo widget script
+    loadKommoWidget();
+    
     // Load stored auth tokens
     const storedAuth = localStorage.getItem('kommo_auth');
     if (storedAuth) {
@@ -47,6 +53,29 @@ export const useKommo = () => {
       }
     }
   }, []);
+
+  const loadKommoWidget = () => {
+    // Initialize Kommo widget
+    if (typeof window !== 'undefined') {
+      (window as any).crmPlugin = (window as any).crmPlugin || {
+        id: kommoConfig.widgetId,
+        hash: kommoConfig.widgetHash,
+        locale: "id",
+        setMeta: function(p: any) {
+          this.params = (this.params || []).concat([p]);
+        }
+      };
+
+      // Load the widget script if not already loaded
+      if (!document.getElementById('crm_plugin_script')) {
+        const script = document.createElement('script');
+        script.async = true;
+        script.id = 'crm_plugin_script';
+        script.src = 'https://gso.kommo.com/js/button.js';
+        document.head?.appendChild(script);
+      }
+    }
+  };
 
   const initiateAuth = () => {
     const authUrl = `https://${kommoConfig.domain}/oauth2/authorize?` +
@@ -227,11 +256,20 @@ export const useKommo = () => {
     }
   };
 
+  // Function to show Kommo widget
+  const showKommoWidget = () => {
+    if (typeof window !== 'undefined' && (window as any).crmPlugin) {
+      (window as any).crmPlugin('show');
+    }
+  };
+
   return {
     isConnected,
     initiateAuth,
     handleAuthCallback,
     createLead,
-    auth
+    showKommoWidget,
+    auth,
+    config: kommoConfig
   };
 };
