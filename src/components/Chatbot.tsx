@@ -8,7 +8,6 @@ import { ChatMessages } from "./chatbot/ChatMessages";
 import { ChatInput } from "./chatbot/ChatInput";
 import { useChatbot } from "./chatbot/useChatbot";
 import { useEffect, useState } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Chatbot = () => {
   const { 
@@ -21,7 +20,9 @@ const Chatbot = () => {
     handleSendMessage, 
     toggleTts,
     switchLanguage,
-    speakText
+    speakText,
+    connectToKommo,
+    isConnected
   } = useChatbot();
 
   const [showNotification, setShowNotification] = useState(false);
@@ -56,11 +57,12 @@ const Chatbot = () => {
         {showNotification && (
           <div className="absolute bottom-20 right-0 mb-2 animate-bounce-slow">
             <div className="relative">
-              <div className="w-56 p-3 rounded-lg shadow-lg bg-gradient-to-r from-theme-purple to-theme-blue text-white">
+              <div className="w-64 p-3 rounded-lg shadow-lg bg-gradient-to-r from-theme-purple to-theme-blue text-white">
                 <div className="absolute -bottom-2 right-6 w-0 h-0 border-8 border-solid border-theme-purple border-t-transparent border-r-transparent border-b-theme-purple border-l-transparent transform rotate-180"></div>
-                <AlertDescription className="text-sm font-bold drop-shadow-md">
-                  Butuh bantuan?
-                </AlertDescription>
+                <div className="text-sm font-bold drop-shadow-md">
+                  <p>Need help with your project?</p>
+                  <p className="text-xs opacity-90 mt-1">Chat with me - I'm connected to Kommo CRM!</p>
+                </div>
               </div>
             </div>
           </div>
@@ -107,7 +109,12 @@ const Chatbot = () => {
             ttsEnabled={ttsEnabled}
             onSpeakMessage={speakText}
           />
-          <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+          <ChatInput 
+            onSendMessage={handleSendMessage} 
+            isLoading={isLoading}
+            onConnectKommo={connectToKommo}
+            isConnected={isConnected}
+          />
         </Card>
       </div>
     </>

@@ -1,16 +1,23 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mic, Send } from "lucide-react";
+import { Mic, Send, Settings } from "lucide-react";
 import { useState, useRef } from "react";
 import { toast } from "@/components/ui/use-toast";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => Promise<void>;
   isLoading: boolean;
+  onConnectKommo?: () => void;
+  isConnected?: boolean;
 }
 
-export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
+export const ChatInput = ({ 
+  onSendMessage, 
+  isLoading, 
+  onConnectKommo, 
+  isConnected = false 
+}: ChatInputProps) => {
   const [inputMessage, setInputMessage] = useState("");
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -50,7 +57,7 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
       const recognition = new SpeechRecognitionAPI();
       recognition.continuous = false;
       recognition.interimResults = true;
-      recognition.lang = "en-US"; // Default language
+      recognition.lang = "en-US";
       
       recognition.onstart = () => {
         setIsListening(true);
@@ -105,8 +112,24 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-3 border-t bg-white">
-      <div className="flex gap-2">
+    <div className="p-3 border-t bg-white">
+      {!isConnected && onConnectKommo && (
+        <div className="mb-3 p-2 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-blue-800">Connect to Kommo for enhanced features</span>
+            <Button 
+              size="sm" 
+              onClick={onConnectKommo}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <Settings className="h-3 w-3 mr-1" />
+              Setup
+            </Button>
+          </div>
+        </div>
+      )}
+      
+      <form onSubmit={handleSubmit} className="flex gap-2">
         <Button
           type="button"
           onClick={toggleSpeechRecognition}
@@ -138,7 +161,7 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
             <Send className="h-4 w-4" />
           )}
         </Button>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 };

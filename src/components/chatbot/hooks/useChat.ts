@@ -24,7 +24,9 @@ export const useChat = () => {
   const {
     messages,
     isLoading,
-    handleSendMessage
+    handleSendMessage,
+    connectToKommo,
+    isConnected
   } = useMessages(stopSpeaking);
 
   // When a new bot message is added, read it out if TTS is enabled
@@ -47,6 +49,8 @@ export const useChat = () => {
     toggleTts,
     switchLanguage,
     speakText,
-    stopSpeaking
+    stopSpeaking,
+    connectToKommo,
+    isConnected
   };
 };
