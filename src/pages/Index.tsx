@@ -9,7 +9,6 @@ import Articles from "@/components/Articles";
 import Activities from "@/components/Activities";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
-import Chatbot from "@/components/Chatbot";
 import { Toaster } from "@/components/ui/toaster";
 
 const Index = () => {
@@ -27,7 +26,6 @@ const Index = () => {
         <Contact />
       </main>
       <Footer />
-      <Chatbot />
       <Toaster />
     </div>
   );

@@ -8,6 +8,22 @@
     <meta name="description" content="Lovable Generated Project" />
     <meta name="author" content="Lovable" />
     <meta property="og:image" content="/og-image.png" />
+    <style>
+      /* Ensure Kommo widget stays on top */
+      #crm_plugin_script,
+      [id*="kommo"],
+      [class*="kommo"],
+      [id*="crm"],
+      [class*="crm"] {
+        z-index: 9999 !important;
+        position: relative !important;
+      }
+      
+      /* Kommo chat widget container */
+      div[style*="position: fixed"] {
+        z-index: 9999 !important;
+      }
+    </style>
   </head>
 
   <body>
@@ -27,8 +43,20 @@
         s.async=true;
         s.id=m+'_script';
         s.src='https://gso.kommo.com/js/button.js';
+        s.style.zIndex = '9999';
         d.head&&d.head.appendChild(s)
       }(window,0,'crmPlugin',0,0,'crm_plugin'));
+      
+      // Ensure Kommo widget loads with high z-index
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const kommoElements = document.querySelectorAll('[id*="kommo"], [class*="kommo"], [id*="crm"], [class*="crm"]');
+          kommoElements.forEach(function(el) {
+            el.style.zIndex = '9999';
+            el.style.position = 'relative';
+          });
+        }, 1000);
+      });
     </script>
     
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
