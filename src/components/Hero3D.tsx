@@ -5,7 +5,7 @@ import { getGreeting } from "@/lib/utils";
 import Scene3D from "./three/Scene3D";
 import AnimatedShapes from "./three/AnimatedShapes";
 import ParticleSystem from "./three/ParticleSystem";
-import CharacterScene from "./three/CharacterScene";
+import GeometricScene from "./three/GeometricScene";
 
 const Hero3D = () => {
   const [greeting, setGreeting] = useState("");
@@ -187,37 +187,38 @@ const Hero3D = () => {
           </div>
         </div>
         
-        {/* Replaced profile image section with 3D Character */}
+        {/* Enhanced 3D Geometric Scene */}
         <div className="md:flex-1 flex justify-center items-center">
-          <div className="relative w-96 h-96">
-            {/* 3D Character Scene */}
+          <div className="relative w-[500px] h-[500px]">
+            {/* Main 3D Geometric Scene */}
             <div className="absolute inset-0 z-10">
-              <CharacterScene />
+              <GeometricScene />
             </div>
             
-            {/* Enhanced glowing background effects */}
-            <div className="absolute inset-0 bg-gradient-to-b from-purple-500/20 via-blue-500/20 to-pink-500/20 rounded-full blur-3xl opacity-70 animate-pulse"></div>
-            <div className="absolute inset-4 bg-gradient-to-b from-cyan-500/15 via-purple-500/15 to-blue-500/15 rounded-full blur-2xl opacity-60 animate-pulse" style={{animationDelay: "1s"}}></div>
+            {/* Enhanced multi-layered glowing effects */}
+            <div className="absolute inset-0 bg-gradient-to-b from-purple-500/30 via-blue-500/30 to-pink-500/30 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+            <div className="absolute inset-8 bg-gradient-to-b from-cyan-400/20 via-purple-400/20 to-blue-400/20 rounded-full blur-2xl opacity-70 animate-pulse" style={{animationDelay: "1s"}}></div>
+            <div className="absolute inset-16 bg-gradient-to-b from-pink-400/15 via-indigo-400/15 to-cyan-400/15 rounded-full blur-xl opacity-80 animate-pulse" style={{animationDelay: "2s"}}></div>
             
-            {/* Floating tech icons around the character */}
-            <div className="absolute top-8 right-8 animate-bounce-slow z-20">
-              <div className="p-3 rounded-full bg-gradient-to-r from-yellow-500/30 to-orange-500/30 backdrop-blur-sm border border-yellow-400/40">
-                <Blocks className="w-6 h-6 text-yellow-400" />
+            {/* Floating tech icons with enhanced animation */}
+            <div className="absolute top-12 right-12 animate-bounce-slow z-20">
+              <div className="p-4 rounded-full bg-gradient-to-r from-yellow-500/40 to-orange-500/40 backdrop-blur-md border border-yellow-400/50 shadow-lg shadow-yellow-500/25">
+                <Blocks className="w-7 h-7 text-yellow-300" />
               </div>
             </div>
-            <div className="absolute bottom-8 left-8 animate-bounce-slow z-20" style={{animationDelay: "1s"}}>
-              <div className="p-3 rounded-full bg-gradient-to-r from-green-500/30 to-blue-500/30 backdrop-blur-sm border border-green-400/40">
-                <Network className="w-6 h-6 text-green-400" />
+            <div className="absolute bottom-12 left-12 animate-bounce-slow z-20" style={{animationDelay: "1s"}}>
+              <div className="p-4 rounded-full bg-gradient-to-r from-green-500/40 to-emerald-500/40 backdrop-blur-md border border-green-400/50 shadow-lg shadow-green-500/25">
+                <Network className="w-7 h-7 text-green-300" />
               </div>
             </div>
-            <div className="absolute top-16 left-4 animate-bounce-slow z-20" style={{animationDelay: "2s"}}>
-              <div className="p-2 rounded-full bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur-sm border border-purple-400/40">
-                <Cpu className="w-5 h-5 text-purple-400" />
+            <div className="absolute top-20 left-8 animate-bounce-slow z-20" style={{animationDelay: "2s"}}>
+              <div className="p-3 rounded-full bg-gradient-to-r from-purple-500/40 to-pink-500/40 backdrop-blur-md border border-purple-400/50 shadow-lg shadow-purple-500/25">
+                <Cpu className="w-6 h-6 text-purple-300" />
               </div>
             </div>
-            <div className="absolute bottom-16 right-4 animate-bounce-slow z-20" style={{animationDelay: "1.5s"}}>
-              <div className="p-2 rounded-full bg-gradient-to-r from-cyan-500/30 to-blue-500/30 backdrop-blur-sm border border-cyan-400/40">
-                <Zap className="w-5 h-5 text-cyan-400" />
+            <div className="absolute bottom-20 right-8 animate-bounce-slow z-20" style={{animationDelay: "1.5s"}}>
+              <div className="p-3 rounded-full bg-gradient-to-r from-cyan-500/40 to-blue-500/40 backdrop-blur-md border border-cyan-400/50 shadow-lg shadow-cyan-500/25">
+                <Zap className="w-6 h-6 text-cyan-300" />
               </div>
             </div>
           </div>
