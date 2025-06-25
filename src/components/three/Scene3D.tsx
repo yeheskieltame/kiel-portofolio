@@ -14,28 +14,32 @@ const Scene3D = ({ children, enableControls = true, showStars = true, className 
   return (
     <div className={`w-full h-full ${className}`}>
       <Canvas
-        camera={{ position: [0, 0, 5], fov: 75 }}
+        camera={{ position: [15, 10, 15], fov: 60 }}
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent' }}
       >
         <Suspense fallback={null}>
-          {/* Lighting */}
-          <ambientLight intensity={0.5} />
+          {/* Enhanced Lighting for 3D objects */}
+          <ambientLight intensity={0.4} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
-          <pointLight position={[-10, -10, -5]} intensity={0.5} />
+          <directionalLight position={[-10, -10, -5]} intensity={0.5} />
+          <pointLight position={[0, 0, 10]} intensity={0.8} color="#ffffff" />
           
           {/* Background Stars */}
           {showStars && <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />}
           
-          {/* Controls */}
+          {/* Enhanced Controls for 3D navigation */}
           {enableControls && (
             <OrbitControls 
               enableZoom={true} 
-              enablePan={false} 
+              enablePan={true} 
               enableRotate={true}
-              autoRotate={false}
-              maxPolarAngle={Math.PI / 2}
-              minPolarAngle={Math.PI / 2}
+              autoRotate={true}
+              autoRotateSpeed={0.5}
+              maxDistance={50}
+              minDistance={5}
+              maxPolarAngle={Math.PI}
+              minPolarAngle={0}
             />
           )}
           
