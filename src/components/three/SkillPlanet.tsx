@@ -2,7 +2,7 @@
 import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Mesh, Group } from 'three';
-import { Float, Text, Html } from '@react-three/drei';
+import { Float, Html } from '@react-three/drei';
 
 interface SkillPlanetProps {
   name: string;

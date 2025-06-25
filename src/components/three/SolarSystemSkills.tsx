@@ -4,14 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { Group } from 'three';
 import SkillPlanet from './SkillPlanet';
 import { Float } from '@react-three/drei';
-
-interface Skill {
-  id: string;
-  name: string;
-  icon: string;
-  level: number;
-  category: string;
-}
+import { Skill } from '../admin/AdminDataContext';
 
 interface SolarSystemSkillsProps {
   skills: Skill[];
