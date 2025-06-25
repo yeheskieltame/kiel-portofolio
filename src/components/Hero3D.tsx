@@ -5,6 +5,7 @@ import { getGreeting } from "@/lib/utils";
 import Scene3D from "./three/Scene3D";
 import AnimatedShapes from "./three/AnimatedShapes";
 import ParticleSystem from "./three/ParticleSystem";
+import CharacterScene from "./three/CharacterScene";
 
 const Hero3D = () => {
   const [greeting, setGreeting] = useState("");
@@ -95,7 +96,7 @@ const Hero3D = () => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,_rgba(120,_200,_255,_0.2),_transparent_50%)]"></div>
       </div>
 
-      {/* Content - keep existing structure but add higher z-index */}
+      {/* Content */}
       <div className="max-w-7xl mx-auto text-center flex flex-col md:flex-row items-center gap-12 justify-between relative z-20">
         <div className="md:flex-1 text-center md:text-left">
           {showNamePrompt ? (
@@ -123,7 +124,6 @@ const Hero3D = () => {
             </div>
           ) : null}
 
-          {/* Rest of the content remains the same */}
           <div className="space-y-6 animate-slide-down opacity-0" style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}>
             <div className="inline-flex gap-4 items-center justify-center md:justify-start mb-8">
               <span className="h-px w-20 bg-gradient-to-r from-transparent via-purple-400 to-transparent"></span>
@@ -148,7 +148,6 @@ const Hero3D = () => {
               Let's build tomorrow, today! ⚡
             </p>
 
-            {/* Keep existing tech grid and buttons */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10 max-w-2xl mx-auto md:mx-0">
               <div className="group p-4 rounded-xl bg-gradient-to-br from-purple-600/20 to-blue-600/20 backdrop-blur-sm border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 hover-scale">
                 <Code className="w-8 h-8 text-purple-400 mb-2 group-hover:scale-110 transition-transform" />
@@ -188,30 +187,37 @@ const Hero3D = () => {
           </div>
         </div>
         
+        {/* Replaced profile image section with 3D Character */}
         <div className="md:flex-1 flex justify-center items-center">
-          <div className="relative">
-            {/* Enhanced 3D Profile Image Container */}
-            <div className="absolute inset-0 rounded-full border-4 border-gradient-to-r from-purple-500 via-blue-500 to-pink-500 animate-spin" style={{animationDuration: "10s"}}></div>
-            <div className="absolute inset-2 rounded-full border-2 border-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-spin" style={{animationDuration: "8s", animationDirection: "reverse"}}></div>
+          <div className="relative w-96 h-96">
+            {/* 3D Character Scene */}
+            <div className="absolute inset-0 z-10">
+              <CharacterScene />
+            </div>
             
-            {/* Enhanced glowing background */}
-            <div className="absolute inset-0 bg-gradient-to-b from-purple-500/30 via-blue-500/30 to-pink-500/30 rounded-full blur-2xl opacity-70 animate-pulse"></div>
+            {/* Enhanced glowing background effects */}
+            <div className="absolute inset-0 bg-gradient-to-b from-purple-500/20 via-blue-500/20 to-pink-500/20 rounded-full blur-3xl opacity-70 animate-pulse"></div>
+            <div className="absolute inset-4 bg-gradient-to-b from-cyan-500/15 via-purple-500/15 to-blue-500/15 rounded-full blur-2xl opacity-60 animate-pulse" style={{animationDelay: "1s"}}></div>
             
-            <img 
-              src="/lovable-uploads/ac05b5d9-c668-494e-9575-2f216c149e65.png" 
-              alt="Yeheskiel Yunus Tame - Blockchain & AI Developer" 
-              className="w-80 h-80 object-cover rounded-full relative z-10 animate-float border-4 border-white/20 shadow-2xl"
-            />
-            
-            {/* Keep existing floating tech icons */}
-            <div className="absolute top-4 right-4 animate-bounce-slow">
-              <div className="p-2 rounded-full bg-gradient-to-r from-yellow-500/30 to-orange-500/30 backdrop-blur-sm">
-                <Blocks className="w-5 h-5 text-yellow-400" />
+            {/* Floating tech icons around the character */}
+            <div className="absolute top-8 right-8 animate-bounce-slow z-20">
+              <div className="p-3 rounded-full bg-gradient-to-r from-yellow-500/30 to-orange-500/30 backdrop-blur-sm border border-yellow-400/40">
+                <Blocks className="w-6 h-6 text-yellow-400" />
               </div>
             </div>
-            <div className="absolute bottom-4 left-4 animate-bounce-slow" style={{animationDelay: "1s"}}>
-              <div className="p-2 rounded-full bg-gradient-to-r from-green-500/30 to-blue-500/30 backdrop-blur-sm">
-                <Network className="w-5 h-5 text-green-400" />
+            <div className="absolute bottom-8 left-8 animate-bounce-slow z-20" style={{animationDelay: "1s"}}>
+              <div className="p-3 rounded-full bg-gradient-to-r from-green-500/30 to-blue-500/30 backdrop-blur-sm border border-green-400/40">
+                <Network className="w-6 h-6 text-green-400" />
+              </div>
+            </div>
+            <div className="absolute top-16 left-4 animate-bounce-slow z-20" style={{animationDelay: "2s"}}>
+              <div className="p-2 rounded-full bg-gradient-to-r from-purple-500/30 to-pink-500/30 backdrop-blur-sm border border-purple-400/40">
+                <Cpu className="w-5 h-5 text-purple-400" />
+              </div>
+            </div>
+            <div className="absolute bottom-16 right-4 animate-bounce-slow z-20" style={{animationDelay: "1.5s"}}>
+              <div className="p-2 rounded-full bg-gradient-to-r from-cyan-500/30 to-blue-500/30 backdrop-blur-sm border border-cyan-400/40">
+                <Zap className="w-5 h-5 text-cyan-400" />
               </div>
             </div>
           </div>
