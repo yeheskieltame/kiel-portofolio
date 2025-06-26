@@ -1,6 +1,7 @@
 
 import Navbar from "@/components/Navbar";
 import Hero3D from "@/components/Hero3D";
+import Profile from "@/components/Profile";
 import Services from "@/components/Services";
 import Projects from "@/components/Projects";
 import Skills from "@/components/Skills";
@@ -17,6 +18,7 @@ const Index = () => {
       <Navbar />
       <main className="flex-grow">
         <Hero3D />
+        <Profile />
         <Services />
         <Skills />
         <Projects />
