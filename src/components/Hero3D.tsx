@@ -5,6 +5,7 @@ import { getGreeting } from "@/lib/utils";
 import Scene3D from "./three/Scene3D";
 import AnimatedShapes from "./three/AnimatedShapes";
 import ParticleSystem from "./three/ParticleSystem";
+import WalletDonation from "./WalletDonation";
 
 const Hero3D = () => {
   const [greeting, setGreeting] = useState("");
@@ -122,6 +123,11 @@ const Hero3D = () => {
               </p>
             </div>
           ) : null}
+
+          {/* Add Wallet Donation Section */}
+          <div className="mt-12 animate-fade-in opacity-0" style={{ animationDelay: "0.5s", animationFillMode: "forwards" }}>
+            <WalletDonation variant="hero" className="max-w-md mx-auto md:mx-0" />
+          </div>
 
           {/* Rest of the content remains the same */}
           <div className="space-y-6 animate-slide-down opacity-0" style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}>
