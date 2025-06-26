@@ -16,7 +16,7 @@ const Profile = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-500 rounded-2xl blur-xl opacity-30 scale-105"></div>
               <div className="relative bg-white rounded-2xl p-8 shadow-2xl">
                 <img
-                  src="/lovable-uploads/WhatsApp Image 2025-06-12 at 09.39.05.jpeg"
+                  src="/lovable-uploads/kiel.jpeg"
                   alt="Yeheskiel Yunus Tame - Blockchain & AI Developer"
                   className="w-full max-w-sm mx-auto rounded-xl shadow-lg"
                 />
