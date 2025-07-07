@@ -12,7 +12,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Send } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
   SelectContent,
@@ -39,38 +38,24 @@ const ServiceRequestDialog = ({ isOpen, onClose, service }: ServiceRequestDialog
     timeline: "",
     requirements: "",
   });
-  const [availableServices, setAvailableServices] = useState<string[]>([]);
   const [selectedService, setSelectedService] = useState("");
 
-  // Fetch available services from Supabase
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('kiel_portfolio_services')
-          .select('title')
-          .order('title');
-          
-        if (error) {
-          console.error("Error fetching services:", error);
-          return;
-        }
-        
-        if (data && data.length > 0) {
-          setAvailableServices(data.map(service => service.title));
-        }
-      } catch (error) {
-        console.error("Failed to fetch services:", error);
-      }
-    };
-
-    fetchServices();
-  }, []);
+  // Updated services list to match the new services
+  const availableServices = [
+    "🤖 Chatbot Development",
+    "📱 Social Media ADS Management", 
+    "🌐 Website Development",
+    "🧠 AI Model Development",
+    "⛓️ Blockchain DApp Development",
+    "⚡ Business Automation"
+  ];
 
   // Update selected service when service prop changes or when dialog opens
   useEffect(() => {
     if (service && service.title) {
       setSelectedService(service.title);
+    } else if (availableServices.length > 0) {
+      setSelectedService(availableServices[0]);
     }
   }, [service, isOpen]);
 
