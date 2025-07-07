@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +26,16 @@ const Articles = () => {
       readTime: "4 min read",
       category: "Personal Development",
       tags: ["Adaptability", "Growth", "Leadership", "Mindset"]
+    },
+    {
+      id: 3,
+      title: "Simplifying Web3: Introducing SmartVerse Identity",
+      description: "Discover how SmartVerse is revolutionizing Web3 user experience by replacing complex blockchain addresses with simple, human-readable usernames ending in .sw (Smart Wallet).",
+      url: "https://www.linkedin.com/pulse/simplifying-web3-introducing-smartverse-identity-yeheskiel-yunus-tame-xccdc",
+      publishDate: "2024",
+      readTime: "6 min read",
+      category: "Web3",
+      tags: ["Web3", "Blockchain", "User Experience", "Digital Identity", "Innovation"]
     }
   ];
 
@@ -69,7 +78,7 @@ const Articles = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {articles.map((article, index) => (
             <Card
               key={article.id}
