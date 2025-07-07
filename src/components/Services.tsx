@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import ServiceRequestDialog from "./ServiceRequestDialog";
 import { useAdminData } from "./admin/AdminDataContext";
-import { Blocks, BrainCircuit, Code, Database, Sparkles, Zap, Network, Cpu, Shield, Rocket } from "lucide-react";
+import { MessageCircle, Megaphone, Globe, Brain, Blocks, Zap, Sparkles, ArrowRight, Star } from "lucide-react";
 
 const Services = () => {
   const { services, isLoading } = useAdminData();
@@ -17,56 +17,69 @@ const Services = () => {
     setIsDialogOpen(true);
   };
 
-  // Map service titles to categories and icons
-  const getServiceCategory = (title: string) => {
-    const titleLower = title.toLowerCase();
-    if (titleLower.includes('blockchain') || titleLower.includes('crypto') || titleLower.includes('web3')) return 'blockchain';
-    if (titleLower.includes('ai') || titleLower.includes('machine learning') || titleLower.includes('neural')) return 'ai';
-    if (titleLower.includes('web') || titleLower.includes('frontend') || titleLower.includes('react')) return 'web';
-    if (titleLower.includes('mobile') || titleLower.includes('app')) return 'mobile';
-    if (titleLower.includes('data') || titleLower.includes('database')) return 'data';
-    if (titleLower.includes('security') || titleLower.includes('audit')) return 'security';
-    return 'innovation';
-  };
-
-  const iconMap: { [key: string]: any } = {
-    'blockchain': Blocks,
-    'ai': BrainCircuit,
-    'web': Code,
-    'mobile': Cpu,
-    'data': Database,
-    'security': Shield,
-    'innovation': Sparkles,
-    'network': Network,
-    'performance': Zap,
-    'launch': Rocket
-  };
-
-  const getServiceIcon = (category: string) => {
-    const IconComponent = iconMap[category.toLowerCase()] || Code;
-    return IconComponent;
-  };
-
-  // Parse tech stack from description or use default
-  const getTechStack = (description: string) => {
-    const techKeywords = ['React', 'Node.js', 'Python', 'JavaScript', 'TypeScript', 'Blockchain', 'AI', 'Machine Learning', 'Web3', 'Smart Contracts'];
-    const foundTech = techKeywords.filter(tech => 
-      description.toLowerCase().includes(tech.toLowerCase())
-    );
-    return foundTech.length > 0 ? foundTech : ['Custom Solution', 'Modern Tech'];
-  };
-
-  // Generate price based on service complexity
-  const getServicePrice = (title: string, description: string) => {
-    const basePrice = 500;
-    let multiplier = 1;
-    
-    if (title.toLowerCase().includes('enterprise') || description.toLowerCase().includes('enterprise')) multiplier = 3;
-    else if (title.toLowerCase().includes('advanced') || description.toLowerCase().includes('advanced')) multiplier = 2;
-    else if (title.toLowerCase().includes('basic') || description.toLowerCase().includes('basic')) multiplier = 0.5;
-    
-    return Math.round(basePrice * multiplier);
-  };
+  // Modern service configurations based on your actual offerings
+  const modernServices = [
+    {
+      id: 1,
+      title: "🤖 Chatbot Development",
+      description: "Custom AI-powered chatbots for business automation, customer service, and engagement across Telegram, WhatsApp, and web platforms with NLP capabilities.",
+      icon: MessageCircle,
+      category: "AI & Automation",
+      gradient: "from-blue-500 to-cyan-500",
+      features: ["Natural Language Processing", "Multi-platform Integration", "Business Automation", "Custom AI Training"],
+      pricing: "Starting from $800"
+    },
+    {
+      id: 2,
+      title: "📱 Social Media ADS Management",
+      description: "Comprehensive advertising services across all social media platforms including WhatsApp, Instagram, Facebook, and TikTok with targeted campaigns.",
+      icon: Megaphone,
+      category: "Digital Marketing",
+      gradient: "from-pink-500 to-rose-500",
+      features: ["Multi-Platform Campaigns", "Targeted Advertising", "Performance Analytics", "ROI Optimization"],
+      pricing: "Starting from $500"
+    },
+    {
+      id: 3,
+      title: "🌐 Website Development",
+      description: "Modern, responsive websites for companies, institutions, and portfolios using cutting-edge technologies and best practices.",
+      icon: Globe,
+      category: "Web Development",
+      gradient: "from-green-500 to-emerald-500",
+      features: ["Responsive Design", "Modern Technologies", "SEO Optimized", "Performance Focused"],
+      pricing: "Starting from $1,200"
+    },
+    {
+      id: 4,
+      title: "🧠 AI Model Development",
+      description: "Custom AI solutions including deep learning and machine learning models for business intelligence, automation, and data analysis.",
+      icon: Brain,
+      category: "Artificial Intelligence",
+      gradient: "from-purple-500 to-violet-500",
+      features: ["Deep Learning", "Machine Learning", "Custom Training", "Data Analysis"],
+      pricing: "Starting from $1,500"
+    },
+    {
+      id: 5,
+      title: "⛓️ Blockchain DApp Development",
+      description: "Decentralized applications and smart contracts development for Web3 solutions, including identity management and protocol development.",
+      icon: Blocks,
+      category: "Blockchain & Web3",
+      gradient: "from-orange-500 to-red-500",
+      features: ["Smart Contracts", "Web3 Integration", "DeFi Solutions", "Protocol Development"],
+      pricing: "Starting from $2,000"
+    },
+    {
+      id: 6,
+      title: "⚡ Business Automation",
+      description: "Streamline your business processes with custom automation solutions, workflow optimization, and integration services.",
+      icon: Zap,
+      category: "Automation",
+      gradient: "from-yellow-500 to-orange-500",
+      features: ["Workflow Automation", "Process Optimization", "System Integration", "Custom Solutions"],
+      pricing: "Starting from $600"
+    }
+  ];
 
   if (isLoading) {
     return (
@@ -77,7 +90,7 @@ const Services = () => {
             <div className="h-12 bg-gray-200 rounded w-64 mx-auto mb-8"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-64 bg-gray-200 rounded-xl"></div>
+                <div key={i} className="h-80 bg-gray-200 rounded-xl"></div>
               ))}
             </div>
           </div>
@@ -87,120 +100,177 @@ const Services = () => {
   }
 
   return (
-    <section id="services" className="py-20 px-6 md:px-10 bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-10">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-purple-500 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-40 h-40 bg-blue-500 rounded-full blur-3xl animate-pulse" style={{animationDelay: "2s"}}></div>
-        <div className="absolute top-1/2 left-1/2 w-24 h-24 bg-pink-500 rounded-full blur-3xl animate-pulse" style={{animationDelay: "1s"}}></div>
+    <section id="services" className="py-20 px-6 md:px-10 relative overflow-hidden">
+      {/* Modern gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/50"></div>
+      
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-cyan-400/10 to-blue-400/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: "2s"}}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-gradient-to-br from-purple-400/5 to-pink-400/5 rounded-full blur-3xl animate-pulse" style={{animationDelay: "1s"}}></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-purple-600" />
-            <span className="inline-block py-2 px-4 rounded-full text-sm font-medium bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 border border-purple-200">
-              🚀 My Services
+          <div className="inline-flex items-center gap-2 mb-6">
+            <Sparkles className="w-6 h-6 text-blue-600" />
+            <span className="inline-block py-2 px-6 rounded-full text-sm font-semibold bg-gradient-to-r from-blue-100 to-purple-100 text-blue-700 border border-blue-200/50 shadow-sm">
+              ✨ Professional Services
             </span>
-            <Sparkles className="w-5 h-5 text-purple-600" />
+            <Sparkles className="w-6 h-6 text-purple-600" />
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600">
-            Building the Future
+          
+          <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800">
+            Transform Your Vision
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            From blockchain solutions to AI innovations, I craft cutting-edge technology 
-            that transforms ideas into reality. Let's create something extraordinary together! ✨
+          
+          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            From AI-powered chatbots to blockchain DApps, I deliver cutting-edge solutions 
+            that drive innovation and accelerate your digital transformation journey. 🚀
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => {
-            const category = getServiceCategory(service.title);
-            const IconComponent = getServiceIcon(category);
-            const techStack = getTechStack(service.description);
-            const price = getServicePrice(service.title, service.description);
+        {/* Services Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          {modernServices.map((service, index) => {
+            const IconComponent = service.icon;
             
             return (
               <Card 
                 key={service.id}
-                className={`group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 bg-white/80 backdrop-blur-sm hover:bg-white/90 hover-scale cursor-pointer opacity-0 animate-slide-up`}
+                className={`group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-700 bg-white/80 backdrop-blur-sm cursor-pointer opacity-0 animate-slide-up`}
                 style={{ 
                   animationDelay: `${0.1 + index * 0.1}s`, 
                   animationFillMode: "forwards"
                 }}
-                onClick={() => handleServiceClick(service)}
+                onClick={() => handleServiceClick({
+                  id: service.id,
+                  title: service.title,
+                  description: service.description
+                })}
               >
-                {/* Gradient Border */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500 rounded-xl blur opacity-0 group-hover:opacity-75 transition-opacity duration-500 -z-10"></div>
+                {/* Gradient border effect */}
+                <div className={`absolute inset-0 bg-gradient-to-r ${service.gradient} rounded-xl blur opacity-0 group-hover:opacity-75 transition-opacity duration-500 -z-10`}></div>
                 <div className="absolute inset-[1px] bg-white rounded-xl z-0"></div>
                 
                 <CardHeader className="relative z-10 pb-4">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-purple-100 to-blue-100 group-hover:from-purple-200 group-hover:to-blue-200 transition-all duration-300">
-                      <IconComponent className="w-8 h-8 text-purple-600 group-hover:scale-110 transition-transform" />
+                  {/* Icon and Category */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`p-4 rounded-2xl bg-gradient-to-br ${service.gradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <IconComponent className="w-8 h-8 text-white" />
                     </div>
                     <Badge 
                       variant="secondary"
-                      className="bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 border-purple-200"
+                      className="bg-gray-100 text-gray-700 border-gray-200 text-xs font-medium"
                     >
-                      {category}
+                      {service.category}
                     </Badge>
                   </div>
-                  <CardTitle className="text-xl font-bold text-gray-800 group-hover:text-purple-700 transition-colors">
+                  
+                  <CardTitle className="text-xl font-bold text-gray-800 group-hover:text-gray-900 transition-colors mb-3">
                     {service.title}
                   </CardTitle>
-                  <CardDescription className="text-gray-600 leading-relaxed">
+                  
+                  <CardDescription className="text-gray-600 leading-relaxed mb-4">
                     {service.description}
                   </CardDescription>
                 </CardHeader>
                 
                 <CardContent className="relative z-10 pt-0">
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {techStack.map((tech: string, techIndex: number) => (
-                      <span
-                        key={techIndex}
-                        className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 border border-gray-200"
-                      >
-                        {tech}
-                      </span>
+                  {/* Features */}
+                  <div className="grid grid-cols-2 gap-2 mb-6">
+                    {service.features.map((feature: string, featureIndex: number) => (
+                      <div key={featureIndex} className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${service.gradient}`}></div>
+                        <span className="text-xs text-gray-600 font-medium">
+                          {feature}
+                        </span>
+                      </div>
                     ))}
                   </div>
                   
+                  {/* Pricing and CTA */}
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-purple-600">
-                      ${price}
-                    </span>
+                    <div className="flex flex-col">
+                      <span className="text-sm text-gray-500 font-medium">Investment</span>
+                      <span className={`text-lg font-bold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}>
+                        {service.pricing}
+                      </span>
+                    </div>
+                    
                     <Button 
-                      className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 rounded-xl group-hover:scale-105 transition-transform"
+                      className={`bg-gradient-to-r ${service.gradient} hover:opacity-90 text-white border-0 rounded-xl px-6 py-2 font-semibold shadow-lg group-hover:scale-105 transition-all duration-300`}
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleServiceClick(service);
+                        handleServiceClick({
+                          id: service.id,
+                          title: service.title,
+                          description: service.description
+                        });
                       }}
                     >
-                      Get Started 🚀
+                      <span>Get Quote</span>
+                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </div>
                 </CardContent>
+
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
               </Card>
             );
           })}
         </div>
 
         {/* Call to Action */}
-        <div className="text-center mt-16">
-          <div className="p-8 rounded-2xl bg-gradient-to-r from-purple-600/10 via-blue-600/10 to-purple-600/10 backdrop-blur-sm border border-purple-200">
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">
-              Ready to Start Your Project? 🌟
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Let's discuss your vision and bring it to life with cutting-edge technology.
-            </p>
-            <Button 
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 rounded-xl px-8 py-3 text-lg font-semibold"
-              asChild
-            >
-              <a href="#contact">Start a Conversation 💬</a>
-            </Button>
+        <div className="text-center">
+          <div className="relative p-12 rounded-3xl bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-blue-600/5 backdrop-blur-sm border border-blue-200/30 shadow-xl">
+            {/* Background decoration */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-3xl blur-xl"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Star className="w-6 h-6 text-yellow-500 fill-current" />
+                <Star className="w-6 h-6 text-yellow-500 fill-current" />
+                <Star className="w-6 h-6 text-yellow-500 fill-current" />
+                <Star className="w-6 h-6 text-yellow-500 fill-current" />
+                <Star className="w-6 h-6 text-yellow-500 fill-current" />
+              </div>
+              
+              <h3 className="text-3xl font-bold text-gray-800 mb-4">
+                Ready to Innovation? 🚀
+              </h3>
+              
+              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                Let's discuss your project and create something extraordinary together. 
+                From concept to deployment, I'll guide you through every step.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Button 
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 rounded-xl px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                  asChild
+                >
+                  <a href="#contact" className="flex items-center gap-2">
+                    <MessageCircle className="w-5 h-5" />
+                    Start Conversation
+                  </a>
+                </Button>
+                
+                <Button 
+                  variant="outline"
+                  className="border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:bg-gray-50 rounded-xl px-8 py-4 text-lg font-semibold transition-all duration-300"
+                  asChild
+                >
+                  <a href="#projects" className="flex items-center gap-2">
+                    <Globe className="w-5 h-5" />
+                    View Portfolio
+                  </a>
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
